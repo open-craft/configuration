@@ -19,6 +19,9 @@
     COMMON_ENABLE_DATADOG: False
     COMMON_ENABLE_SPLUNKFORWARDER: False
     ENABLE_LEGACY_ORA: !!null
+  pre_tasks:
+    - name: install memcached
+      apt: pkg=memcached state=present
   roles:
     - role: nginx
       nginx_sites:
@@ -26,6 +29,8 @@
       - lms
       nginx_default_sites:
       - lms
-    - edxlocal
-    - mongo
+    - role: edxlocal
+      when: EDXAPP_MYSQL_HOST == 'localhost'
+    - role: mongo
+      when: "'localhost' in EDXAPP_MONGO_HOSTS"
     - edxapp
