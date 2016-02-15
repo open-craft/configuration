@@ -22,3 +22,7 @@ dependencies:
       redhat: "{{ ecommerce_redhat_pkgs }}"
   - supervisor
   - oraclejdk
+  - role: nginx
+    nginx_sites:
+    - ecommerce
+
