@@ -77,6 +77,7 @@
   vars:
     python_path: /edx/bin/python.edxapp
     manage_path: /edx/bin/manage.edxapp
+    ignore_user_creation_errors: no
   tasks:
     - name: Manage groups
       shell: >
@@ -85,6 +86,20 @@
         {% if item.get('permissions', []) | length %}--permissions {{ item.permissions | default([]) | map('quote') | join(' ') }}{% endif %}
         {% if item.get('remove') %}--remove{% endif %}
       with_items: django_groups
+
+    - name: Manage users (errors allowed)
+      shell: >
+        {{ python_path }} {{ manage_path }} lms --settings={{ deployment_settings|default('aws') }}
+        manage_user {{ item.username | quote }} {{ item.email | quote }}
+        {% if item.get('groups', []) | length %}--groups {{ item.groups | default([]) | map('quote') | join(' ') }}{% endif %}
+        {% if item.get('remove') %}--remove{% endif %}
+        {% if item.get('superuser') %}--superuser{% endif %}
+        {% if item.get('staff') %}--staff{% endif %}
+        {% if item.get('unusable_password') %}--unusable-password{% endif %}
+        {% if item.get('initial_password_hash') %}--initial-password-hash {{ item.initial_password_hash | quote }}{% endif %}
+      with_items: django_users
+      ignore_errors: yes
+      when: ignore_user_creation_errors | bool
 
     - name: Manage users
       shell: >
@@ -97,4 +112,4 @@
         {% if item.get('unusable_password') %}--unusable-password{% endif %}
         {% if item.get('initial_password_hash') %}--initial-password-hash {{ item.initial_password_hash | quote }}{% endif %}
       with_items: django_users
-      ignore_errors: "{{ ignore_user_creation_errors|default (False) }}"
+      when: not ignore_user_creation_errors | bool
