@@ -97,3 +97,4 @@
         {% if item.get('unusable_password') %}--unusable-password{% endif %}
         {% if item.get('initial_password_hash') %}--initial-password-hash {{ item.initial_password_hash | quote }}{% endif %}
       with_items: django_users
+      ignore_errors: "{{ ignore_user_creation_errors|default (False) }}"
