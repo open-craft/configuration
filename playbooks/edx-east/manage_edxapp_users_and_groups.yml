@@ -80,7 +80,7 @@
   tasks:
     - name: Manage groups
       shell: >
-        {{ python_path }} {{ manage_path }} lms --settings=aws
+        {{ python_path }} {{ manage_path }} lms --settings={{ deployment_settings|default('aws') }}
         manage_group {{ item.name | quote }}
         {% if item.get('permissions', []) | length %}--permissions {{ item.permissions | default([]) | map('quote') | join(' ') }}{% endif %}
         {% if item.get('remove') %}--remove{% endif %}
@@ -88,7 +88,7 @@
 
     - name: Manage users
       shell: >
-        {{ python_path }} {{ manage_path }} lms --settings=aws
+        {{ python_path }} {{ manage_path }} lms --settings={{ deployment_settings|default('aws') }}
         manage_user {{ item.username | quote }} {{ item.email | quote }}
         {% if item.get('groups', []) | length %}--groups {{ item.groups | default([]) | map('quote') | join(' ') }}{% endif %}
         {% if item.get('remove') %}--remove{% endif %}
