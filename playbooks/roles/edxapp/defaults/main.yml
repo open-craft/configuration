@@ -1511,6 +1511,7 @@ edxapp_requirements_files:
 edxapp_requirements_with_github_urls:
   - "{{ custom_requirements_file }}"
   - "{{ base_requirements_file }}"
+  - "{{ openstack_requirements_file }}"
   - "{{ sandbox_base_requirements }}"
 
 edxapp_chrislea_ppa: "ppa:chris-lea/node.js"

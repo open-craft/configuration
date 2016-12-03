@@ -51,6 +51,10 @@
     - role: rabbitmq
       rabbitmq_ip: 127.0.0.1
       when: SANDBOX_ENABLE_RABBITMQ
+    - role: aws
+      when: COMMON_ENABLE_AWS_INTEGRATION
+    - role: openstack
+      when: COMMON_ENABLE_OPENSTACK_INTEGRATION
     - role: edxapp
       celery_worker: True
     - edxapp
