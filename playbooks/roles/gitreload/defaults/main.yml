@@ -3,8 +3,8 @@
 # edX Configuration
 #
 # github:     https://github.com/edx/configuration
-# wiki:       https://github.com/edx/configuration/wiki
-# code style: https://github.com/edx/configuration/wiki/Ansible-Coding-Conventions
+# wiki:       https://openedx.atlassian.net/wiki/display/OpenOPS
+# code style: https://openedx.atlassian.net/wiki/display/OpenOPS/Ansible+Code+Conventions
 # license:    https://github.com/edx/configuration/blob/master/LICENSE.TXT
 #
 ##
@@ -36,12 +36,10 @@ gitreload_venv_bin: "{{ gitreload_venv }}/bin"
 gitreload_gunicorn_workers: 1
 gitreload_gunicorn_host: "127.0.0.1"
 
-gitreload_edxapp_django_settings: "aws"
-
 gitreload_env:
   REPODIR: "{{ GITRELOAD_REPODIR }}"
   LOG_LEVEL: "{{ GITRELOAD_LOG_LEVEL }}"
   NUM_THREADS: "{{ GITRELOAD_NUM_THREADS }}"
   VIRTUAL_ENV: "{{ edxapp_venv_dir }}"
   EDX_PLATFORM: "{{ edxapp_code_dir }}"
-  DJANGO_SETTINGS: "{{ gitreload_edxapp_django_settings }}"
+  DJANGO_SETTINGS: "{{ edxapp_settings }}"

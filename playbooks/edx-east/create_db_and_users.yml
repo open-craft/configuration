@@ -1,11 +1,10 @@
 #
-# Requires MySQL-python be installed for system python
 # This play will create databases and user for an application.
 # It can be run like so:
 #
-# ansible-playbook -i 'localhost,' create_analytics_reports_dbs.yml -e@./db.yml
+# ansible-playbook -c local -i 'localhost,' create_dbs_and_users.yml -e@./db.yml
 #
-# where the content of dbs.yml contains the following dictionaries
+# where the content of db.yml contains the following dictionaries
 #
 # database_connection: &default_connection
 #   login_host: "mysql.example.org"
@@ -44,39 +43,37 @@
 
 - name: Create databases and users
   hosts: all
-  connection: local
   gather_facts: False
   tasks:
     # Install required library, currently this needs to be available
     # to system python.
     - name: install python mysqldb module
       pip: name={{item}} state=present
-      sudo: yes
       with_items:
         - MySQL-python
 
     - name: create mysql databases
-      mysql_db: >
-        db={{ item.name}}
-        state={{ item.state }}
-        encoding={{ item.encoding }}
-        login_host={{ item.login_host }}
-        login_user={{ item.login_user }}
-        login_password={{ item.login_password }}
-      with_items: databases
+      mysql_db:
+        db: "{{ item.name}}"
+        state: "{{ item.state }}"
+        encoding: "{{ item.encoding }}"
+        login_host: "{{ item.login_host }}"
+        login_user: "{{ item.login_user }}"
+        login_password: "{{ item.login_password }}"
+      with_items: "{{ databases }}"
       tags:
         - dbs
 
     - name: create mysql users and assign privileges
-      mysql_user: >
-        name="{{ item.name }}"
-        priv="{{ '/'.join(item.privileges) }}"
-        password="{{ item.password }}"
-        host={{ item.host }}
-        login_host={{ item.login_host }}
-        login_user={{ item.login_user }}
-        login_password={{ item.login_password }}
-        append_privs=yes
-      with_items: database_users
+      mysql_user:
+        name: "{{ item.name }}"
+        priv: "{{ '/'.join(item.privileges) }}"
+        password: "{{ item.password }}"
+        host: "{{ item.host }}"
+        login_host: "{{ item.login_host }}"
+        login_user: "{{ item.login_user }}"
+        login_password: "{{ item.login_password }}"
+        append_privs: yes
+      with_items: "{{ database_users }}"
       tags:
         - users

@@ -3,8 +3,8 @@
 # edX Configuration
 #
 # github:     https://github.com/edx/configuration
-# wiki:       https://github.com/edx/configuration/wiki
-# code style: https://github.com/edx/configuration/wiki/Ansible-Coding-Conventions
+# wiki:       https://openedx.atlassian.net/wiki/display/OpenOPS
+# code style: https://openedx.atlassian.net/wiki/display/OpenOPS/Ansible+Code+Conventions
 # license:    https://github.com/edx/configuration/blob/master/LICENSE.TXT
 #
 # Tasks for role analytics_api
@@ -19,7 +19,7 @@
 # Example play:
 # - name: Deploy Analytics API
 #   hosts: all
-#   sudo: True
+#   become: True
 #   gather_facts: True
 #   vars:
 #     ENABLE_DATADOG: False
@@ -33,43 +33,41 @@
 #
 
 - name: setup the analytics_api env file
-  template: >
-    src="edx/app/analytics_api/analytics_api_env.j2"
-    dest="{{ analytics_api_home }}/analytics_api_env"
-    owner={{ analytics_api_user }}
-    group={{ analytics_api_user }}
-    mode=0644
+  template:
+    src: "edx/app/analytics_api/analytics_api_env.j2"
+    dest: "{{ analytics_api_home }}/analytics_api_env"
+    owner: "{{ analytics_api_user }}"
+    group: "{{ analytics_api_user }}"
+    mode: 0644
   tags:
     - install
     - install:configuration
 
 - name: "add gunicorn configuration file"
-  template: >
-    src=edx/app/analytics_api/analytics_api_gunicorn.py.j2
-    dest={{ analytics_api_home }}/analytics_api_gunicorn.py
-  sudo_user: "{{ analytics_api_user }}"
+  template:
+    src: edx/app/analytics_api/analytics_api_gunicorn.py.j2
+    dest: "{{ analytics_api_home }}/analytics_api_gunicorn.py"
+  become_user: "{{ analytics_api_user }}"
   tags:
     - install
     - install:configuration
 
 - name: install application requirements
-  pip: >
-    requirements="{{ analytics_api_requirements_base }}/{{ item }}"
-    virtualenv="{{ analytics_api_home }}/venvs/{{ analytics_api_service_name }}"
-    state=present
-  sudo_user: "{{ analytics_api_user }}"
-  with_items: analytics_api_requirements
+  pip:
+    requirements: "{{ analytics_api_requirements_base }}/{{ item }}"
+    virtualenv: "{{ analytics_api_home }}/venvs/{{ analytics_api_service_name }}"
+    state: present
+  become_user: "{{ analytics_api_user }}"
+  with_items: "{{ analytics_api_requirements }}"
   tags:
     - install
     - install:app-requirements
 
 - name: migrate
-  shell: >
-    chdir={{ analytics_api_code_dir }}
-    DB_MIGRATION_USER={{ COMMON_MYSQL_MIGRATE_USER }}
-    DB_MIGRATION_PASS={{ COMMON_MYSQL_MIGRATE_PASS }}
-    {{ analytics_api_home }}/venvs/{{ analytics_api_service_name }}/bin/python ./manage.py migrate --noinput
-  sudo_user: "{{ analytics_api_user }}"
+  shell: "DB_MIGRATION_USER='{{ COMMON_MYSQL_MIGRATE_USER }}' DB_MIGRATION_PASS='{{ COMMON_MYSQL_MIGRATE_PASS }}' {{ analytics_api_home }}/venvs/{{ analytics_api_service_name }}/bin/python ./manage.py migrate --noinput"
+  args:
+    chdir: "{{ analytics_api_code_dir }}"
+  become_user: "{{ analytics_api_user }}"
   environment: "{{ analytics_api_environment }}"
   when: migrate_db is defined and migrate_db|lower == "yes"
   tags:
@@ -77,50 +75,54 @@
     - migrate:db
 
 - name: run collectstatic
-  shell: >
-    chdir={{ analytics_api_code_dir }}
-    {{ analytics_api_home }}/venvs/{{ analytics_api_service_name }}/bin/python manage.py collectstatic  --noinput
-  sudo_user: "{{ analytics_api_user }}"
+  shell: "{{ analytics_api_home }}/venvs/{{ analytics_api_service_name }}/bin/python manage.py collectstatic  --noinput"
+  args:
+    chdir: "{{ analytics_api_code_dir }}"
+  become_user: "{{ analytics_api_user }}"
   environment: "{{ analytics_api_environment }}"
   tags:
     - assets
     - assets:gather
 
 - name: create api users
-  shell: >
-    chdir={{ analytics_api_code_dir }}
-    {{ analytics_api_home }}/venvs/{{ analytics_api_service_name }}/bin/python manage.py set_api_key {{ item.key }} {{ item.value }}
-  sudo_user: "{{ analytics_api_user }}"
+  shell: "{{ analytics_api_home }}/venvs/{{ analytics_api_service_name }}/bin/python manage.py set_api_key {{ item.key }} {{ item.value }}"
+  args:
+    chdir: "{{ analytics_api_code_dir }}"
+  become_user: "{{ analytics_api_user }}"
   environment: "{{ analytics_api_environment }}"
-  with_dict: ANALYTICS_API_USERS
+  with_dict: "{{ ANALYTICS_API_USERS }}"
   tags:
     - manage
     - manage:app-users
 
 - name: write out the supervisor wrapper
-  template: >
-    src=edx/app/analytics_api/analytics_api.sh.j2
-    dest={{ analytics_api_home }}/{{ analytics_api_service_name }}.sh
-    mode=0650 owner={{ supervisor_user }} group={{ common_web_user }}
+  template:
+    src: edx/app/analytics_api/analytics_api.sh.j2
+    dest: "{{ analytics_api_home }}/{{ analytics_api_service_name }}.sh"
+    mode: 0650
+    owner: "{{ supervisor_user }}"
+    group: "{{ common_web_user }}"
   tags:
     - install
     - install:configuration
 
 - name: write supervisord config
-  template: >
-    src=edx/app/supervisor/conf.d.available/analytics_api.conf.j2
-    dest="{{ supervisor_available_dir }}/{{ analytics_api_service_name }}.conf"
-    owner={{ supervisor_user }} group={{ common_web_user }} mode=0644
+  template:
+    src: edx/app/supervisor/conf.d.available/analytics_api.conf.j2
+    dest: "{{ supervisor_available_dir }}/{{ analytics_api_service_name }}.conf"
+    owner: "{{ supervisor_user }}"
+    group: "{{ common_web_user }}"
+    mode: 0644
   tags:
     - install
     - install:configuration
 
 - name: enable supervisor script
-  file: >
-    src={{ supervisor_available_dir }}/{{ analytics_api_service_name }}.conf
-    dest={{ supervisor_cfg_dir }}/{{ analytics_api_service_name }}.conf
-    state=link
-    force=yes
+  file:
+    src: "{{ supervisor_available_dir }}/{{ analytics_api_service_name }}.conf"
+    dest: "{{ supervisor_cfg_dir }}/{{ analytics_api_service_name }}.conf"
+    state: link
+    force: yes
   when: not disable_edx_services
   tags:
     - install
@@ -130,14 +132,14 @@
   shell: "{{ supervisor_ctl }} -c {{ supervisor_cfg }} update"
   when: not disable_edx_services
   tags:
-    - install
-    - install:configuration
+    - manage
+    - manage:start
 
 - name: create symlinks from the venv bin dir
-  file: >
-    src="{{ analytics_api_home }}/venvs/{{ analytics_api_service_name }}/bin/{{ item }}"
-    dest="{{ COMMON_BIN_DIR }}/{{ item.split('.')[0] }}.analytics_api"
-    state=link
+  file:
+    src: "{{ analytics_api_home }}/venvs/{{ analytics_api_service_name }}/bin/{{ item }}"
+    dest: "{{ COMMON_BIN_DIR }}/{{ item.split('.')[0] }}.analytics_api"
+    state: link
   with_items:
   - python
   - pip
@@ -147,10 +149,10 @@
     - install:base
 
 - name: create symlinks from the repo dir
-  file: >
-    src="{{ analytics_api_code_dir }}/{{ item }}"
-    dest="{{ COMMON_BIN_DIR }}/{{ item.split('.')[0] }}.analytics_api"
-    state=link
+  file:
+    src: "{{ analytics_api_code_dir }}/{{ item }}"
+    dest: "{{ COMMON_BIN_DIR }}/{{ item.split('.')[0] }}.analytics_api"
+    state: link
   with_items:
   - manage.py
   tags:
@@ -158,12 +160,12 @@
     - install:base
 
 - name: restart analytics_api
-  supervisorctl: >
-    state=restarted
-    supervisorctl_path={{ supervisor_ctl }}
-    config={{ supervisor_cfg }}
-    name={{ analytics_api_service_name }}
+  supervisorctl:
+    state: restarted
+    supervisorctl_path: "{{ supervisor_ctl }}"
+    config: "{{ supervisor_cfg }}"
+    name: "{{ analytics_api_service_name }}"
   when: not disable_edx_services
-  sudo_user: "{{ supervisor_service_user }}"
+  become_user: "{{ supervisor_service_user }}"
   tags:
     - manage:start

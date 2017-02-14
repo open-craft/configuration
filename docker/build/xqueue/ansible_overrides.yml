@@ -1,0 +1,7 @@
+---
+
+DOCKER_TLD: "xqueue"
+
+XQUEUE_SYSLOG_SERVER: "localhost"
+XQUEUE_RABBITMQ_HOSTNAME: "rabbit.{{ DOCKER_TLD }}"
+XQUEUE_MYSQL_HOST: "db.{{ DOCKER_TLD }}"

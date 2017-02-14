@@ -1,9 +1,10 @@
-- name: Deploy the edx_ansible role
+- name: Install edx_ansible
   hosts: all
-  sudo: True
+  become: True
   gather_facts: True
   vars:
     serial_count: 1
   serial: "{{ serial_count }}"
   roles:
+    - common
     - edx_ansible

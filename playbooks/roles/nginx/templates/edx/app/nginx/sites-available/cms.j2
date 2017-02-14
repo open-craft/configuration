@@ -1,5 +1,5 @@
 {%- if "cms" in nginx_default_sites -%}
-  {%- set default_site = "default" -%}
+  {%- set default_site = "default_server" -%}
 {%- else -%}
   {%- set default_site = "" -%}
 {%- endif -%}
@@ -30,18 +30,45 @@ server {
 error_page {{ k }} {{ v }};
   {% endfor %}
 
+  listen {{ EDXAPP_CMS_NGINX_PORT }} {{ default_site }};
+
   {% if NGINX_ENABLE_SSL %}
 
-  listen {{ EDXAPP_CMS_NGINX_PORT }} {{ default_site }};
   listen {{ EDXAPP_CMS_SSL_NGINX_PORT }} ssl;
 
   ssl_certificate /etc/ssl/certs/{{ NGINX_SSL_CERTIFICATE|basename }};
   ssl_certificate_key /etc/ssl/private/{{ NGINX_SSL_KEY|basename }};
   # request the browser to use SSL for all connections
   add_header Strict-Transport-Security "max-age=31536000; includeSubDomains";
+  {% endif %}
 
-  {% else %}
-  listen {{ EDXAPP_CMS_NGINX_PORT }} {{ default_site }};
+  # Prevent invalid display courseware in IE 10+ with high privacy settings
+  add_header P3P '{{ NGINX_P3P_MESSAGE }}';
+
+  # Nginx does not support nested condition or or conditions so
+  # there is an unfortunate mix of conditonals here.
+  {% if NGINX_REDIRECT_TO_HTTPS %}
+     {% if NGINX_HTTPS_REDIRECT_STRATEGY == "scheme" %}
+  # Redirect http to https over single instance
+  if ($scheme != "https") 
+  { 
+   set $do_redirect_to_https "true";
+  }
+
+     {% elif NGINX_HTTPS_REDIRECT_STRATEGY == "forward_for_proto" %}
+
+  # Forward to HTTPS if we're an HTTP request... and the server is behind ELB 
+  if ($http_x_forwarded_proto = "http") 
+  {
+   set $do_redirect_to_https "true";
+  }
+     {% endif %}
+
+  # Execute the actual redirect
+  if ($do_redirect_to_https = "true")
+  {
+  return 301 https://$host$request_uri;
+  }
   {% endif %}
 
   server_name {{ CMS_HOSTNAME }};
@@ -56,6 +83,8 @@ error_page {{ k }} {{ v }};
   
   rewrite ^(.*)/favicon.ico$ /static/images/favicon.ico last;
 
+  {% include "python_lib.zip.j2" %}
+  {% include "common-settings.j2" %}
 
   location @proxy_to_cms_app {
     {% if NGINX_SET_X_FORWARDED_HEADERS %}
@@ -67,6 +96,10 @@ error_page {{ k }} {{ v }};
     proxy_set_header X-Forwarded-Port $http_x_forwarded_port;
     proxy_set_header X-Forwarded-For $http_x_forwarded_for;
     {% endif %}
+
+    # newrelic-specific header records the time when nginx handles a request.
+    proxy_set_header X-Queue-Start "t=${msec}";
+
     proxy_set_header Host $http_host;
 
     proxy_redirect off;
@@ -74,7 +107,9 @@ error_page {{ k }} {{ v }};
   }
 
   location / {
-    {% include "basic-auth.j2" %}
+    {% if EDXAPP_CMS_ENABLE_BASIC_AUTH|bool %}
+      {% include "basic-auth.j2" %}
+    {% endif %}
     try_files $uri @proxy_to_cms_app;
   }
 
@@ -91,19 +126,4 @@ error_page {{ k }} {{ v }};
   {% include "robots.j2" %}
   {% include "static-files.j2" %}
 
-  {% if NGINX_SET_X_FORWARDED_HEADERS %}
-   if ($scheme != "https") {
-    rewrite ^ https://$host$uri permanent;
-   }
- {% else %}
-  # Forward to HTTPS if we're an HTTP request...
-  if ($http_x_forwarded_proto = "http") {
-    set $do_redirect "true";
-  }
-
-  # Run our actual redirect...
-  if ($do_redirect = "true") {
-    rewrite ^ https://$host$request_uri? permanent;
-  }
- {% endif %}
 }

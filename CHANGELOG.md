@@ -1,3 +1,53 @@
+- Role: credentials
+  - Added `CREDENTIALS_EXTRA_APPS` to enable the inclusion of additional Django apps in the Credentials Service.
+- Role: common
+  - Renamed `COMMON_AWS_SYNC` to `COMMON_OBJECT_STORE_LOG_SYNC`
+  - Renamed `COMMON_AWS_SYNC_BUCKET` to `COMMON_OBJECT_STORE_LOG_SYNC_BUCKET`
+  - Renamed `COMMON_AWS_S3_SYNC_SCRIPT` to `COMMON_OBJECT_STORE_LOG_SYNC_SCRIPT`
+  - Added `COMMON_OBJECT_STORE_LOG_SYNC_PREFIX`. Default: `logs/tracking/`
+  - Added `COMMON_EDXAPP_SETTINGS`. Default: `aws`
+- Role: aws
+  - Removed `AWS_S3_LOGS`
+  - Added `vhost` role as dependency
+- Role: edxapp
+  - Added `EDXAPP_SWIFT_USERNAME`
+  - Added `EDXAPP_SWIFT_KEY`
+  - Added `EDXAPP_SWIFT_TENANT_ID`
+  - Added `EDXAPP_SWIFT_TENANT_NAME`
+  - Added `EDXAPP_SWIFT_AUTH_URL`
+  - Added `EDXAPP_SWIFT_AUTH_VERSION`
+  - Added `EDXAPP_SWIFT_REGION_NAME`
+  - Added `EDXAPP_SWIFT_USE_TEMP_URLS`
+  - Added `EDXAPP_SWIFT_TEMP_URL_KEY`
+  - Added `EDXAPP_SWIFT_TEMP_URL_DURATION`
+  - Added `EDXAPP_SETTINGS` to allow using a settings file other than `aws.py`. Default: `aws`
+  - Renamed `ENABLE_S3_GRADE_DOWNLOADS` to `ENABLE_GRADE_DOWNLOADS`
+  - Replaced `EDXAPP_GRADE_STORAGE_TYPE`, `EDXAPP_GRADE_BUCKET` and `EDXAPP_GRADE_ROOT_PATH` with `EDXAPP_GRADE_STORAGE_CLASS` and `EDXAPP_GRADE_STORAGE_KWARGS`
+- Role: openstack
+  - Added role
+- Role: vhost
+  - Added as dependency for aws and openstack roles. Handles common functionality for setting up VM hosts
+- Role: xqueue
+  - Added `XQUEUE_SETTINGS` to specify which settings file to use. Default: `aws_settings`
+  - Renamed `XQUEUE_S3_BUCKET` to `XQUEUE_UPLOAD_BUCKET`
+  - Renamed `XQUEUE_S3_PATH_PREFIX` to `XQUEUE_UPLOAD_PATH_PREFIX`
+
+- Role: discovery
+  - Course Discovery JWT configuration now takes a list of issuers instead of a single issuer.  This change is not backward compatible with older versions of course discovery.
+
+- Role: hadoop_common
+  - Enable log retention by default to assist with debugging. Now YARN will retain stdout and stderr logs produced by map reduce tasks for 24 hours. They can be retrieved by running "yarn logs -applicationId YOUR_APPLICATION_ID".
+
+- Role: rabbitmq
+  - Removed the RABBITMQ_CLUSTERED var and related tooling. The goal of the var was to be able to setup a cluster in the aws environment without having to know all the IPs of the cluster before hand.  It relied on the `hostvars` ansible varible to work correctly which it no longer does in 1.9.  This may get fixed in the future but for now, the "magic" setup doesn't work.
+  - Changed `rabbitmq_clustered_hosts` to RABBITMQ_CLUSTERED_HOSTS.
+
+- Role: edxapp
+  - Removed SUBDOMAIN_BRANDING and SUBDOMAIN_COURSE_LISTINGS variables
+
+- Role: ora
+  - Remove the ora1 role as support for it was deprecated in Cypress.
+  - Removed dependencies on ora throughout the playbooks / vagrantfiles.
 - Role: edxapp
   - Removed XmlModuleStore from the default list of modulestores for the LMS.
   - EDXAPP_XML_MAPPINGS variable no longer exists by default and is not used by the edxapp role.
@@ -124,3 +174,46 @@
 - Role: Edxapp
   - Added EDXAPP_LMS_AUTH_EXTRA and EDXAPP_CMS_AUTH_EXTRA for passing unique AUTH_EXTRA configurations to the LMS and CMS.
     Both variables default to EDXAPP_AUTH_EXTRA for backward compatibility
+
+- Role: ecommerce
+  - Renamed `ECOMMERCE_COMPREHENSIVE_THEME_DIR` to `ECOMMERCE_COMPREHENSIVE_THEME_DIRS`, `ECOMMERCE_COMPREHENSIVE_THEME_DIRS`
+    is now a list of directories. Change is backward incompatible.
+  - Renamed `COMPREHENSIVE_THEME_DIR` to `COMPREHENSIVE_THEME_DIRS`, `COMPREHENSIVE_THEME_DIRS` is now a list of directories.
+    Change is backward incompatible.
+
+- Role: Edxapp
+  - `EDXAPP_COMPREHENSIVE_THEME_DIR` is deprecated and is maintained for backward compatibility, `EDXAPP_COMPREHENSIVE_THEME_DIRS`
+    should be used instead which is a list of directories. `EDXAPP_COMPREHENSIVE_THEME_DIR` if present will have priority over `EDXAPP_COMPREHENSIVE_THEME_DIRS`
+  - `COMPREHENSIVE_THEME_DIR` is deprecated and is maintained for backward compatibility, `COMPREHENSIVE_THEME_DIRS` should be used
+    instead which is a list of directories. `COMPREHENSIVE_THEME_DIR` if present will have priority over `COMPREHENSIVE_THEME_DIRS`
+
+- Role: edxapp
+  - Added COMPREHENSIVE_THEME_LOCALE_PATHS to support internationalization of strings originating from custom themes.
+
+- Role: edxapp
+  - Added `EXPIRING_SOON_WINDOW` to show message to learners if their verification is expiring soon.
+
+- Role: discovery
+  - Added `PUBLISHER_FROM_EMAIL` for sending emails to publisher app users.
+
+- Role: security
+  - Changed SECURITY_UPGRADE_ON_ANSIBLE to only apply security updates.  If you want to retain the behavior of running safe-upgrade,
+    you should switch to using SAFE_UPGRADE_ON_ANSIBLE.
+
+- Role: mongo_3_0
+  - Changed MONGO_STORAGE_ENGINE to default to wiredTiger which is the default in 3.2 and 3.4 and what edX suggests be used even on 3.0.
+    If you have a mmapv1 3.0 install, override MONGO_STORAGE_ENGINE to be mmapv1 which was the old default.
+  - Support parsing the replset JSON in 3.2 and 3.0
+
+- Role: xqueue
+  - Added `EDXAPP_CELERY_BROKER_USE_SSL` to allow configuring celery to use TLS.
+
+- Role: edxapp
+  - Added `XQUEUE_RABBITMQ_VHOST` to allow configuring the xqueue RabbitMQ host.
+  - Added `XQUEUE_RABBITMQ_PORT` and `XQUEUE_RABBITMQ_TLS` to allow configuring the RabbitMQ port, and enabling TLS respectively.
+
+- Role: ecommerce
+  - Added `ECOMMERCE_ENTERPRISE_URL` for the `enterprise` API endpoint exposed by a new service `edx-enterprise` (currently hosted by `LMS`), which defaults to the existing setting `ECOMMERCE_LMS_URL_ROOT`.
+
+- Role: ecommerce
+  - Removed `SEGMENT_KEY` which is no longer used.  Segment key is now defined in DB configuration. (https://github.com/edx/ecommerce/pull/1121)

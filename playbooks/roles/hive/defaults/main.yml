@@ -3,8 +3,8 @@
 # edX Configuration
 #
 # github:     https://github.com/edx/configuration
-# wiki:       https://github.com/edx/configuration/wiki
-# code style: https://github.com/edx/configuration/wiki/Ansible-Coding-Conventions
+# wiki:       https://openedx.atlassian.net/wiki/display/OpenOPS
+# code style: https://openedx.atlassian.net/wiki/display/OpenOPS/Ansible+Code+Conventions
 # license:    https://github.com/edx/configuration/blob/master/LICENSE.TXT
 #
 ##
@@ -18,13 +18,35 @@ HIVE_CONF: "{{ HIVE_HOME }}/conf"
 HIVE_LIB: "{{ HIVE_HOME }}/lib"
 
 HIVE_METASTORE_DATABASE_NAME: edx_hive_metastore
-HIVE_METASTORE_DATABASE:
-  user: edx_hive
-  password: edx
-  name: "{{ HIVE_METASTORE_DATABASE_NAME }}"
-  host: 127.0.0.1
-  port: 3306
+HIVE_METASTORE_DATABASE_USER: edx_hive
+HIVE_METASTORE_DATABASE_PASSWORD: edx
+HIVE_METASTORE_DATABASE_HOST: 127.0.0.1
+HIVE_METASTORE_DATABASE_PORT: 3306
 
+HIVE_METASTORE_DATABASE:
+  user: "{{ HIVE_METASTORE_DATABASE_USER }}"
+  password: "{{ HIVE_METASTORE_DATABASE_PASSWORD }}"
+  name: "{{ HIVE_METASTORE_DATABASE_NAME }}"
+  host: "{{ HIVE_METASTORE_DATABASE_HOST }}"
+  port: "{{ HIVE_METASTORE_DATABASE_PORT }}"
+
+#
+# Vars are used to fill in the hive-site.xml file
+#
+HIVE_SITE_DEFAULT_CONFIG:
+  javax.jdo.option.ConnectionURL: "jdbc:mysql://{{ HIVE_METASTORE_DATABASE.host }}:{{ HIVE_METASTORE_DATABASE.port }}/{{ HIVE_METASTORE_DATABASE.name }}"
+  javax.jdo.option.ConnectionDriverName: "com.mysql.jdbc.Driver"
+  javax.jdo.option.ConnectionUserName: "{{ HIVE_METASTORE_DATABASE.user }}"
+  javax.jdo.option.ConnectionPassword: "{{ HIVE_METASTORE_DATABASE.password }}"
+  datanucleus.autoCreateSchema: "true"
+  hive.metastore.schema.verification: "true"
+
+#
+# Variables override the stock configuration for entry into
+# the hive-site.xml file. Ensure that you use unambiguous
+# string literals to avoid any confusion.
+#
+HIVE_SITE_EXTRA_CONFIG: {}
 
 #
 # vars are namespace with the module name.

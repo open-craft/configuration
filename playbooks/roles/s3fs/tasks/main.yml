@@ -3,8 +3,8 @@
 # edX Configuration
 #
 # github:     https://github.com/edx/configuration
-# wiki:       https://github.com/edx/configuration/wiki
-# code style: https://github.com/edx/configuration/wiki/Ansible-Coding-Conventions
+# wiki:       https://openedx.atlassian.net/wiki/display/OpenOPS
+# code style: https://openedx.atlassian.net/wiki/display/OpenOPS/Ansible+Code+Conventions
 # license:    https://github.com/edx/configuration/blob/master/LICENSE.TXT
 #
 # Tasks for role s3fs
@@ -29,13 +29,13 @@
 #   file:
 #     path={{ item.mount_point }} owner={{ item.owner }}
 #     group={{ item.group }} mode={{ item.mode }} state="directory"
-#   with_items: my_role_s3fs_mounts
+#   with_items: "{{ my_role_s3fs_mounts }}"
 #
 # - name: mount s3 buckets
 #   mount:
 #     name={{ item.mount_point }} src={{ item.bucket }} fstype=fuse.s3fs
 #     opts=use_cache=/tmp,iam_role={{ task_iam_role }},allow_other state=mounted
-#   with_items: myrole_s3fs_mounts
+#   with_items: "{{ myrole_s3fs_mounts }}"
 #
 # Example play:
 #

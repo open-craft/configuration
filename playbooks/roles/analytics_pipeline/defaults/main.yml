@@ -3,20 +3,25 @@
 # edX Configuration
 #
 # github:     https://github.com/edx/configuration
-# wiki:       https://github.com/edx/configuration/wiki
-# code style: https://github.com/edx/configuration/wiki/Ansible-Coding-Conventions
+# wiki:       https://openedx.atlassian.net/wiki/display/OpenOPS
+# code style: https://openedx.atlassian.net/wiki/display/OpenOPS/Ansible+Code+Conventions
 # license:    https://github.com/edx/configuration/blob/master/LICENSE.TXT
 #
 ##
 # Defaults for role analytics_pipeline
 #
 
+ANALYTICS_PIPELINE_OUTPUT_DATABASE_USER: pipeline001
+ANALYTICS_PIPELINE_OUTPUT_DATABASE_PASSWORD: password
+ANALYTICS_PIPELINE_OUTPUT_DATABASE_HOST: localhost
+ANALYTICS_PIPELINE_OUTPUT_DATABASE_PORT: 3306
+
 ANALYTICS_PIPELINE_OUTPUT_DATABASE_NAME: "{{ ANALYTICS_API_REPORTS_DB_NAME }}"
 ANALYTICS_PIPELINE_OUTPUT_DATABASE:
-  username: pipeline001
-  password: password
-  host: localhost
-  port: 3306
+  username: "{{ ANALYTICS_PIPELINE_OUTPUT_DATABASE_USER }}"
+  password: "{{ ANALYTICS_PIPELINE_OUTPUT_DATABASE_PASSWORD }}"
+  host: "{{ ANALYTICS_PIPELINE_OUTPUT_DATABASE_HOST }}"
+  port: "{{ ANALYTICS_PIPELINE_OUTPUT_DATABASE_PORT }}"
 
 ANALYTICS_PIPELINE_INPUT_DATABASE:
   username: "{{ COMMON_MYSQL_READ_ONLY_USER }}"

@@ -1,6 +1,6 @@
 - name: Deploy xqueue
   hosts: all
-  sudo: True
+  become: True
   gather_facts: True
   vars:
     # By default take instances in and out of the elb(s) they
@@ -14,7 +14,8 @@
   pre_tasks:
     - action: ec2_facts
       when: elb_pre_post
-    - debug: var="{{ ansible_ec2_instance_id }}"
+    - debug:
+        var:  "{{ ansible_ec2_instance_id }}"
       when: elb_pre_post
     - name: Instance De-register
       local_action: ec2_elb
@@ -23,14 +24,14 @@
         region: us-east-1
         state: absent
         wait_timeout: 60
-      sudo: False
+      become: False
       when: elb_pre_post
   roles:
     - aws
     - role: nginx
       nginx_sites:
       - xqueue
-    - role: xqueue
+    - xqueue
     - role: datadog
       when: COMMON_ENABLE_DATADOG
     - role: splunkforwarder
@@ -38,16 +39,16 @@
     - role: newrelic
       when: COMMON_ENABLE_NEWRELIC
   post_tasks:
-    - debug: var="{{ ansible_ec2_instance_id }}"
+    - debug:
+        var:  "{{ ansible_ec2_instance_id }}"
       when: elb_pre_post
     - name: Register instance in the elb
       local_action: ec2_elb
       args:
         instance_id: "{{ ansible_ec2_instance_id }}"
-        ec2_elbs: "{{ item }}"
+        ec2_elbs: "{{ ec2_elbs }}"
         region: us-east-1
         state: present
         wait_timeout: 60
-      with_items: ec2_elbs
-      sudo: False
+      become: False
       when: elb_pre_post

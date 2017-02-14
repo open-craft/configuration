@@ -9,7 +9,7 @@ import requests
 try:
     import boto.ec2
     import boto.sqs
-    from boto.vpc import VPCConnection
+    import boto.vpc
     from boto.exception import NoAuthHandlerFound, EC2ResponseError
     from boto.sqs.message import RawMessage
     from boto.ec2.blockdevicemapping import BlockDeviceType, BlockDeviceMapping
@@ -86,11 +86,17 @@ def parse_args():
     parser.add_argument('--configuration-secure-repo', required=False,
                         default="git@github.com:edx-ops/prod-secure",
                         help="repo to use for the secure files")
+    parser.add_argument('--configuration-internal-version', required=False,
+                        help="configuration-internal repo gitref",
+                        default="master")
+    parser.add_argument('--configuration-internal-repo', required=False,
+                        default="",
+                        help="repo to use for internal (non-secure) configuration data")
     parser.add_argument('--configuration-private-version', required=False,
                         help="configuration-private repo gitref",
                         default="master")
     parser.add_argument('--configuration-private-repo', required=False,
-                        default="git@github.com:edx-ops/ansible-private",
+                        default="",
                         help="repo to use for private playbooks")
     parser.add_argument('-c', '--cache-id', required=True,
                         help="unique id to use as part of cache prefix")
@@ -132,6 +138,10 @@ def parse_args():
                         default=50,
                         help="The size of the root volume to use for the "
                              "abbey instance.")
+    parser.add_argument("--datadog-api-key", required=False,
+                        default="",
+                        help="The datadog api key used for capturing task"
+                             "and playbook metrics abbey instance.")
 
     group = parser.add_mutually_exclusive_group()
     group.add_argument('-b', '--base-ami', required=False,
@@ -151,6 +161,18 @@ def get_instance_sec_group(vpc_id):
             'tag:play': args.play
         }
     )
+
+    if len(grp_details) < 1:
+        #
+        # try scheme for non-cloudformation builds
+        #
+
+        grp_details = ec2.get_all_security_groups(
+            filters={
+                'tag:play': args.play,
+                'tag:environment': args.environment,
+                'tag:deployment': args.deployment}
+        )
 
     if len(grp_details) < 1:
         sys.stderr.write("ERROR: Expected atleast one security group, got {}\n".format(
@@ -184,7 +206,7 @@ def create_instance_args():
     user data
     """
 
-    vpc = VPCConnection()
+    vpc = boto.vpc.connect_to_region(args.region)
     subnet = vpc.get_all_subnets(
         filters={
             'tag:aws:cloudformation:stack-name': stack_name,
@@ -198,14 +220,14 @@ def create_instance_args():
 
         subnet = vpc.get_all_subnets(
             filters={
-                'tag:cluster': args.play,
+                'tag:play': args.play,
                 'tag:environment': args.environment,
                 'tag:deployment': args.deployment}
         )
 
     if len(subnet) < 1:
-        sys.stderr.write("ERROR: Expected at least one subnet, got {}\n".format(
-            len(subnet)))
+        sys.stderr.write("ERROR: Expected at least one subnet, got {} for {}-{}-{}\n".format(
+            len(subnet), args.environment, args.deployment, args.play))
         sys.exit(1)
     subnet_id = subnet[0].id
     vpc_id = subnet[0].vpc_id
@@ -231,9 +253,11 @@ git_ssh="$base_dir/git_ssh.sh"
 configuration_version="{configuration_version}"
 configuration_secure_version="{configuration_secure_version}"
 configuration_private_version="{configuration_private_version}"
+configuration_internal_version="{configuration_internal_version}"
 environment="{environment}"
 deployment="{deployment}"
 play="{play}"
+cluster="{play}"
 config_secure={config_secure}
 git_repo_name="configuration"
 git_repo="https://github.com/edx/$git_repo_name"
@@ -241,9 +265,13 @@ git_repo_secure="{configuration_secure_repo}"
 git_repo_secure_name=$(basename $git_repo_secure .git)
 git_repo_private="{configuration_private_repo}"
 git_repo_private_name=$(basename $git_repo_private .git)
+git_repo_internal="{configuration_internal_repo}"
+git_repo_internal_name=$(basename $git_repo_internal .git)
 secure_vars_file={secure_vars_file}
 environment_deployment_secure_vars="$base_dir/$git_repo_secure_name/ansible/vars/{environment}-{deployment}.yml"
 deployment_secure_vars="$base_dir/$git_repo_secure_name/ansible/vars/{deployment}.yml"
+environment_deployment_internal_vars="$base_dir/$git_repo_internal_name/ansible/vars/{environment}-{deployment}.yml"
+deployment_internal_vars="$base_dir/$git_repo_internal_name/ansible/vars/{deployment}.yml"
 instance_id=\\
 $(curl http://169.254.169.254/latest/meta-data/instance-id 2>/dev/null)
 instance_ip=\\
@@ -260,7 +288,7 @@ fi
 
 ANSIBLE_ENABLE_SQS=true
 SQS_NAME={queue_name}
-SQS_REGION=us-east-1
+SQS_REGION={region}
 SQS_MSG_PREFIX="[ $instance_id $instance_ip $environment-$deployment $play ]"
 PYTHONUNBUFFERED=1
 HIPCHAT_TOKEN={hipchat_token}
@@ -268,18 +296,148 @@ HIPCHAT_ROOM={hipchat_room}
 HIPCHAT_MSG_PREFIX="$environment-$deployment-$play: "
 HIPCHAT_FROM="ansible-$instance_id"
 HIPCHAT_MSG_COLOR=$(echo -e "yellow\\ngreen\\npurple\\ngray" | shuf | head -1)
+DATADOG_API_KEY={datadog_api_key}
 # environment for ansible
 export ANSIBLE_ENABLE_SQS SQS_NAME SQS_REGION SQS_MSG_PREFIX PYTHONUNBUFFERED
-export HIPCHAT_TOKEN HIPCHAT_ROOM HIPCHAT_MSG_PREFIX HIPCHAT_FROM HIPCHAT_MSG_COLOR
+export HIPCHAT_TOKEN HIPCHAT_ROOM HIPCHAT_MSG_PREFIX HIPCHAT_FROM
+export HIPCHAT_MSG_COLOR DATADOG_API_KEY
 
-if [[ ! -x /usr/bin/git || ! -x /usr/bin/pip ]]; then
-    echo "Installing pkg dependencies"
-    /usr/bin/apt-get update
-    /usr/bin/apt-get install -y git python-pip python-apt \\
-        git-core build-essential python-dev libxml2-dev \\
-        libxslt-dev curl libmysqlclient-dev --force-yes
+
+#################################### Lifted from ansible-bootstrap.sh
+if [[ -z "$ANSIBLE_REPO" ]]; then
+  ANSIBLE_REPO="https://github.com/edx/ansible.git"
 fi
 
+if [[ -z "$ANSIBLE_VERSION" ]]; then
+  ANSIBLE_VERSION="master"
+fi
+
+if [[ -z "$CONFIGURATION_REPO" ]]; then
+  CONFIGURATION_REPO="https://github.com/edx/configuration.git"
+fi
+
+if [[ -z "$CONFIGURATION_VERSION" ]]; then
+  CONFIGURATION_VERSION="master"
+fi
+
+if [[ -z "$UPGRADE_OS" ]]; then
+  UPGRADE_OS=false
+fi
+
+#
+# Bootstrapping constants
+#
+VIRTUAL_ENV_VERSION="15.0.2"
+PIP_VERSION="8.1.2"
+SETUPTOOLS_VERSION="24.0.3"
+EDX_PPA="deb http://ppa.edx.org precise main"
+EDX_PPA_KEY_SERVER="hkp://pgp.mit.edu:80"
+EDX_PPA_KEY_ID="B41E5E3969464050"
+
+cat << EOF
+******************************************************************************
+
+Running the abbey with the following arguments:
+
+ANSIBLE_REPO="$ANSIBLE_REPO"
+ANSIBLE_VERSION="$ANSIBLE_VERSION"
+CONFIGURATION_REPO="$CONFIGURATION_REPO"
+CONFIGURATION_VERSION="$CONFIGURATION_VERSION"
+
+******************************************************************************
+EOF
+
+
+if [[ $(id -u) -ne 0 ]] ;then
+    echo "Please run as root";
+    exit 1;
+fi
+
+if grep -q 'Precise Pangolin' /etc/os-release
+then
+    SHORT_DIST="precise"
+elif grep -q 'Trusty Tahr' /etc/os-release
+then
+    SHORT_DIST="trusty"
+elif grep -q 'Xenial Xerus' /etc/os-release
+then
+    SHORT_DIST="xenial"
+else
+    cat << EOF
+
+    This script is only known to work on Ubuntu Precise, Trusty and Xenial,
+    exiting.  If you are interested in helping make installation possible
+    on other platforms, let us know.
+
+EOF
+   exit 1;
+fi
+
+EDX_PPA="deb http://ppa.edx.org $SHORT_DIST main"
+
+# Upgrade the OS
+apt-get update -y
+apt-key update -y
+
+if [ "$UPGRADE_OS" = true ]; then
+    echo "Upgrading the OS..."
+    apt-get upgrade -y
+fi
+
+# Required for add-apt-repository
+apt-get install -y software-properties-common python-software-properties
+
+# Add git PPA
+add-apt-repository -y ppa:git-core/ppa
+
+# For older distributions we need to install a PPA for Python 2.7.10
+if [[ "precise" = "$SHORT_DIST" || "trusty" = "$SHORT_DIST" ]]; then
+
+    # Add python PPA
+    apt-key adv --keyserver "$EDX_PPA_KEY_SERVER" --recv-keys "$EDX_PPA_KEY_ID"
+    add-apt-repository -y "$EDX_PPA"
+fi
+
+# Install python 2.7 latest, git and other common requirements
+# NOTE: This will install the latest version of python 2.7 and
+# which may differ from what is pinned in virtualenvironments
+apt-get update -y
+
+apt-get install -y python2.7 python2.7-dev python-pip python-apt python-yaml python-jinja2 build-essential sudo git-core libmysqlclient-dev libffi-dev libssl-dev
+
+# Workaround for a 16.04 bug, need to upgrade to latest and then
+# potentially downgrade to the preferred version.
+# https://github.com/pypa/pip/issues/3862
+if [[ "xenial" = "$SHORT_DIST" ]]; then
+    pip install --upgrade pip
+    pip install --upgrade pip=="$PIP_VERSION"
+else
+    pip install --upgrade pip=="$PIP_VERSION"
+fi
+
+# pip moves to /usr/local/bin when upgraded
+hash -r   #pip may have moved from /usr/bin/ to /usr/local/bin/. This clears bash's path cache.
+PATH=/usr/local/bin:$PATH
+pip install setuptools=="$SETUPTOOLS_VERSION"
+pip install virtualenv=="$VIRTUAL_ENV_VERSION"
+
+
+##################### END Lifted from ansible-bootstrap.sh
+
+
+# python3 is required for certain other things
+# (currently xqwatcher so it can run python2 and 3 grader code,
+# but potentially more in the future). It's not available on Ubuntu 12.04,
+# but in those cases we don't need it anyways.
+if [[ -n "$(apt-cache search --names-only '^python3-pip$')" ]]; then
+    /usr/bin/apt-get update
+    /usr/bin/apt-get install -y python3-pip python3-dev
+fi
+
+# this is missing on 14.04 (base package on 12.04)
+# we need to do this on any build, since the above apt-get
+# only runs on a build from scratch
+/usr/bin/apt-get install -y python-httplib2 --force-yes
 
 rm -rf $base_dir
 mkdir -p $base_dir
@@ -339,12 +497,27 @@ if [[ ! -z $git_repo_private ]]; then
     cd $base_dir
 fi
 
+if [[ ! -z $git_repo_internal ]]; then
+    $git_cmd clone $git_repo_internal $git_repo_internal_name
+    cd $git_repo_internal_name
+    $git_cmd checkout $configuration_internal_version
+    cd $base_dir
+fi
+
 
 cd $base_dir/$git_repo_name
 sudo pip install -r pre-requirements.txt
 sudo pip install -r requirements.txt
 
 cd $playbook_dir
+
+if [[ -r "$deployment_internal_vars" ]]; then
+    extra_args_opts+=" -e@$deployment_internal_vars"
+fi
+
+if [[ -r "$environment_deployment_internal_vars" ]]; then
+    extra_args_opts+=" -e@$environment_deployment_internal_vars"
+fi
 
 if [[ -r "$deployment_secure_vars" ]]; then
     extra_args_opts+=" -e@$deployment_secure_vars"
@@ -373,6 +546,8 @@ rm -rf $base_dir
                 configuration_secure_repo=args.configuration_secure_repo,
                 configuration_private_version=args.configuration_private_version,
                 configuration_private_repo=args.configuration_private_repo,
+                configuration_internal_version=args.configuration_internal_version,
+                configuration_internal_repo=args.configuration_internal_repo,
                 environment=args.environment,
                 deployment=args.deployment,
                 play=args.play,
@@ -382,7 +557,9 @@ rm -rf $base_dir
                 queue_name=run_id,
                 extra_vars_yml=extra_vars_yml,
                 secure_vars_file=secure_vars_file,
-                cache_id=args.cache_id)
+                cache_id=args.cache_id,
+                datadog_api_key=args.datadog_api_key,
+                region=args.region)
 
     mapping = BlockDeviceMapping()
     root_vol = BlockDeviceType(size=args.root_vol_size,
@@ -538,6 +715,8 @@ def create_ami(instance_id, name, description):
                 time.sleep(AWS_API_WAIT_TIME)
                 img.add_tag("deployment", args.deployment)
                 time.sleep(AWS_API_WAIT_TIME)
+                img.add_tag("cluster", args.play)
+                time.sleep(AWS_API_WAIT_TIME)
                 img.add_tag("play", args.play)
                 time.sleep(AWS_API_WAIT_TIME)
                 conf_tag = "{} {}".format("http://github.com/edx/configuration", args.configuration_version)
@@ -625,7 +804,7 @@ def launch_and_configure(ec2_args):
     system_start = time.time()
     for _ in xrange(EC2_STATUS_TIMEOUT):
         status = ec2.get_all_instance_status(inst.id)
-        if status[0].system_status.status == u'ok':
+        if status and status[0].system_status.status == u'ok':
             system_delta = time.time() - system_start
             run_summary.append(('EC2 Status Checks', system_delta))
             print "[ OK ] {:0>2.0f}:{:0>2.0f}".format(
