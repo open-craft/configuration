@@ -225,4 +225,9 @@ location ~ ^{{ EDXAPP_MEDIA_URL }}/(?P<file>.*) {
   {% include "robots.j2" %}
   {% include "static-files.j2" %}
 
+
+  # Redirect the Terms of Service/Honor page to Cloudera's site
+  location ~ /(tos)|(honor)/?$ {
+        rewrite ^ https://www.cloudera.com/legal/terms-and-conditions.html permanent;
+  }
 }
