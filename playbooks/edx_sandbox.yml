@@ -26,8 +26,9 @@
     COMMON_ENABLE_DATADOG: False
     SANDBOX_ENABLE_ECOMMERCE: False
     SANDBOX_ENABLE_RABBITMQ: False
+    SANDBOX_ENABLE_DISCOVERY: False
     COMMON_ENABLE_SPLUNKFORWARDER: False
-    ENABLE_LEGACY_ORA: !!null
+    ENABLE_DISCOVERY_METADATA_REFRESH_CRONTASK: True
   roles:
     - role: swapfile
       SWAPFILE_SIZE: 4GB
@@ -67,6 +68,8 @@
     - role: elasticsearch
       when: "'localhost' in EDXAPP_ELASTIC_SEARCH_CONFIG|map(attribute='host')"
     - forum
+    - role: discovery
+      when: SANDBOX_ENABLE_DISCOVERY
     - role: notifier
       NOTIFIER_DIGEST_TASK_INTERVAL: 5
     - role: xqueue
