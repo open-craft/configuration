@@ -174,6 +174,9 @@
 - Role: server_utils
   - Install "vim", not "vim-tiny".
 
+- Role: edxapp
+  - Added `EDXAPP_EXTRA_MIDDLEWARE_CLASSES` for configuring additional middleware logic.
+
 - Role: common
   - Added `COMMON_FALLBACK_DNS_SERVERS`, which optionally adds additional `nameserver` entries to the resolvconf tail
   - Explicitly added `resolvconf` as a dependency
