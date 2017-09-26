@@ -170,8 +170,14 @@
   - Modified `lms.j2` , `cms.j2` , `credentials.j2` , `edx_notes_api.j2` and `insights.j2` to enable HTTP Strict Transport Security
   - Added `NGINX_HSTS_MAX_AGE` to make HSTS header `max_age` value configurable and used in templates
 
+
 - Role: server_utils
   - Install "vim", not "vim-tiny".
+
+- Role: common
+  - Added `COMMON_FALLBACK_DNS_SERVERS`, which optionally adds additional `nameserver` entries to the resolvconf tail
+  - Explicitly added `resolvconf` as a dependency
+
 
 - Role: edxapp
   - Added GOOGLE_ANALYTICS_TRACKING_ID setting for inserting GA tracking into emails generated via ACE.
