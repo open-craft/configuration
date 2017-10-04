@@ -166,6 +166,10 @@
   - Removed `EDXAPP_CONTENTSTORE_ADDITIONAL_OPTS`, since there is no notion of
     common options to the content store anymore.
 
+- Role: edxapp
+  - Added `EDXAPP_ENABLE_ENTERPRISE_INTEGRATION` for enabling/disabling Enterprise service integration.
+
+
 - Role: nginx
   - Modified `lms.j2` , `cms.j2` , `credentials.j2` , `edx_notes_api.j2` and `insights.j2` to enable HTTP Strict Transport Security
   - Added `NGINX_HSTS_MAX_AGE` to make HSTS header `max_age` value configurable and used in templates
