@@ -1,3 +1,6 @@
+- Role: edxapp
+  - Added `EDXAPP_ENABLE_ENTERPRISE_INTEGRATION` for enabling/disabling Enterprise service integration.
+
 - Role: common_vars
   - Added `COMMON_ENABLE_AWS_INTEGRATION` to run the `aws` role when enabled. Default: `False`.
 
