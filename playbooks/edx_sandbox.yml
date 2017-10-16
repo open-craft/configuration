@@ -18,6 +18,10 @@
   vars:
     migrate_db: "yes"
     EDXAPP_LMS_NGINX_PORT: '80'
+    # Deal with noted memory issues
+    EDXAPP_WORKERS:
+      lms: 3
+      cms: 2
     edx_platform_version: 'master'
     # Set to false if deployed behind another proxy/load balancer.
     NGINX_SET_X_FORWARDED_HEADERS: True
