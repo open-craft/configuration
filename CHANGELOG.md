@@ -1,3 +1,13 @@
+- Role: edxapp
+  - Added `EDXAPP_LMS_SPLIT_DOC_STORE_READ_PREFERENCE` with a default value of
+    SECONDARY_PREFERED to distribute read workload across the replica set.
+  - Changed `EDXAPP_MONGO_HOSTS` to be a comma seperated string, which is
+    required by pymongo.MongoReplicaSetClient for multiple hosts instead of an
+    array.
+  - Added `EDXAPP_MONGO_REPLICA_SET`, which is required to use
+    pymongo.MongoReplicaSetClient in PyMongo 2.9.1, whis is required to use the
+    read_preference setting. This should be set to the name of your replica set.
+
 - Role: discovery
   - Added `DISCOVERY_REPOS` to allow configuring discovery repository details.
 
