@@ -335,7 +335,8 @@ EDXAPP_SOCIAL_MEDIA_FOOTER_URLS: {}
 EDXAPP_MOBILE_STORE_URLS: {}
 EDXAPP_FOOTER_ORGANIZATION_IMAGE: "images/logo.png"
 
-EDXAPP_ENV_EXTRA: {}
+EDXAPP_ENV_EXTRA:
+  REGISTRATION_EXTENSION_FORM: "reg_form_ext.forms.PhoneInfoForm"
 EDXAPP_AUTH_EXTRA: {}
 EDXAPP_LMS_ENV_EXTRA: "{{ EDXAPP_ENV_EXTRA }}"
 EDXAPP_CMS_ENV_EXTRA: "{{ EDXAPP_ENV_EXTRA }}"
@@ -418,11 +419,10 @@ EDXAPP_INSTALL_PRIVATE_REQUIREMENTS: false
 # `name` (required), `version` (optional), and `extra_args` (optional)
 # are supported and correspond to the options of ansible's pip module.
 # Example:
-# EDXAPP_EXTRA_REQUIREMENTS:
-#   - name: mypackage
-#     version: 1.0.1
-#   - name: git+https://git.myproject.org/MyProject#egg=MyProject
-EDXAPP_EXTRA_REQUIREMENTS: []
+EDXAPP_EXTRA_REQUIREMENTS:
+  - name: edx-custom-registration-form
+    version: 1.0
+  - name: git+https://github.com/open-craft/edx-custom-registration-form.git
 
 # List of custom middlewares that should be used in edxapp to process
 # incoming HTTP resquests. Should be a list of plain strings that fully
@@ -499,7 +499,7 @@ EDXAPP_REGISTRATION_EXTRA_FIELDS:
   goals: "optional"
   honor_code: "required"
   terms_of_service: "hidden"
-  city: "hidden"
+  city: "required"
   country: "required"
 
 EDXAPP_CELERY_WORKERS:
