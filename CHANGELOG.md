@@ -1,3 +1,8 @@
+- Role: edxapp
+  - Added `EDXAPP_EXTRA_REQUIREMENTS` with the custom registration form repository
+  - Added to `EDXAPP_ENV_EXTRA`, `REGISTRATION_EXTENSION_FORM` with the classname of the registration extension form
+  - Edited `EDXAPP_REGISTRATION_EXTRA_FIELDS` to make the `city` field required
+
 - Role: discovery
   - Added `DISCOVERY_REPOS` to allow configuring discovery repository details.
 
