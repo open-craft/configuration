@@ -160,6 +160,7 @@ EDXAPP_CELERY_BROKER_TRANSPORT: 'amqp'
 EDXAPP_CELERY_BROKER_VHOST: ""
 EDXAPP_CELERY_BROKER_USE_SSL: false
 EDXAPP_CELERY_EVENT_QUEUE_TTL: "None"
+EDXAPP_BRANCH_IO_KEY: ""
 
 EDXAPP_VIDEO_CDN_URLS:
   EXAMPLE_COUNTRY_CODE: "http://example.com/edx/video?s3_url="
@@ -176,6 +177,9 @@ EDXAPP_PLATFORM_DESCRIPTION: 'Your Platform Description Here'
 EDXAPP_STUDIO_NAME: 'Studio'
 EDXAPP_STUDIO_SHORT_NAME: 'Studio'
 EDXAPP_ANALYTICS_DASHBOARD_NAME: "{{ EDXAPP_PLATFORM_NAME }} Insights"
+
+EDXAPP_LMS_ANALYTICS_API_KEY: ''
+EDXAPP_LMS_ANALYTICS_API_URL: 'http://localhost:18100'
 
 EDXAPP_CAS_SERVER_URL: ""
 EDXAPP_CAS_EXTRA_LOGIN_PARAMS: ""
@@ -415,7 +419,7 @@ EDXAPP_SANDBOX_ENFORCE: true
 EDXAPP_AUTOMATED_USERS:
   automated_user:
     sudo_commands:
-      - command: "{{ edxapp_venv_bin }}/python {{ edxapp_code_dir }}/manage.py lms migrate --list --settings={{ edxapp_settings }}"
+      - command: "{{ edxapp_venv_bin }}/python {{ edxapp_code_dir }}/manage.py lms showmigrations --settings={{ edxapp_settings }}"
         sudo_user: "edxapp"
     authorized_keys:
       - "SSH authorized key"
@@ -972,6 +976,7 @@ edxapp_generic_auth_config:  &edxapp_generic_auth
   FACEBOOK_APP_SECRET: "{{ EDXAPP_FACEBOOK_APP_SECRET }}"
   FACEBOOK_API_VERSION: "{{ EDXAPP_FACEBOOK_API_VERSION }}"
   ENTERPRISE_SERVICE_WORKER_USERNAME: "{{ EDXAPP_ENTERPRISE_SERVICE_WORKER_USERNAME }}"
+  BRANCH_IO_KEY: "{{ EDXAPP_BRANCH_IO_KEY }}"
 
 generic_cache_config: &default_generic_cache
   BACKEND:  'django.core.cache.backends.memcached.MemcachedCache'
@@ -1211,6 +1216,7 @@ lms_auth_config:
   ACE_CHANNEL_SAILTHRU_API_KEY: "{{ EDXAPP_ACE_CHANNEL_SAILTHRU_API_KEY }}"
   ACE_CHANNEL_SAILTHRU_API_SECRET: "{{ EDXAPP_ACE_CHANNEL_SAILTHRU_API_SECRET }}"
   ENTERPRISE_REPORTING_SECRET: "{{ EDXAPP_ENTERPRISE_REPORTING_SECRET }}"
+  ANALYTICS_API_KEY: "{{ EDXAPP_LMS_ANALYTICS_API_KEY }}"
 
 
 lms_env_config:
@@ -1263,6 +1269,7 @@ lms_env_config:
   ACE_CHANNEL_SAILTHRU_TEMPLATE_NAME: "{{ EDXAPP_ACE_CHANNEL_SAILTHRU_TEMPLATE_NAME }}"
   ACE_ROUTING_KEY: "{{ EDXAPP_ACE_ROUTING_KEY }}"
   ENTERPRISE_TAGLINE: "{{ EDXAPP_ENTERPRISE_TAGLINE }}"
+  ANALYTICS_API_URL: "{{ EDXAPP_LMS_ANALYTICS_API_URL }}"
 
 cms_auth_config:
   <<: *edxapp_generic_auth

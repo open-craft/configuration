@@ -1,3 +1,24 @@
+- Role: veda_ffmpeg
+  - New role added to compile ffmpeg for video pipeline. It will be used as a dependency for video pipeline roles.
+
+- Role: edxapp
+  - Added `EDXAPP_BRANCH_IO_KEY` to configure branch.io journey app banners.
+
+- Role: ecomworker
+  - Added `ECOMMERCE_WORKER_BROKER_TRANSPORT` with a default value of 'ampq' to be backwards compatible with rabbit.  Set to 'redis' if you wish to use redis instead of rabbit as a queue for ecommerce worker.
+
+- Role: ecommerce
+  - Added `ECOMMERCE_BROKER_TRANSPORT` with a default value of 'ampq' to be backwards compatible with rabbit.  Set to 'redis' if you wish to use redis instead of rabbit as a queue for ecommerce.
+
+- Role: credentials
+  - This role is now dependent on the edx_django_service role. Settings are all the same, but nearly all of the tasks are performed by the edx_django_service role.
+
+- Role: veda_delivery_worker
+  - New role added to run [video delivery worker](https://github.com/edx/edx-video-pipeline/blob/master/bin/deliver)
+
+- Role: veda_web_frontend
+  - New role added for [edx-video-pipeline](https://github.com/edx/edx-video-pipeline)
+
 - Role: edxapp
   - Added `EDXAPP_LMS_INTERNAL_ROOT_URL` setting (defaults to `EDXAPP_LMS_ROOT_URL`).
 
