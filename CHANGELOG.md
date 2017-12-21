@@ -1,4 +1,21 @@
 - Role: edxapp
+  - Added `EDXAPP_MONGO_REPLICA_SET`, which is required to use
+    pymongo.MongoReplicaSetClient in PyMongo 2.9.1.  This should be set to the
+    name of your replica set.
+    This setting causes the `EDXAPP_*_READ_PREFERENCE` settings below to be used.
+  - Added `EDXAPP_MONGO_CMS_READ_PREFERENCE` with a default value of `PRIMARY`.
+  - Added `EDXAPP_MONGO_LMS_READ_PREFERENCE` with a default value of
+    `SECONDARY_PREFERED` to distribute the read workload across the replica set
+    for replicated docstores and contentstores.
+  - Added `EDXAPP_LMS_SPLIT_DOC_STORE_READ_PREFERENCE` with a default value of
+    `EDXAPP_MONGO_LMS_READ_PREFERENCE`.
+  - Added `EDXAPP_LMS_DRAFT_DOC_STORE_CONFIG` with a default value of
+    `EDXAPP_MONGO_CMS_READ_PREFERENCE`, to enforce consistency between
+    Studio and the LMS Preview modes.
+  - Removed `EDXAPP_CONTENTSTORE_ADDITIONAL_OPTS`, since there is no notion of
+    common options to the content store anymore.
+
+- Role: edxapp
   - Added creation of enterprise_worker user to provisioning. This user is used by the edx-enterprise package when making API requests to Open edX IDAs.
 
 - Role: forum
