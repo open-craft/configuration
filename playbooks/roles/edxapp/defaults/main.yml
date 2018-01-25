@@ -613,6 +613,13 @@ EDXAPP_REGISTRATION_EXTRA_FIELDS:
   city: "hidden"
   country: "required"
 
+EDXAPP_CELERY_BEAT:
+  enabled: True
+  monitor: True
+  service_variant: lms
+  beat_file: "{{ supervisor_data_dir }}/beat"
+  pid_file: "{{ supervisor_data_dir }}/celery_beat.pid"
+
 EDXAPP_CELERY_WORKERS:
   - queue: default
     service_variant: cms
