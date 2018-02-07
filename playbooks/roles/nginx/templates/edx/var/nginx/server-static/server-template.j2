@@ -42,9 +42,9 @@
             display: flex;
             flex-direction: row;
             max-height: 100px;
-            align-content: center;
-            justify-content: flex-start;
+            justify-content: space-between;
             padding: 0 40px;
+            margin: 0;
           }
 
           header.branding img {
@@ -61,17 +61,17 @@
             display: flex;
             flex-direction: column;
             justify-content: center;
-            text-align: center;
+            align-items: center;
           }
 
-          {% if 'branding' in item and 'extra_styles' in item.branding %}
-            {{ item.extra_styles }}
+          {% if item.branding and 'extra_styles' in item.branding %}
+            {{ item.branding.extra_styles }}
           {% endif %}
 
         </style>
     </head>
     <body>
-      {% if 'branding' in item %}
+      {% if item.branding %}
       <header class="branding">
         <img src="{{ item.branding.logo }}" alt="logo">
         <h1>{{ item.branding.name }}</h1>
