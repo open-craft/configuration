@@ -64,7 +64,7 @@
             text-align: center;
           }
 
-          {{ item.extra_styles }}
+          {% if item.extra_styles %}{{ item.extra_styles }}{% endif %}
 
         </style>
     </head>
