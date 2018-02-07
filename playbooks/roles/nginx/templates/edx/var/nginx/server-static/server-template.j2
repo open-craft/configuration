@@ -64,12 +64,14 @@
             text-align: center;
           }
 
-          {% if item.extra_styles %}{{ item.extra_styles }}{% endif %}
+          {% if 'branding' in item and 'extra_styles' in item.branding %}
+            {{ item.extra_styles }}
+          {% endif %}
 
         </style>
     </head>
     <body>
-      {% if item.branding %}
+      {% if 'branding' in item %}
       <header class="branding">
         <img src="{{ item.branding.logo }}" alt="logo">
         <h1>{{ item.branding.name }}</h1>
