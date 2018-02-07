@@ -28,15 +28,60 @@
             font-size: 1.1em;
             max-width: 80%;
           }
+
+          body {
+            display: flex;
+            flex-direction: column;
+            width: 100vw;
+            height: 100vh;
+            margin: 0;
+            padding: 0;
+          }
+
+          header.branding {
+            display: flex;
+            flex-direction: row;
+            max-height: 100px;
+            justify-content: space-between;
+            padding: 0 40px;
+            margin: 0;
+          }
+
+          header.branding img {
+            height: 100%;
+            object-fit: contain;
+          }
+
+          header.branding h1 {
+            flex: 1;
+            text-align: right;
+          }
+
+          section.main {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+          }
+
+          {% if item.branding and 'extra_styles' in item.branding %}
+            {{ item.branding.extra_styles }}
+          {% endif %}
+
         </style>
     </head>
     <body>
-      <div style="margin: auto; width: 800px; text-align: center; padding:20px 0px 0px 0px;">
+      {% if item.branding %}
+      <header class="branding">
+        <img src="{{ item.branding.logo }}" alt="logo">
+        <h1>{{ item.branding.name }}</h1>
+      </header>
+      {% endif %}
+      <section class="main">
         <h1>{{ item.heading }}</h1>
         <img src="{{ item.img}}" alt="">
         <h2>{{ item.title }}</h2>
         <p>{{ item.msg }}
-      </div
+      </section>
     </body>
 </html>
-
