@@ -11,7 +11,7 @@
 # Defaults for role sqoop
 #
 
-SQOOP_VERSION: 1.4.6
+SQOOP_VERSION: 1.4.7
 
 # There is no non-alpha version here, this is just the version of sqoop that is compatible with Hadoop 2
 SQOOP_HADOOP_VERSION: 2.0.4-alpha
