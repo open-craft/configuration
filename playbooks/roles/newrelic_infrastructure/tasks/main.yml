@@ -96,13 +96,6 @@
     insertbefore: "exit 0"
     mode: "u+x,g+x"
 
-- name: Install New Relic Infrastructure agent
-  apt:
-    name: "newrelic-infra"
-  tags:
-    - install
-    - install:code
-
 - name: Restart the infrastructure agent if the license key changes
   service:
     name: newrelic-infra
