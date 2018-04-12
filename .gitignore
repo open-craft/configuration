@@ -32,4 +32,4 @@ playbooks/edx-east/travis-test.yml
 *.retry
 
 ## Ignore 3rd party sanity-checker role
-playbooks/roles/ansible-sanity-checker
+playbooks/roles/sanity-checker
