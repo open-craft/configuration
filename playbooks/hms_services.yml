@@ -19,6 +19,7 @@
     - security
     - role: rabbitmq
       rabbitmq_ip: ""
+    - sanity-checker
     - role: datadog
       when: COMMON_ENABLE_DATADOG
     - role: splunkforwarder
