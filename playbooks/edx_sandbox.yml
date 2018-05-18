@@ -22,6 +22,7 @@
     # Set to false if deployed behind another proxy/load balancer.
     NGINX_SET_X_FORWARDED_HEADERS: True
     DISCOVERY_URL_ROOT: 'http://localhost:{{ DISCOVERY_NGINX_PORT }}'
+    SANDBOX_ENABLE_RABBITMQ: True
   roles:
     - role: swapfile
       SWAPFILE_SIZE: 4GB
@@ -43,6 +44,7 @@
       when: "'localhost' in EDXAPP_MONGO_HOSTS"
     - role: rabbitmq
       rabbitmq_ip: 127.0.0.1
+      when: SANDBOX_ENABLE_RABBITMQ
     - role: aws
       when: COMMON_ENABLE_AWS_INTEGRATION
     - role: openstack
