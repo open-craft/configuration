@@ -38,6 +38,7 @@
       - lms
       - forum
       - xqueue
+      - discourse
       nginx_default_sites:
       - lms
     - role: edxlocal
