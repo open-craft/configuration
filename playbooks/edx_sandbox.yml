@@ -52,6 +52,7 @@
     - role: edxapp
       celery_worker: True
     - edxapp
+    - blockstore
     - role: ecommerce
       when: SANDBOX_ENABLE_ECOMMERCE
     - role: ecomworker

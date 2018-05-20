@@ -1,0 +1,46 @@
+---
+#
+# edX Configuration
+#
+# github:     https://github.com/edx/configuration
+# wiki:       https://openedx.atlassian.net/wiki/display/OpenOPS
+# code style: https://openedx.atlassian.net/wiki/display/OpenOPS/Ansible+Code+Conventions
+# license:    https://github.com/edx/configuration/blob/master/LICENSE.TXT
+#
+##
+# Role includes for role blockstore
+#
+dependencies:
+  - role: edx_django_service
+    edx_django_service_version: '{{ BLOCKSTORE_VERSION }}'
+    edx_django_service_git_path: '{{ BLOCKSTORE_GIT_PATH }}'
+    edx_django_service_name: '{{ blockstore_service_name }}'
+    edx_django_service_config_overrides: '{{ blockstore_service_config_overrides }}'
+    edx_django_service_debian_pkgs_extra: '{{ blockstore_debian_pkgs }}'
+    edx_django_service_gunicorn_port: '{{ blockstore_gunicorn_port }}'
+    edx_django_service_django_settings_module: '{{ BLOCKSTORE_DJANGO_SETTINGS_MODULE }}'
+    edx_django_service_environment_extra: '{{ blockstore_environment }}'
+    edx_django_service_gunicorn_extra: '{{ BLOCKSTORE_GUNICORN_EXTRA }}'
+    edx_django_service_nginx_port: '{{ BLOCKSTORE_NGINX_PORT }}'
+    edx_django_service_ssl_nginx_port: '{{ BLOCKSTORE_SSL_NGINX_PORT }}'
+    edx_django_service_hostname: '{{ BLOCKSTORE_SERVICE_HOSTNAME }}'
+    edx_django_service_use_python3: true
+    edx_django_service_language_code: '{{ BLOCKSTORE_LANGUAGE_CODE }}'
+    edx_django_service_secret_key: '{{ BLOCKSTORE_SECRET_KEY }}'
+    edx_django_service_memcache: '{{ BLOCKSTORE_MEMCACHE }}'
+    edx_django_service_default_db_host: '{{ BLOCKSTORE_DATABASE_HOST }}'
+    edx_django_service_default_db_name: '{{ BLOCKSTORE_DATABASE_NAME }}'
+    edx_django_service_default_db_atomic_requests: true
+    edx_django_service_db_user: '{{ BLOCKSTORE_DATABASE_USER }}'
+    edx_django_service_db_password: '{{ BLOCKSTORE_DATABASE_PASSWORD }}'
+    edx_django_service_social_auth_edx_oidc_key: '{{ BLOCKSTORE_SOCIAL_AUTH_EDX_OIDC_KEY }}'
+    edx_django_service_social_auth_edx_oidc_secret: '{{ BLOCKSTORE_SOCIAL_AUTH_EDX_OIDC_SECRET }}'
+    edx_django_service_social_auth_redirect_is_https: '{{ BLOCKSTORE_SOCIAL_AUTH_REDIRECT_IS_HTTPS }}'
+    edx_django_service_session_expire_at_browser_close: '{{ BLOCKSTORE_SESSION_EXPIRE_AT_BROWSER_CLOSE }}'
+    edx_django_service_post_migrate_commands: '{{ blockstore_post_migrate_commands }}'
+    edx_django_service_basic_auth_exempted_paths_extra: []
+    edx_django_service_gunicorn_worker_class: "{{ BLOCKSTORE_GUNICORN_WORKER_CLASS }}"
+    EDX_DJANGO_SERVICE_ENABLE_DJANGO_ADMIN_RESTRICTION: '{{ BLOCKSTORE_ENABLE_DJANGO_ADMIN_RESTRICTION }}'
+  - role: antivirus
+    ANTIVIRUS_SCAN_DIRECTORY: "{{ BLOCKSTORE_ANTIVIRUS_SCAN_DIRECTORY }}"
+    when: BLOCKSTORE_ENABLE_ANTIVIRUS
