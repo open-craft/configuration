@@ -24,6 +24,7 @@
     DISCOVERY_URL_ROOT: 'http://localhost:{{ DISCOVERY_NGINX_PORT }}'
     SANDBOX_ENABLE_ECOMMERCE: False
     SANDBOX_ENABLE_DISCOVERY: False
+    SANDBOX_ENABLE_RABBITMQ: True
     ENABLE_DISCOVERY_METADATA_REFRESH_CRONTASK: True
   roles:
     - role: swapfile
@@ -53,6 +54,7 @@
       when: "'localhost' in EDXAPP_MONGO_HOSTS"
     - role: rabbitmq
       rabbitmq_ip: 127.0.0.1
+      when: SANDBOX_ENABLE_RABBITMQ
     - role: aws
       when: COMMON_ENABLE_AWS_INTEGRATION
     - role: openstack
