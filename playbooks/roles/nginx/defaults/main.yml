@@ -61,6 +61,9 @@ NGINX_SERVER_HTML_FILES:
     img: "{{ NGINX_SERVER_ERROR_IMG }}"
     heading: 'Uh oh, we are having some server issues..'
 
+NGINX_SERVER_TEMPLATE: "edx/var/nginx/server-static/server-template.j2"
+NGINX_SERVER_STATIC_FILES: []
+
 NGINX_APT_REPO: deb http://nginx.org/packages/ubuntu/ {{ ansible_distribution_release }} nginx
 
 

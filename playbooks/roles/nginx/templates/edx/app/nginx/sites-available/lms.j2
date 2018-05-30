@@ -57,6 +57,11 @@ server {
 
   {% endif %}
 
+  # maintenance page
+  if (-f {{ nginx_server_static_dir }}/maintenance.html) {
+     rewrite ^(?!/server/)(.*)$ /server/maintenance.html last;
+  }
+
   # error pages
   {% for k, v in NGINX_EDXAPP_ERROR_PAGES.iteritems() %}
 error_page {{ k }} {{ v }};
