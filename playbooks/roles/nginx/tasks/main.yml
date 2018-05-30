@@ -237,7 +237,7 @@
 
 - name: Create NGINX server templates
   template:
-    src: "edx/var/nginx/server-static/server-template.j2"
+    src: "{{ NGINX_SERVER_TEMPLATE }}"
     dest: "{{ nginx_server_static_dir }}/{{ item.file }}"
     owner: root
     group: "{{ common_web_user }}"
