@@ -51,6 +51,7 @@
     - role: rabbitmq
       rabbitmq_ip: 127.0.0.1
       when: SANDBOX_ENABLE_RABBITMQ
+    - redis
     - role: edxapp
       celery_worker: True
     - edxapp
