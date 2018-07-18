@@ -47,10 +47,12 @@
       when: "'localhost' in ' '.join(EDXAPP_MEMCACHE)"
     - role: mongo
       when: "'localhost' in EDXAPP_MONGO_HOSTS"
-    - role: rabbitmq
-      rabbitmq_ip: 127.0.0.1
+    # Skip rabbitMQ for now -- will install an updated version for hawthorn.
+    #- { role: 'rabbitmq', rabbitmq_ip: '127.0.0.1' }
     - role: edxapp
       celery_worker: True
+    - role: openstack
+      when: EDXAPP_SETTINGS == 'openstack'
     - edxapp
     - role: aws
       when: COMMON_ENABLE_AWS_INTEGRATION
