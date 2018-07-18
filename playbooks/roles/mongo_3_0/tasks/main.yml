@@ -214,7 +214,6 @@
     name: mongod
     enabled: yes
     state: restarted
-  when: update_mongod_conf.changed
   tags:
     - "install"
     - "install:configuration"
