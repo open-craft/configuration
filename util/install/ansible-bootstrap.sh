@@ -72,6 +72,9 @@ then
 elif grep -q 'Trusty Tahr' /etc/os-release
 then
     SHORT_DIST="trusty"
+elif grep -q 'Xenial Xerus' /etc/os-release
+then
+    SHORT_DIST="xenial"
 else    
     cat << EOF
     
@@ -108,7 +111,7 @@ add-apt-repository -y "${EDX_PPA}"
 # NOTE: This will install the latest version of python 2.7 and
 # which may differ from what is pinned in virtualenvironments
 apt-get update -y
-apt-get install -y build-essential sudo git-core python2.7 python2.7-dev python-pip python-apt python-yaml python-jinja2 libmysqlclient-dev
+apt-get install -y python2.7 python2.7-dev python-pip python-apt python-yaml python-jinja2 build-essential sudo git-core libmysqlclient-dev libffi-dev libssl-dev
 
 pip install --upgrade pip=="${PIP_VERSION}"
 
@@ -130,7 +133,7 @@ git checkout ${CONFIGURATION_VERSION}
 make requirements
 
 cd "${CONFIGURATION_DIR}"/playbooks/edx-east
-"${PYTHON_BIN}"/ansible-playbook edx_ansible.yml -i '127.0.0.1,' -c local -e "configuration_version=${CONFIGURATION_VERSION}"
+"${PYTHON_BIN}"/ansible-playbook edx_ansible.yml -i '127.0.0.1,' -c local -e "configuration_version=${CONFIGURATION_VERSION}" -e "edx_ansible_source_repo=${CONFIGURATION_REPO}"
 
 # cleanup
 rm -rf "${ANSIBLE_DIR}"
