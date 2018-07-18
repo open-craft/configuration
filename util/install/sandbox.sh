@@ -8,13 +8,37 @@
 ## commands as root via sudo.  Caveat Emptor!
 ##
 
+set -xe
+
 ##
 ## Sanity check
 ##
-if [[ `lsb_release -rs` != "16.04" ]]; then
-   echo "This script is only known to work on Ubuntu 16.04, exiting...";
-   exit;
+if [[ ! $OPENEDX_RELEASE ]]; then
+    echo "You must define OPENEDX_RELEASE"
+    exit
 fi
+
+if [[ `lsb_release -rs` != "16.04" ]]; then
+    echo "This script is only known to work on Ubuntu 16.04, exiting..."
+    exit
+fi
+
+##
+## Log what's happening
+##
+
+mkdir -p logs
+log_file=logs/install-$(date +%Y%m%d-%H%M%S).log
+exec > >(tee $log_file) 2>&1
+echo "Capturing output to $log_file"
+echo "Installation started at $(date '+%Y-%m-%d %H:%M:%S')"
+
+function finish {
+    echo "Installation finished at $(date '+%Y-%m-%d %H:%M:%S')"
+}
+trap finish EXIT
+
+echo "Installing release '$OPENEDX_RELEASE'"
 
 ##
 ## Set ppa repository source for gcc/g++ 4.8 in order to install insights properly
@@ -72,12 +96,13 @@ if [[ -f my-passwords.yml ]]; then
 fi
 
 CONFIGURATION_VERSION=${CONFIGURATION_VERSION-${OPENEDX_RELEASE-master}}
+CONFIGURATION_REPO=${CONFIGURATION_REPO-https://github.com/edx/configuration}
 
 ##
 ## Clone the configuration repository and run Ansible
 ##
 cd /var/tmp
-git clone https://github.com/edx/configuration
+git clone ${CONFIGURATION_REPO}
 cd configuration
 git checkout $CONFIGURATION_VERSION
 git pull
@@ -91,4 +116,19 @@ sudo -H pip install -r requirements.txt
 ##
 ## Run the edx_sandbox.yml playbook in the configuration/playbooks directory
 ##
-cd /var/tmp/configuration/playbooks && sudo -E ansible-playbook -c local ./edx_sandbox.yml -i "localhost," $EXTRA_VARS
+cd /var/tmp/configuration/playbooks && sudo -E ansible-playbook -c local ./edx_sandbox.yml -i "localhost," $EXTRA_VARS "$@"
+ansible_status=$?
+
+if [[ $ansible_status -ne 0 ]]; then
+    echo " "
+    echo "========================================"
+    echo "Ansible failed!"
+    echo "----------------------------------------"
+    echo "If you need help, see https://open.edx.org/getting-help ."
+    echo "When asking for help, please provide as much information as you can."
+    echo "These might be helpful:"
+    echo "    Your log file is at $log_file"
+    echo "    Your environment:"
+    env | egrep -i 'version|release' | sed -e 's/^/        /'
+    echo "========================================"
+fi

@@ -62,5 +62,5 @@ xserver_debian_pkgs:
   - libxml2-dev
   - libxml2-utils
   - libxslt1-dev
-  - python-dev
+  - python2.7-dev
   - apparmor-utils

@@ -26,7 +26,7 @@ edx_ansible_debian_pkgs:
   - libmysqlclient-dev
   - git-core
   - build-essential
-  - python-dev
+  - python2.7-dev
   - libxml2-dev
   - libxslt1-dev
   - curl
