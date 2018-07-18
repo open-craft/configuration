@@ -37,7 +37,10 @@
       when: EDXAPP_MYSQL_HOST == 'localhost'
     - role: memcache
       when: "'localhost' in ' '.join(EDXAPP_MEMCACHE)"
-    - role: mongo
+    - role: mongo_3_0
+      mongo_version: "2.6.5"
+      MONGODB_REPO: "deb http://downloads-distro.mongodb.org/repo/ubuntu-upstart dist 10gen"
+      MONGODB_SERVICE_TEMPLATE: "mongodb.service"
       when: "'localhost' in EDXAPP_MONGO_HOSTS"
     # Skip rabbitMQ for now -- will install an updated version for hawthorn.
     #- { role: 'rabbitmq', rabbitmq_ip: '127.0.0.1' }

@@ -76,6 +76,21 @@
     - "install"
     - "install:configuration"
 
+- name: Install mongo service control file (if required)
+  tags:
+    - install
+    - install:configuration
+  copy:
+    src: "{{ MONGODB_SERVICE_TEMPLATE }}"
+    dest: "/lib/systemd/system/mongodb.service"
+    owner: root
+    group: root
+    mode: 0755
+  when: MONGODB_SERVICE_TEMPLATE is defined
+  tags:
+    - "install"
+    - "install:system-requirements"
+
 - name: add serverStatus logging script
   template:
     src: "log-mongo-serverStatus.sh.j2"
@@ -196,6 +211,7 @@
 - name: restart mongo service if we changed our configuration
   service:
     name: mongod
+    enabled: yes
     state: restarted
   when: update_mongod_conf.changed
   tags:

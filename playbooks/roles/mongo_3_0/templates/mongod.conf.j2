@@ -5,17 +5,12 @@
 storage:
   # Where to store the data.
   dbPath: {{ mongo_dbpath }}
-  # Storage Engine
-  engine: {{ MONGO_STORAGE_ENGINE }}
   # Enable journaling, http://www.mongodb.org/display/DOCS/Journaling
   journal:
 {% if mongo_enable_journal %}
     enabled: true
 {% else %}
     enabled: false
-{% endif %}
-{% if MONGO_STORAGE_ENGINE_OPTIONS %}
-  {{ MONGO_STORAGE_ENGINE_OPTIONS | to_nice_yaml }}
 {% endif %}
 
 systemLog:
@@ -27,7 +22,7 @@ systemLog:
 {% else %}
   logAppend: false
 {% endif %}
-  logRotate: {{ mongo_logrotate }}
+
 
 {% if MONGO_CLUSTERED and not skip_replica_set %}
 replication:
