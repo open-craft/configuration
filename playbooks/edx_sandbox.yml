@@ -46,6 +46,7 @@
     - role: memcache
       when: "'localhost' in ' '.join(EDXAPP_MEMCACHE)"
     - role: mongo_3_0
+      MONGODB_SERVICE_TEMPLATE: "mongodb.service"
       when: "'localhost' in EDXAPP_MONGO_HOSTS"
     # Skip rabbitMQ for now -- will install an updated version for hawthorn.
     #- { role: 'rabbitmq', rabbitmq_ip: '127.0.0.1' }
