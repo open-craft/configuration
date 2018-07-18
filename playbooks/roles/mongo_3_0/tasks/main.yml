@@ -86,7 +86,7 @@
     owner: root
     group: root
     mode: 0755
- register: update_mongod_conf
+  register: update_mongod_conf
   when: MONGODB_SERVICE_TEMPLATE is defined
   tags:
     - "install"
