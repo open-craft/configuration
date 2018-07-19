@@ -48,7 +48,6 @@
       when: SANDBOX_ENABLE_ECOMMERCE
     - role: ecomworker
       when: SANDBOX_ENABLE_ECOMMERCE
-    - notifier
     # not ready yet: - edx_notes_api
     - demo
     - oauth_client_setup
@@ -56,7 +55,6 @@
     - role: elasticsearch
       when: "'localhost' in EDXAPP_ELASTIC_SEARCH_CONFIG|map(attribute='host')"
     - forum
-    - { role: notifier, NOTIFIER_DIGEST_TASK_INTERVAL: "5" }
     - { role: "xqueue", update_users: True }
     - certs
     - edx_ansible
