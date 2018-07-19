@@ -99,6 +99,11 @@ for var in ${VERSION_VARS[@]}; do
     fi
 done
 
+# vars/anu.yml contains the site settings
+if [[ -f vars-public.yml ]]; then
+    EXTRA_VARS="-e@$(pwd)/vars-public.yml $EXTRA_VARS"
+fi
+
 # my-passwords.yml is the file made by generate-passwords.sh.
 if [[ -f my-passwords.yml ]]; then
     EXTRA_VARS="-e@$(pwd)/my-passwords.yml $EXTRA_VARS"

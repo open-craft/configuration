@@ -1,0 +1,88 @@
+EDXAPP_SITE_NAME: meristemresources.anu.edu.au
+EDXAPP_PLATFORM_NAME: 'MeriSTEM Resources'
+EDXAPP_PLATFORM_DESCRIPTION: 'Providing complete flipped class resources for secondary STEM education.'
+EDXAPP_LMS_BASE: meristemresources.anu.edu.au
+EDXAPP_LMS_BASE_SCHEME: http
+EDXAPP_CMS_BASE: meristemresources.anu.edu.au:18010
+EDXAPP_PREVIEW_LMS_BASE: "preview.{{ EDXAPP_LMS_BASE }}"
+EDXAPP_CREDENTIALS_PUBLIC_SERVICE_URL: "{{ EDXAPP_LMS_BASE_SCHEME }}://{{ EDXAPP_LMS_BASE }}:8005"
+EDXAPP_ECOMMERCE_PUBLIC_URL_ROOT: "{{ EDXAPP_LMS_BASE_SCHEME }}://{{ EDXAPP_LMS_BASE }}:8002"
+EDXAPP_EDXNOTES_PUBLIC_API: "{{ EDXAPP_LMS_BASE_SCHEME }}://{{ EDXAPP_LMS_BASE }}:18120/api/v1"
+EDXAPP_ANALYTICS_DASHBOARD_URL: "{{ EDXAPP_LMS_BASE_SCHEME }}://{{ EDXAPP_LMS_BASE }}:18110/courses"
+
+COMMON_JWT_ISSUER: "{{ EDXAPP_LMS_BASE_SCHEME }}://{{ EDXAPP_LMS_BASE }}/oauth2"
+COMMON_JWT_AUDIENCE: "lms-key"
+COMMON_JWT_SECRET_KEY: "lms-secret"
+EDXAPP_OAUTH_ENFORCE_SECURE: False
+
+# Set this for rabbitmq to listen on localhost network interface
+# (by default, ansible configures it to listening on the external IP)
+rabbitmq_ip: 127.0.0.1
+
+THEMES_GIT_PATH: "open-craft"
+THEMES_REPO: "edx-theme"
+THEMES_VERSION: "anu"
+THEMES_CODE_DIR: "/edx/var/edx-themes/anu"
+
+EDXAPP_ENABLE_COMPREHENSIVE_THEMING: true
+EDXAPP_COMPREHENSIVE_THEME_DIRS:
+  - "/edx/var/edxapp"
+EDXAPP_DEFAULT_SITE_THEME: 'anu'
+
+EDXAPP_GRADE_STORAGE_KWARGS:
+  location: "/edx/var/edxapp/media/"
+
+EDXAPP_ENV_EXTRA:
+  REGISTRATION_EXTRA_FIELDS:
+    city: hidden
+    country: hidden
+    gender: optional
+    goals: optional
+    honor_code: required
+    level_of_education: optional
+    mailing_address: optional
+    year_of_birth: optional
+
+EDXAPP_CONTACT_EMAIL: "info@meristemresources.anu.edu.au"
+EDXAPP_PAYMENT_SUPPORT_EMAIL: "{{ EDXAPP_CONTACT_EMAIL }}"
+EDXAPP_DEFAULT_FROM_EMAIL: "registration@meristemresources.anu.edu.au"
+EDXAPP_DEFAULT_FEEDBACK_EMAIL: "feedback@meristemresources.anu.edu.au"
+EDXAPP_FEEDBACK_SUBMISSION_EMAIL: "{{ EDXAPP_DEFAULT_FEEDBACK_EMAIL }}"
+EDXAPP_PRESS_EMAIL: "press@meristemresources.anu.edu.au"
+EDXAPP_DEFAULT_SERVER_EMAIL: "devops@meristemresources.anu.edu.au"
+EDXAPP_TECH_SUPPORT_EMAIL: "technical@meristemresources.anu.edu.au"
+EDXAPP_UNIVERSITY_EMAIL: "university@meristemresources.anu.edu.au"
+EDXAPP_API_ACCESS_FROM_EMAIL: "api-requests@meristemresources.anu.edu.au"
+EDXAPP_API_ACCESS_MANAGER_EMAIL: "api-access@meristemresources.anu.edu.au"
+EDXAPP_BUGS_EMAIL: "bugs@meristemresources.anu.edu.au"
+EDXAPP_BULK_EMAIL_DEFAULT_FROM_EMAIL: "no-reply@meristemresources.anu.edu.au"
+EDXAPP_SUPPORT_SITE_LINK: "http://meristemresource-hawthorn.anu.edu.au/support/contact_us"
+EDXAPP_CONTACT_MAILING_ADDRESS: "The Australian National University, Canberra"
+EDXAPP_LTI_USER_EMAIL_DOMAIN: "lti.meristemresources.anu.edu.au"
+
+EDXAPP_FEATURES:
+  CUSTOM_COURSES_EDX: true
+  AUTH_USE_OPENID_PROVIDER: true
+  AUTOMATIC_AUTH_FOR_TESTING: false
+  ENABLE_COMBINED_LOGIN_REGISTRATION: true
+  ENABLE_CORS_HEADERS: false
+  ENABLE_COUNTRY_ACCESS: false
+  ENABLE_CREDIT_API: false
+  ENABLE_CREDIT_ELIGIBILITY: false
+  ENABLE_CROSS_DOMAIN_CSRF_COOKIE: false
+  ENABLE_CSMH_EXTENDED: true
+  ENABLE_DISCUSSION_HOME_PANEL: true
+  ENABLE_DISCUSSION_SERVICE: true
+  ENABLE_EDXNOTES: false
+  ENABLE_GRADE_DOWNLOADS: true
+  ENABLE_INSTRUCTOR_ANALYTICS: false
+  ENABLE_MKTG_SITE: false
+  ENABLE_MOBILE_REST_API: false
+  ENABLE_OAUTH2_PROVIDER: false
+  ENABLE_ONLOAD_BEACON: false
+  ENABLE_READING_FROM_MULTIPLE_HISTORY_TABLES: true
+  ENABLE_SPECIAL_EXAMS: false
+  ENABLE_THIRD_PARTY_AUTH: true
+  ENABLE_VIDEO_BEACON: false
+  ENABLE_VIDEO_UPLOAD_PIPELINE: false
+  PREVIEW_LMS_BASE: "{{ EDXAPP_PREVIEW_LMS_BASE }}"
