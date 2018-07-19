@@ -16,6 +16,12 @@ if [[ `lsb_release -rs` != "12.04" ]]; then
    exit;
 fi
 
+if [[ ! $OPENEDX_RELEASE ]]; then
+    echo "You must define OPENEDX_RELEASE"
+    exit
+fi
+
+
 ##
 ## Set ppa repository source for gcc/g++ 4.8 in order to install insights properly
 ##
@@ -42,30 +48,32 @@ sudo -H pip install --upgrade virtualenv==13.1.2
 sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-4.8 50
 sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-4.8 50
 
-## Did we specify an openedx release?
-if [ -n "$OPENEDX_RELEASE" ]; then
-  EXTRA_VARS="-e edx_platform_version=$OPENEDX_RELEASE \
+if [[ -z "${CONFIGURATION_REPO}" ]]; then
+  CONFIGURATION_REPO="https://github.com/edx/configuration.git"
+fi
+if [[ -z "${CONFIGURATION_VERSION}" ]]; then
+  CONFIGURATION_VERSION="$OPENEDX_RELEASE"
+fi
+
+EXTRA_VARS="-e edx_platform_version=$OPENEDX_RELEASE \
+    -e configuration_repo=$CONFIGURATION_REPO \
+    -e edx_ansible_source_repo=$CONFIGURATION_VERSION \
     -e certs_version=$OPENEDX_RELEASE \
     -e forum_version=$OPENEDX_RELEASE \
     -e xqueue_version=$OPENEDX_RELEASE \
-    -e configuration_version=$OPENEDX_RELEASE \
     -e demo_version=$OPENEDX_RELEASE \
     -e NOTIFIER_VERSION=$OPENEDX_RELEASE \
     -e INSIGHTS_VERSION=$OPENEDX_RELEASE \
     -e ANALYTICS_API_VERSION=$OPENEDX_RELEASE \
   $EXTRA_VARS"
-  CONFIG_VER=$OPENEDX_RELEASE
-else
-  CONFIG_VER="master"
-fi
 
 ##
 ## Clone the configuration repository and run Ansible
 ##
 cd /var/tmp
-git clone https://github.com/edx/configuration
+git clone $CONFIGURATION_REPO
 cd configuration
-git checkout $CONFIG_VER
+git checkout $CONFIGURATION_VERSION
 
 ##
 ## Install the ansible requirements
@@ -76,4 +84,4 @@ sudo -H pip install -r requirements.txt
 ##
 ## Run the edx_sandbox.yml playbook in the configuration/playbooks directory
 ##
-cd /var/tmp/configuration/playbooks && sudo ansible-playbook -c local ./edx_sandbox.yml -i "localhost," $EXTRA_VARS
+cd /var/tmp/configuration/playbooks && sudo ansible-playbook -c local ./edx_sandbox.yml -i "localhost," $EXTRA_VARS $@
