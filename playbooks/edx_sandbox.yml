@@ -22,12 +22,12 @@
     # Set to false if deployed behind another proxy/load balancer.
     NGINX_SET_X_FORWARDED_HEADERS: True
     DISCOVERY_URL_ROOT: 'http://localhost:{{ DISCOVERY_NGINX_PORT }}'
-    ecommerce_create_demo_data: true
-    credentials_create_demo_data: true
-    SANDBOX_ENABLE_DISCOVERY: true
-    SANDBOX_ENABLE_ECOMMERCE: true
-    SANDBOX_ENABLE_ANALYTICS_API: true
-    SANDBOX_ENABLE_INSIGHTS: true
+    ecommerce_create_demo_data: false
+    credentials_create_demo_data: false
+    SANDBOX_ENABLE_DISCOVERY: false
+    SANDBOX_ENABLE_ECOMMERCE: false
+    SANDBOX_ENABLE_ANALYTICS_API: false
+    SANDBOX_ENABLE_INSIGHTS: false
     SANDBOX_ENABLE_RABBITMQ: true
     JOURNALS_ENABLED: false
   roles:
@@ -64,7 +64,6 @@
     - role: insights
       when: SANDBOX_ENABLE_INSIGHTS
     # not ready yet: - edx_notes_api
-    - demo
     - oauth_client_setup
     - oraclejdk
     - role: elasticsearch
