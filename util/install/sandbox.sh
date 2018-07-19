@@ -70,8 +70,15 @@ fi
 if [[ -z "${CONFIGURATION_VERSION}" ]]; then
   CONFIGURATION_VERSION="$OPENEDX_RELEASE"
 fi
+if [[ -z "${EDX_PLATFORM_REPO}" ]]; then
+  EDX_PLATFORM_REPO="https://github.com/edx/edx-platform.git"
+fi
+if [[ -z "${EDX_PLATFORM_VERSION}" ]]; then
+  EDX_PLATFORM_COMMIT="$OPENEDX_RELEASE"
+fi
 
-EXTRA_VARS="-e edx_platform_version=$OPENEDX_RELEASE \
+EXTRA_VARS="-e edx_platform_version=$EDX_PLATFORM_VERSION \
+    -e edx_platform_repo=$EDX_PLATFORM_REPO \
     -e configuration_repo=$CONFIGURATION_REPO \
     -e edx_ansible_source_repo=$CONFIGURATION_VERSION \
     -e certs_version=$OPENEDX_RELEASE \
