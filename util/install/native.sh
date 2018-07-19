@@ -59,6 +59,16 @@ sudo pip install --upgrade pip==9.0.3
 sudo pip install --upgrade setuptools==39.0.1
 sudo -H pip install --upgrade virtualenv==15.2.0
 
+if [[ -z "${CONFIGURATION_REPO}" ]]; then
+  CONFIGURATION_REPO="https://github.com/edx/configuration.git"
+fi
+EXTRA_VARS="-e edx_ansible_source_repo=$CONFIGURATION_REPO $EXTRA_VARS"
+
+if [[ -z "${EDX_PLATFORM_REPO}" ]]; then
+  EDX_PLATFORM_REPO="https://github.com/edx/edx-platform.git"
+fi
+EXTRA_VARS="-e edx_platform_repo=$EDX_PLATFORM_REPO $EXTRA_VARS"
+
 ##
 ## Overridable version variables in the playbooks. Each can be overridden
 ## individually, or with $OPENEDX_RELEASE.
@@ -100,7 +110,7 @@ CONFIGURATION_VERSION=${CONFIGURATION_VERSION-$OPENEDX_RELEASE}
 ## Clone the configuration repository and run Ansible
 ##
 cd /var/tmp
-git clone https://github.com/edx/configuration
+git clone $CONFIGURATION_REPO
 cd configuration
 git checkout $CONFIGURATION_VERSION
 git pull
