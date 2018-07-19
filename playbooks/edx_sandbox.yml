@@ -51,7 +51,7 @@
     # not ready yet: - edx_notes_api
     - demo
     - oauth_client_setup
-    - forum
+    - { role: "forum", forum_services: [] }
     - { role: "xqueue", update_users: True }
     - certs
     - edx_ansible
