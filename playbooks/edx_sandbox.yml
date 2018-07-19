@@ -51,9 +51,6 @@
     # not ready yet: - edx_notes_api
     - demo
     - oauth_client_setup
-    - oraclejdk
-    - role: elasticsearch
-      when: "'localhost' in EDXAPP_ELASTIC_SEARCH_CONFIG|map(attribute='host')"
     - forum
     - { role: "xqueue", update_users: True }
     - certs
