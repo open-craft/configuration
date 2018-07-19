@@ -25,6 +25,10 @@
     COMMON_ENABLE_DATADOG: False
     SANDBOX_ENABLE_ECOMMERCE: False
     COMMON_ENABLE_SPLUNKFORWARDER: False
+    oraclejdk_version: "8u181"
+    oraclejdk_base: "jdk1.8.0_181"
+    oraclejdk_build: "b13"
+    oraclejdk_url: "http://download.oracle.com/otn-pub/java/jdk/8u181-b13/96a7b8442fe848ef90c96a2fad6ed6d1/jdk-8u181-linux-x64.tar.gz"
   roles:
     - role: swapfile
       SWAPFILE_SIZE: 2GB
