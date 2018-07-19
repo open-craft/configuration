@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 ##
 ## Installs the pre-requisites for running edX on a single Ubuntu 12.04
 ## instance.  This script is provided as a convenience and any of these
