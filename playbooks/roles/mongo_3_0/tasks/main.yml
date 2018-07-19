@@ -1,25 +1,25 @@
 ---
-- name: disable transparent huge pages on startup (http://docs.mongodb.org/manual/tutorial/transparent-huge-pages/)
+- name: Add disable transparent huge pages systemd service (http://docs.mongodb.org/manual/tutorial/transparent-huge-pages/)
   copy:
-    src: disable-transparent-hugepages.conf
-    dest: /etc/init/disable-transparent-hugepages.conf
+    src:  etc/systemd/system/disable-transparent-hugepages.service
+    dest: "/etc/systemd/system/disable-transparent-hugepages.service"
     owner: root
     group: root
-    mode: 0755
+    mode: 0644
   tags:
     - "hugepages"
     - "install"
-    - "install:system-requirements"
+    - "install:configuration"
 
-- name: disable transparent huge pages
+- name: Enable/start disable transparent huge pages service (http://docs.mongodb.org/manual/tutorial/transparent-huge-pages/)
   service:
     name: disable-transparent-hugepages
     enabled: yes
     state: started
   tags:
     - "hugepages"
-    - "install"
-    - "install:system-requirements"
+    - "manage"
+    - "manage:start"
 
 - name: install python pymongo for mongo_user ansible module
   pip:
@@ -60,6 +60,21 @@
     - install
     - install:app-requirements
     - mongo_packages
+
+- name: Install mongo service control file (if required)
+  tags:
+    - install
+    - install:configuration
+  copy:
+    src: "{{ MONGODB_SERVICE_TEMPLATE }}"
+    dest: "/lib/systemd/system/mongod.service"
+    owner: root
+    group: root
+    mode: 0755
+  when: MONGODB_SERVICE_TEMPLATE is defined
+  tags:
+    - "install"
+    - "install:system-requirements"
 
 - name: create mongo dirs
   file:
@@ -193,11 +208,11 @@
     - "install:configuration"
     - "logrotate"
 
-- name: restart mongo service if we changed our configuration
+- name: restart mongo service
   service:
     name: mongod
+    enabled: yes
     state: restarted
-  when: update_mongod_conf.changed
   tags:
     - "install"
     - "install:configuration"
@@ -210,36 +225,14 @@
     - "install"
     - "install:configuration"
 
-# We only try passwordless superuser creation when
-# we're initializing the replica set and need to use
-# the localhost exemption to create a user who will be
-# able to initialize the replica set.
-# We can only create the users on one machine, the one
-# where we will initialize the replica set.  If we
-# create users on multiple hosts, then they will fail
-# to come into the replica set.
+# We do passwordless superuser creation. (naughty)
 - name: create super user
   mongodb_user:
     name: "{{ MONGO_ADMIN_USER }}"
     password: "{{ MONGO_ADMIN_PASSWORD }}"
     database: admin
     roles: root
-  when: initialize_replica_set
   run_once: true
-  tags:
-    - "manage"
-    - "manage:db"
-
-- name: create super user
-  mongodb_user:
-    name: "{{ MONGO_ADMIN_USER }}"
-    password: "{{ MONGO_ADMIN_PASSWORD }}"
-    login_user: "{{ MONGO_ADMIN_USER }}"
-    login_password: "{{ MONGO_ADMIN_PASSWORD }}"
-    database: admin
-    roles: root
-  run_once: true
-  when: not initialize_replica_set
   tags:
     - "manage"
     - "manage:db"
