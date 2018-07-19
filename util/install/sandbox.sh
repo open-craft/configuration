@@ -16,6 +16,28 @@ if [[ `lsb_release -rs` != "16.04" ]]; then
    exit;
 fi
 
+if [[ ! $OPENEDX_RELEASE ]]; then
+    echo "You must define OPENEDX_RELEASE"
+    exit
+fi
+
+##
+## Log what's happening
+##
+
+mkdir -p logs
+log_file=logs/install-$(date +%Y%m%d-%H%M%S).log
+exec > >(tee $log_file) 2>&1
+echo "Capturing output to $log_file"
+echo "Installation started at $(date '+%Y-%m-%d %H:%M:%S')"
+
+function finish {
+    echo "Installation finished at $(date '+%Y-%m-%d %H:%M:%S')"
+}
+trap finish EXIT
+
+echo "Installing release '$OPENEDX_RELEASE'"
+
 ##
 ## Set ppa repository source for gcc/g++ 4.8 in order to install insights properly
 ##
@@ -40,6 +62,13 @@ sudo -H pip install --upgrade virtualenv==15.0.2
 ## Overridable version variables in the playbooks. Each can be overridden
 ## individually, or with $OPENEDX_RELEASE.
 ##
+if [[ -z "${CONFIGURATION_REPO}" ]]; then
+  CONFIGURATION_REPO="https://github.com/edx/configuration.git"
+fi
+if [[ -z "${EDX_PLATFORM_REPO}" ]]; then
+  EDX_PLATFORM_REPO="https://github.com/edx/edx-platform.git"
+fi
+
 VERSION_VARS=(
   edx_platform_version
   certs_version
@@ -64,18 +93,20 @@ for var in ${VERSION_VARS[@]}; do
   fi
 done
 
+EXTRA_VARS="-e edx_platform_repo=$EDX_PLATFORM_REPO \
+    -e edx_ansible_source_repo=$CONFIGURATION_REPO \
+    $EXTRA_VARS"
+
 # my-passwords.yml is the file made by generate-passwords.sh.
 if [[ -f my-passwords.yml ]]; then
     EXTRA_VARS="-e@$(pwd)/my-passwords.yml $EXTRA_VARS"
 fi
 
-CONFIGURATION_VERSION=${CONFIGURATION_VERSION-${OPENEDX_RELEASE-master}}
-
 ##
 ## Clone the configuration repository and run Ansible
 ##
 cd /var/tmp
-git clone https://github.com/edx/configuration
+git clone $CONFIGURATION_REPO
 cd configuration
 git checkout $CONFIGURATION_VERSION
 git pull
@@ -90,3 +121,18 @@ sudo -H pip install -r requirements.txt
 ## Run the edx_sandbox.yml playbook in the configuration/playbooks directory
 ##
 cd /var/tmp/configuration/playbooks && sudo -E ansible-playbook -c local ./edx_sandbox.yml -i "localhost," $EXTRA_VARS "$@"
+ansible_status=$?
+
+if [[ $ansible_status -ne 0 ]]; then
+    echo " "
+    echo "========================================"
+    echo "Ansible failed!"
+    echo "----------------------------------------"
+    echo "If you need help, see https://open.edx.org/getting-help ."
+    echo "When asking for help, please provide as much information as you can."
+    echo "These might be helpful:"
+    echo "    Your log file is at $log_file"
+    echo "    Your environment:"
+    env | egrep -i 'version|release' | sed -e 's/^/        /'
+    echo "========================================"
+fi
