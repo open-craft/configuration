@@ -22,6 +22,10 @@ if [[ `lsb_release -rs` != "16.04" ]]; then
     exit
 fi
 
+if [[ -z "${UPGRADE_OS}" ]]; then
+  UPGRADE_OS=false
+fi
+
 ##
 ## Log what's happening
 ##
@@ -49,7 +53,11 @@ sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
 ## Update and Upgrade apt packages
 ##
 sudo apt-get update -y
-sudo apt-get upgrade -y
+
+if [ "${UPGRADE_OS}" = true ]; then
+    echo "Upgrading the OS..."
+    sudo apt-get upgrade -y
+fi
 
 ##
 ## Install system pre-requisites
