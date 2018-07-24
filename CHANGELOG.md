@@ -1,5 +1,56 @@
 - Role: certs
   - Added `CERTS_QUEUE_POLL_FREQUENCY` to make configurable the certificate agent's queue polling frequency.
+- Role: edxapp
+  - Added `EDXAPP_MONGO_REPLICA_SET`, which is required to use
+    pymongo.MongoReplicaSetClient in PyMongo 2.9.1.  This should be set to the
+    name of your replica set.
+    This setting causes the `EDXAPP_*_READ_PREFERENCE` settings below to be used.
+  - Added `EDXAPP_MONGO_CMS_READ_PREFERENCE` with a default value of `PRIMARY`.
+  - Added `EDXAPP_MONGO_LMS_READ_PREFERENCE` with a default value of
+    `SECONDARY_PREFERED` to distribute the read workload across the replica set
+    for replicated docstores and contentstores.
+  - Added `EDXAPP_LMS_SPLIT_DOC_STORE_READ_PREFERENCE` with a default value of
+    `EDXAPP_MONGO_LMS_READ_PREFERENCE`.
+  - Added `EDXAPP_LMS_DRAFT_DOC_STORE_CONFIG` with a default value of
+    `EDXAPP_MONGO_CMS_READ_PREFERENCE`, to enforce consistency between
+    Studio and the LMS Preview modes.
+  - Removed `EDXAPP_CONTENTSTORE_ADDITIONAL_OPTS`, since there is no notion of
+    common options to the content store anymore.
+
+- Role: nginx
+  - Modified `lms.j2` , `cms.j2` , `credentials.j2` , `edx_notes_api.j2` and `insights.j2` to enable HTTP Strict Transport Security
+  - Added `NGINX_HSTS_MAX_AGE` to make HSTS header `max_age` value configurable and used in templates
+
+- Role: server_utils
+  - Install "vim", not "vim-tiny".
+
+- Role: edxapp
+  - Added GOOGLE_ANALYTICS_TRACKING_ID setting for inserting GA tracking into emails generated via ACE.
+
+- Role: notifier
+  - Added notifier back to continuous integration.
+
+- Role: ecommerce
+  - This role is now dependent on the edx_django_service role. Settings are all the same, but nearly all of the tasks are performed by the edx_django_service role.
+
+- Role: discovery
+  - Added `DISCOVERY_REPOS` to allow configuring discovery repository details.
+
+- Role: edx_django_service
+  - Made the keys `edx_django_service_git_protocol`, `edx_django_service_git_domain`, and `edx_django_service_git_path` of `edx_django_service_repos` all individually configurable.
+
+- Role: discovery
+  - Updated LANGUAGE_CODE to generic english. Added configuration for multilingual language package django-parler.
+
+- Role: edxapp
+  - Added `EDXAPP_EXTRA_MIDDLEWARE_CLASSES` for configuring additional middleware logic.
+
+- Role: discovery
+  - Added `OPENEXCHANGERATES_API_KEY` for retrieving currency exchange rates.
+
+- Role: edxapp
+  - Added `EDXAPP_SCORM_PKG_STORAGE_DIR`, with default value as it was in the server template.
+  - Added `EDXAPP_SCORM_PLAYER_LOCAL_STORAGE_ROOT`, with default value as it was in the server template.
 
 - Role: xqueue
   - Added `XQUEUE_SESSION_ENGINE` to allow a configurable xqueue session engine.
