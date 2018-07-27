@@ -75,6 +75,8 @@
 - name: update journal elasticsearch index
   shell: >
     {{ COMMON_BIN_DIR }}/python.journals {{ COMMON_BIN_DIR }}/manage.journals update_index --settings={{ JOURNALS_DJANGO_SETTINGS_MODULE }}
+  retries: 10
+  delay: 60
   become_user: "{{ journals_user }}"
   environment: "{{ journals_environment }}"
   tags:
