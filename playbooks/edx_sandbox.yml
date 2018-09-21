@@ -29,6 +29,7 @@
     SANDBOX_ENABLE_ANALYTICS_API: true
     SANDBOX_ENABLE_INSIGHTS: true
     SANDBOX_ENABLE_RABBITMQ: true
+    SANDBOX_ENABLE_MEMCACHE: "'localhost' in ' '.join(EDXAPP_MEMCACHE)"
     JOURNALS_ENABLED: false
   roles:
     - role: swapfile
@@ -45,7 +46,7 @@
     - role: edxlocal
       when: EDXAPP_MYSQL_HOST == 'localhost'
     - role: memcache
-      when: "'localhost' in ' '.join(EDXAPP_MEMCACHE)"
+      when: SANDBOX_ENABLE_MEMCACHE
     - role: mongo_3_2
       when: "'localhost' in EDXAPP_MONGO_HOSTS"
     - role: rabbitmq
