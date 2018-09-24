@@ -39,6 +39,24 @@
     group: root
     mode: 0644
   when: COMMON_OBJECT_STORE_LOG_SYNC
+        and (ansible_distribution_release == 'precise' or ansible_distribution_release == 'trusty')
+
+# With systemd, log rotation can be run when stopping syslog
+- name: Add script for sending logs on exit
+  template:
+    src: send-logs-on-exit.j2
+    dest: "{{ COMMON_OBJECT_STORE_LOG_SYNC_ON_EXIT }}"
+    owner: root
+    group: root
+    mode: 0744
+  when: COMMON_OBJECT_STORE_LOG_SYNC and ansible_distribution_release == 'xenial'
+
+- name: Force logrotate on syslog stop
+  lineinfile:
+    path: /etc/systemd/system/syslog.service
+    line: "ExecStop={{ COMMON_OBJECT_STORE_LOG_SYNC_ON_EXIT }}"
+    insertafter: "^ExecStart=.*$"
+  when: COMMON_OBJECT_STORE_LOG_SYNC and ansible_distribution_release == 'xenial'
 
 - name: Update /etc/dhcp/dhclient.conf
   template:
