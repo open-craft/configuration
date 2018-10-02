@@ -798,6 +798,15 @@ EDXAPP_CLEARSESSIONS_CRON_ENABLED: false
 EDXAPP_CLEARSESSIONS_CRON_HOURS: "14"
 EDXAPP_CLEARSESSIONS_CRON_MINUTES: "0"
 
+# Optionally add daily cron jobs to run the management command that send the configured Schedules emails
+# cf https://github.com/edx/edx-platform/blob/master/openedx/core/djangoapps/schedules/docs/README.rst#running-the-management-commands
+# e.g.,
+# EDXAPP_SCHEDULES_EMAIL_CRONS_ENABLED:
+#  - { command: 'send_recurring_nudge', hour: 0, minute: 0 }
+#  - { command: 'send_upgrade_reminder', hour: 1, minute: 0 }
+#  - { command: 'send_course_update', hour: 2, minute: 0 }
+EDXAPP_SCHEDULES_EMAIL_CRONS_ENABLED: []
+
 EDXAPP_VIDEO_IMAGE_MAX_AGE: 31536000
 
 # This is django storage configuration for Video Image settings.

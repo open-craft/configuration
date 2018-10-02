@@ -475,3 +475,13 @@
     minute: "{{ EDXAPP_CLEARSESSIONS_CRON_MINUTES }}"
     day: "*"
   when: EDXAPP_CLEARSESSIONS_CRON_ENABLED
+
+- name: install daily cron jobs to send scheduled emails
+  cron:
+    name: "Scheduled {{ item.command }}"
+    user: "{{ edxapp_user }}"
+    job: "{{ edxapp_venv_bin }}/python {{ edxapp_code_dir }}/manage.py lms {{ item.command }} --settings={{ edxapp_settings }} >/dev/null 2>&1"
+    hour: "{{ item.hour | default(0) }}"
+    minute: "{{ item.minute | default(0) }}"
+    day: "*"
+  with_items: "{{ EDXAPP_SCHEDULES_EMAIL_CRONS_ENABLED }}"
