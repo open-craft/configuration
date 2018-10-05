@@ -47,8 +47,8 @@
     owner: root
     group: root
     mode: 0644
-  when: COMMON_OBJECT_STORE_LOG_SYNC
-        and (ansible_distribution_release == 'precise' or ansible_distribution_release == 'trusty')
+  when: (COMMON_S3_LOG_SYNC or COMMON_SWIFT_LOG_SYNC)
+       and (ansible_distribution_release == 'precise' or ansible_distribution_release == 'trusty')
 
 # With systemd, log rotation should be run with an `ExecStop` directive
 # of `syslog.service` to ensure that rsyslogd will not be killed before attempt
