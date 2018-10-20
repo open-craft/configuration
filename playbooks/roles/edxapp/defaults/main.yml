@@ -50,7 +50,7 @@ EDXAPP_AWS_STORAGE_BUCKET_NAME: "SET-ME-PLEASE (ex. bucket-name)"
 # file system for storage. Setting this to a bucket-name will use AWS
 EDXAPP_IMPORT_EXPORT_BUCKET: ""
 EDXAPP_AWS_S3_CUSTOM_DOMAIN: "SET-ME-PLEASE (ex. bucket-name.s3.amazonaws.com)"
-EDXAPP_AWS_S3_HOST: ""
+EDXAPP_AWS_S3_HOST: !!null
 EDXAPP_SWIFT_USERNAME: "None"
 EDXAPP_SWIFT_KEY: "None"
 EDXAPP_SWIFT_TENANT_ID: "None"
