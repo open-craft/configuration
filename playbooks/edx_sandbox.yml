@@ -44,7 +44,6 @@
       - xqueue
       nginx_default_sites:
       - lms
-    - aws
     - role: edxlocal
       when: EDXAPP_MYSQL_HOST == 'localhost'
     - role: memcache
@@ -67,6 +66,7 @@
     - role: insights
       when: SANDBOX_ENABLE_INSIGHTS
     # not ready yet: - edx_notes_api
+    - demo
     - oauth_client_setup
     - oraclejdk
     - role: elasticsearch
