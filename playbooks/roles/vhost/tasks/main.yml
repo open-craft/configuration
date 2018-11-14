@@ -59,7 +59,8 @@
     line: "ExecStop={{ COMMON_OBJECT_STORE_LOG_SYNC_ON_EXIT }}"
     insertafter: "^ExecStart=.*$"
   when: COMMON_OBJECT_STORE_LOG_SYNC
-        and not (ansible_distribution_release == 'precise' or ansible_distribution_release == 'trusty')
+        and ansible_distribution_release != 'precise'
+        and ansible_distribution_release != 'trusty'
 
 - name: Update /etc/dhcp/dhclient.conf
   template:
