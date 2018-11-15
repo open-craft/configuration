@@ -1,0 +1,25 @@
+---
+- name: Configure instance(s)
+  hosts: all
+  become: True
+  gather_facts: No
+  tasks:
+    - name: Add script for syncing logs on exit
+      template:
+        src: sync-logs-on-exit.j2
+        dest: "{{ COMMON_BIN_DIR }}/sync-logs-on-exit"
+        owner: root
+        group: root
+        mode: 0744
+      when: COMMON_OBJECT_STORE_LOG_SYNC
+
+    - name: Force logrotate on supervisor stop
+      template:
+        src: etc/init/sync-on-stop.conf.j2
+        dest: /etc/init/sync-on-stop.conf
+        owner: root
+        group: root
+        mode: 0644
+      when: COMMON_OBJECT_STORE_LOG_SYNC
+            and (ansible_distribution_release == 'precise' or ansible_distribution_release == 'trusty')
+
