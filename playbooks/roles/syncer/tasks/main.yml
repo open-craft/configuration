@@ -1,7 +1,7 @@
 - name: Add script for syncing logs on exit
   template:
     src: sync-logs-on-exit.j2
-    dest: "{{ COMMON_BIN_DIR }}/sync-logs-on-exit"
+    dest: "/edx/bin/sync-logs-on-exit"
     owner: root
     group: root
     mode: 0744
@@ -9,5 +9,5 @@
 - name: Force logrotate on syslog stop
   lineinfile:
     path: /etc/systemd/system/syslog.service
-    line: "ExecStop={{ COMMON_OBJECT_STORE_LOG_SYNC_ON_EXIT }}"
+    line: "ExecStop=/edx/bin/sync-logs-on-exit"
     insertafter: "^ExecStart=.*$"
