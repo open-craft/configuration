@@ -27,6 +27,43 @@
     - install
     - install:configuration
 
+- name: create the watchdog config
+  template:
+    src: watchdog.conf.j2
+    dest: "{{ supervisor_available_dir }}/watchdog.conf"
+    owner: "{{ supervisor_user }}"
+    group: "{{ supervisor_user }}"
+    mode: 0644
+  become_user: "{{ supervisor_user }}"
+  tags:
+    - install
+    - install:configuration
+
+- name: enable the watchdog config
+  file:
+    src: "{{ supervisor_available_dir }}/watchdog.conf"
+    dest: "{{ supervisor_cfg_dir }}/watchdog.conf"
+    owner: "{{ supervisor_user }}"
+    state: link
+    force: yes
+    mode: 0644
+  become_user: "{{ supervisor_user }}"
+  when: not disable_edx_services
+  tags:
+    - install
+    - install:configuration
+
+- name: configure the watchdog script
+  template:
+    src: "{{ forum_watchdog|basename }}.j2"
+    dest: "{{ forum_watchdog }}"
+    mode: 0755
+  become_user: "{{ forum_user }}"
+  notify: restart the forum service when failover fails
+  tags:
+    - install
+    - install:configuration
+
 - name: create the supervisor wrapper
   template:
     src: "{{ forum_supervisor_wrapper|basename }}.j2"
