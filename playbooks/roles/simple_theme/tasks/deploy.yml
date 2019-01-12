@@ -101,7 +101,7 @@
 - block:
   - name: Create directories for static files to be copied
     file:
-      path: "{{ simpletheme_folder }}/{{ item.path | regex_replace('^([^/]+)/(.+)$','\\1/static/\\2') }}"
+      path: "{{ simpletheme_folder }}/{{ item.dest | dirname }}"
       state: directory
       owner: "{{ edxapp_user }}"
       group: "{{ common_web_group }}"
