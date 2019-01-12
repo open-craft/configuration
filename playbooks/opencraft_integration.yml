@@ -31,11 +31,11 @@
       - lms
       nginx_default_sites:
       - lms
-    - edxlocal
+    - role: edxlocal
       when: EDXAPP_MYSQL_HOST == 'localhost'
-    - memcache
+    - role: memcache
       when: "'localhost' in ; '.join(EDXAPP_MEMCACHE)"
-    - mongo
+    - role: mongo
       when: "'localhost' in EDXAPP_MONGO_HOSTS"
     - edxapp
     - role: openstack
