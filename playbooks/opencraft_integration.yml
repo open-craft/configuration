@@ -38,5 +38,3 @@
     - role: mongo
       when: "'localhost' in EDXAPP_MONGO_HOSTS"
     - edxapp
-    - role: openstack
-      when: COMMON_ENABLE_OPENSTACK_INTEGRATION
