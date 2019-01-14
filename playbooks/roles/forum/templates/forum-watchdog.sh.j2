@@ -1,16 +1,10 @@
 #!/bin/bash
 
-{% if ! devstack %}
-  tail -f {{ supervisor_log_dir }}/forum-stderr.log |
-  grep --line-buffered 'Mongo::Error::OperationFailure - not master and slaveOk=false (13435)' |
-  while read;
-  do
-    dt=`date '+%d/%m/%Y %H:%M:%S'`
-    echo "[$dt] Forum Failure detected - Restarting forum service..."
-    {{ supervisor_ctl }} restart forum
-  done
-{ % else %}
-  # On devstack just run a dummy loop to keep supervisor from trying to
-  # restart service
-  while true; do sleep 1d; done
-{% endif %}
+tail -f {{ supervisor_log_dir }}/forum-stderr.log |
+grep --line-buffered 'Mongo::Error::OperationFailure - not master and slaveOk=false (13435)' |
+while read
+do
+  dt=`date '+%d/%m/%Y %H:%M:%S'`
+  echo "[$dt] Forum Failure detected - Restarting forum service..."
+  {{ supervisor_ctl }} restart forum
+done
