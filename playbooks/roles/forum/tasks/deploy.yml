@@ -35,6 +35,7 @@
     group: "{{ supervisor_user }}"
     mode: 0644
   become_user: "{{ supervisor_user }}"
+  when: not devstack
   tags:
     - install
     - install:configuration
@@ -48,7 +49,7 @@
     force: yes
     mode: 0644
   become_user: "{{ supervisor_user }}"
-  when: not disable_edx_services
+  when: not disable_edx_services and not devstack
   tags:
     - install
     - install:configuration
@@ -59,6 +60,7 @@
     dest: "{{ forum_watchdog }}"
     mode: 0755
   become_user: "{{ forum_user }}"
+  when: not devstack
   notify: restart the forum service when failover fails
   tags:
     - install
