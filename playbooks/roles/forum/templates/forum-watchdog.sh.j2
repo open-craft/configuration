@@ -1,5 +1,6 @@
 #!/bin/bash
 
+dt=`date '+%d/%m/%Y %H:%M:%S'`
 echo "[$dt] Forum WatchDog service started"
 
 tail -f {{ supervisor_log_dir }}/forum-stderr.log |
