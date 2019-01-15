@@ -39,6 +39,7 @@
   tags:
     - install
     - install:configuration
+    - forum-watchdog
 
 - name: enable the watchdog config
   file:
@@ -53,6 +54,7 @@
   tags:
     - install
     - install:configuration
+    - forum-watchdog
 
 - name: configure the watchdog script
   template:
@@ -64,6 +66,7 @@
   tags:
     - install
     - install:configuration
+    - forum-watchdog
 
 - name: create the supervisor wrapper
   template:
