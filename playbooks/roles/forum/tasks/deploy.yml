@@ -61,7 +61,6 @@
     mode: 0755
   become_user: "{{ forum_user }}"
   when: not devstack
-  notify: restart the forum service when failover fails
   tags:
     - install
     - install:configuration
