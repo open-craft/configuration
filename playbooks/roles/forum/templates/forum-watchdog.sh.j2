@@ -1,5 +1,7 @@
 #!/bin/bash
 
+echo "[$dt] Forum WatchDog service started"
+
 tail -f {{ supervisor_log_dir }}/forum-stderr.log |
 grep --line-buffered 'Mongo::Error::OperationFailure - not master and slaveOk=false (13435)' |
 while read
