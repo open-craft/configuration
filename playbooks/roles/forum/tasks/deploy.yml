@@ -150,6 +150,17 @@
   tags:
     - manage
 
+- name: ensure watchdog is started
+  supervisorctl:
+    name: forum-watchdog
+    supervisorctl_path: "{{ supervisor_ctl }}"
+    config: "{{ supervisor_cfg }}"
+    state: started
+  when: not disable_edx_services
+  tags:
+    - manage
+    - install:forum-watchdog
+
 - include: test.yml
   tags:
     - deploy
