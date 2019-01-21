@@ -30,7 +30,7 @@
 - name: create the watchdog config
   template:
     src: watchdog.conf.j2
-    dest: "{{ supervisor_available_dir }}/watchdog.conf"
+    dest: "{{ supervisor_available_dir }}/forum-watchdog.conf"
     owner: "{{ supervisor_user }}"
     group: "{{ supervisor_user }}"
     mode: 0644
@@ -43,8 +43,8 @@
 
 - name: enable the watchdog config
   file:
-    src: "{{ supervisor_available_dir }}/watchdog.conf"
-    dest: "{{ supervisor_cfg_dir }}/watchdog.conf"
+    src: "{{ supervisor_available_dir }}/forum-watchdog.conf"
+    dest: "{{ supervisor_cfg_dir }}/forum-watchdog.conf"
     owner: "{{ supervisor_user }}"
     state: link
     force: yes
@@ -156,7 +156,7 @@
     supervisorctl_path: "{{ supervisor_ctl }}"
     config: "{{ supervisor_cfg }}"
     state: started
-  when: not disable_edx_services
+  when: not disable_edx_services and not devstack
   tags:
     - manage
     - install:forum-watchdog
