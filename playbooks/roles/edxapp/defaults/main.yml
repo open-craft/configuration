@@ -1546,6 +1546,7 @@ edxapp_cms_variant: cms
 
 # Worker Settings
 worker_django_settings_module: '{{ EDXAPP_SETTINGS }}'
+worker_django_enable_heartbeats: true
 
 # Add default service worker users
 SERVICE_WORKER_USERS:
