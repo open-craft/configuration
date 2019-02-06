@@ -57,6 +57,7 @@ simpletheme_folder: "{{ EDXAPP_COMPREHENSIVE_THEME_DIRS.0 }}/{{ EDXAPP_DEFAULT_S
 #     value: '#07f'
 #
 SIMPLETHEME_SASS_OVERRIDES: []
+SIMPLETHEME_SASS_BOOTSTRAP_OVERRIDES: []
 
 # Files from the specified directory will be copied to the static/ directory.
 # This is mainly designed to include images and JS.
