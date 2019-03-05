@@ -246,3 +246,6 @@ CREATE_SERVICE_WORKER_USERS: True
 
 COMMON_ENABLE_AWS_ROLE: true
 COMMON_ENABLE_OPENSTACK_ROLE: true
+
+# Variable to control setting up the retirement services
+COMMON_RETIREMENT_SERVICE_SETUP: false
