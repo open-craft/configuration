@@ -1,3 +1,6 @@
+- Role: edxapp
+  - Added `EDXAPP_ENABLE_ENTERPRISE_INTEGRATION` for enabling/disabling Enterprise service integration.
+
 - Role: common_vars
   - Added `COMMON_ENABLE_AWS_INTEGRATION` to run the `aws` role when enabled. Default: `False`.
 
@@ -213,6 +216,14 @@
 
 - Role: edxapp
   - Added OAUTH_DELETE_EXPIRED to enable automatic deletion of edx-django-oauth2-provider grants, access tokens, and refresh tokens as they are consumed. This will not do a bulk delete of existing rows.
+
+- Role: mongo_3_2
+  - Added role for mongo 3.2, not yet in use.
+  - Removed MONGO_CLUSTERED variable. In this role mongo replication is always configured, even if there is only one node.
+
+- Role: common_vars
+  - Added `COMMON_ENABLE_AWS_INTEGRATION` to run the `aws` role when enabled. Default: `False`
+  - Added `COMMON_ENABLE_OPENSTACK_INTEGRATION` to run the `openstack` role when enabled. Default: `False`
 
 - Role: mongo_3_2
   - Added role for mongo 3.2, not yet in use.
