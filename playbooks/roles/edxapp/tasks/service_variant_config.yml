@@ -158,8 +158,18 @@
     DB_MIGRATION_USER: "{{ COMMON_MYSQL_MIGRATE_USER }}"
     DB_MIGRATION_PASS: "{{ COMMON_MYSQL_MIGRATE_PASS }}"
   with_items: "{{ service_variants_enabled }}"
+  async: 21600
+  poll: 0
+  register: migrate_run
   tags:
     - migrate
+
+- name: migrate - check status
+  async_status: "{{ migrate_run.ansible_job_id }}"
+  register: migrate_result
+  until: migrate_result.finished
+  retries: 360
+  delay: 60
 
 # There are problems with django collectstatic copying files.  It doesn't retain
 # last modified timestamps, but relies on those same timestamps to know if a new file
