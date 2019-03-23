@@ -165,7 +165,8 @@
     - migrate
 
 - name: migrate - check status
-  async_status: "{{ migrate_run.ansible_job_id }}"
+  async_status:
+    jid: "{{ migrate_run.ansible_job_id }}"
   register: migrate_result
   until: migrate_result.finished
   retries: 360
