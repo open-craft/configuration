@@ -165,6 +165,7 @@
     - migrate
 
 - name: migrate - check status
+  when: migrate_db is defined and migrate_db|lower == "yes" and COMMON_MYSQL_MIGRATE_PASS and item != "lms-preview"
   async_status:
     jid: "{{ migrate_run.ansible_job_id }}"
   register: migrate_result
