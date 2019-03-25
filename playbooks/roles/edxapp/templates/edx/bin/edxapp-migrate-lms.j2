@@ -20,9 +20,9 @@ remove_unwanted_args () {
   {%- if db != 'read_replica' %}
 if [[ $@ =~ .*--list.* ]]; then
   remove_unwanted_args $@
-  ${SUDO:-} {{ edxapp_venv_bin }}/python manage.py lms showmigrations --database {{ db }} --settings $EDX_PLATFORM_SETTINGS ${ARGS[@]}
+  ${SUDO:-} {{ edxapp_venv_bin }}/python manage.py lms showmigrations --database {{ db }} --settings $EDX_PLATFORM_SETTINGS ${ARGS[@]} >>/tmp/migrate_lms.out 2>&1
 else
-  ${SUDO:-} {{ edxapp_venv_bin }}/python manage.py lms migrate --database {{ db }} --noinput --settings $EDX_PLATFORM_SETTINGS $@
+  ${SUDO:-} {{ edxapp_venv_bin }}/python manage.py lms migrate --database {{ db }} --noinput --settings $EDX_PLATFORM_SETTINGS $@ >>/tmp/migrate_lms.out 2>&1
 fi
   {% endif %}
 {% endfor %}
