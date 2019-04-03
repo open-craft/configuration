@@ -1,0 +1,18 @@
+---
+
+# Set up mongo cluster
+
+- name: Bootstrap instance(s)
+  hosts: all
+  gather_facts: no
+  become: True
+  roles:
+    - python
+
+- name: Install mongo
+  hosts: all
+  become: True
+  gather_facts: True
+  roles:
+    - aws
+    - mongo_3_2
