@@ -77,6 +77,9 @@ def parse_args():
                         help="don't cleanup on failures")
     parser.add_argument('--vars', metavar="EXTRA_VAR_FILE",
                         help="path to extra var file", required=False)
+    parser.add_argument('--configuration-repo', required=False,
+                        help="configuration repo",
+                        default="https://github.com/edx/configuration")
     parser.add_argument('--configuration-version', required=False,
                         help="configuration repo gitref",
                         default="master")
@@ -260,7 +263,7 @@ play="{play}"
 cluster="{play}"
 config_secure={config_secure}
 git_repo_name="configuration"
-git_repo="https://github.com/edx/$git_repo_name"
+git_repo="{configuration_repo}"
 git_repo_secure="{configuration_secure_repo}"
 git_repo_secure_name=$(basename $git_repo_secure .git)
 git_repo_private="{configuration_private_repo}"
@@ -532,6 +535,7 @@ rm -rf $base_dir
     """.format(
                 hipchat_token=args.hipchat_api_token,
                 hipchat_room=args.ansible_hipchat_room_id,
+                configuration_repo=args.configuration_repo,
                 configuration_version=args.configuration_version,
                 configuration_secure_version=args.configuration_secure_version,
                 configuration_secure_repo=args.configuration_secure_repo,
