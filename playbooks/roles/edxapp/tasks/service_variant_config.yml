@@ -1,4 +1,16 @@
 ---
+- name: Debug variables
+  debug:
+    var: EDXAPP_ENV_EXTRA
+
+- name: Debug variables
+  debug:
+    var: EDXAPP_LMS_ENV_EXTRA
+
+- name: Debug variables
+  debug:
+    var: lms_env_config
+
 - name: create application and auth config
   template:
     src: "{{ item[0] }}.{{ item[1] }}.json.j2"
