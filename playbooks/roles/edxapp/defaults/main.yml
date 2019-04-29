@@ -682,6 +682,10 @@ EDXAPP_BLOCK_STRUCTURES_SETTINGS:
   # Maximum number of retries per task.
   TASK_MAX_RETRIES: 5
 
+EDXAPP_ENABLE_MILESTONES_APP: false
+
+EDXAPP_ENABLE_PREREQUISITE_COURSES: false
+
 # Configuration settings needed for the LMS to communicate with the Enterprise service.
 EDXAPP_ENTERPRISE_API_URL: "{{ EDXAPP_LMS_ROOT_URL }}/enterprise/api/v1"
 
@@ -1070,6 +1074,12 @@ generic_env_config:  &edxapp_generic_env
   HELP_TOKENS_BOOKS: "{{ EDXAPP_HELP_TOKENS_BOOKS }}"
   # License for serving content in China
   ICP_LICENSE: "{{ EDXAPP_ICP_LICENSE }}"
+
+  # Milestones application flag
+  MILESTONES_APP: "{{ EDXAPP_ENABLE_MILESTONES_APP }}"
+
+  # Prerequisite courses feature flag
+  ENABLE_PREREQUISITE_COURSES': "{{ EDXAPP_ENABLE_PREREQUISITE_COURSES }}"
 
 lms_auth_config:
   <<: *edxapp_generic_auth
