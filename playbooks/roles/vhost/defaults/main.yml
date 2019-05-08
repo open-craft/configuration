@@ -9,7 +9,7 @@
 #
 ##
 # Defaults for role vhost
-# 
+#
 
 # Specify a name for vhost deployments, e.g. aws or openstack. Service files
 # specific to the vhost will be namespaced in directories with this name.
