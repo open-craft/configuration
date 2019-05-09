@@ -1,3 +1,7 @@
+- Role edx_django_service
+  - Added maintenance page under the flag EDX_DJANGO_SERVICE_ENABLE_S3_MAINTENANCE.
+  - Added the s3_maintenance.j2 file to point to the s3 maintenance page.
+
 - Role: edxapp
   - Added `EDXAPP_CELERY_BROKER_TRANSPORT` and renamed `EDXAPP_RABBIT_HOSTNAME`
     to `EDXAPP_CELERY_BROKER_HOSTNAME`. This is to support non-amqp brokers,
