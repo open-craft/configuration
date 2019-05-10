@@ -527,6 +527,7 @@ fi
 
 extra_args_opts+=" -e@$extra_vars"
 
+export HOME=/root
 ansible-playbook -vvvv -c local -i "localhost," $play.yml $extra_args_opts
 ansible-playbook -vvvv -c local -i "localhost," stop_all_edx_services.yml $extra_args_opts
 
