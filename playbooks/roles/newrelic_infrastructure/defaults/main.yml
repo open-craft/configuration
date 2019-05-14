@@ -33,4 +33,3 @@ newrelic_infrastructure_debian_pkgs:
 
 newrelic_infrastructure_redhat_pkgs:
   - newrelic-infra
-

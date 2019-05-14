@@ -5,6 +5,88 @@
     the value of `EDXAPP_RABBIT_HOSTNAME`, however it is recommended to update
     your configuration to set `EDXAPP_CELERY_BROKER_TRANSPORT` explicitly.
 
+- Role: edxapp
+  - Added `EDXAPP_LMS_SPLIT_DOC_STORE_READ_PREFERENCE` with a default value of
+    SECONDARY_PREFERED to distribute read workload across the replica set.
+  - Changed `EDXAPP_MONGO_HOSTS` to be a comma seperated string, which is
+    required by pymongo.MongoReplicaSetClient for multiple hosts instead of an
+    array.
+  - Added `EDXAPP_MONGO_REPLICA_SET`, which is required to use
+    pymongo.MongoReplicaSetClient in PyMongo 2.9.1.  This should be set to the
+    name of your replica set.
+    This setting causes the `EDXAPP_*_READ_PREFERENCE` settings below to be used.
+  - Added `EDXAPP_MONGO_CMS_READ_PREFERENCE` with a default value of `PRIMARY`.
+  - Added `EDXAPP_MONGO_LMS_READ_PREFERENCE` with a default value of
+    `SECONDARY_PREFERED` to distribute the read workload across the replica set
+    for replicated docstores and contentstores.
+  - Added `EDXAPP_LMS_SPLIT_DOC_STORE_READ_PREFERENCE` with a default value of
+    `EDXAPP_MONGO_LMS_READ_PREFERENCE`.
+  - Added `EDXAPP_LMS_DRAFT_DOC_STORE_CONFIG` with a default value of
+    `EDXAPP_MONGO_CMS_READ_PREFERENCE`, to enforce consistency between
+    Studio and the LMS Preview modes.
+  - Removed `EDXAPP_CONTENTSTORE_ADDITIONAL_OPTS`, since there is no notion of
+    common options to the content store anymore.
+
+- Role: nginx
+  - Modified `lms.j2` , `cms.j2` , `credentials.j2` , `edx_notes_api.j2` and `insights.j2` to enable HTTP Strict Transport Security
+  - Added `NGINX_HSTS_MAX_AGE` to make HSTS header `max_age` value configurable and used in templates
+
+- Role: server_utils
+  - Install "vim", not "vim-tiny".
+
+- Role: edxapp
+  - Added `EDXAPP_DEFAULT_COURSE_VISIBILITY_IN_CATALOG` setting (defaults to `both`).
+
+- Role: nginx
+  - Added `NGINX_EDXAPP_CMS_APP_EXTRA`, which makes it possible to add custom settings to the site configuration for Studio.
+  - Added `NGINX_EDXAPP_LMS_APP_EXTRA`, which makes it possible to add custom settings to the site configuration for the LMS.
+
+- Role: common
+  - Added `COMMON_FALLBACK_DNS_SERVERS`, which optionally adds additional `nameserver` entries to the resolvconf tail
+  - Explicitly added `resolvconf` as a dependency
+
+- Role: common_vars
+  - Added `COMMON_ENABLE_AWS_INTEGRATION` to run the `aws` role when enabled. Default: `False`
+  - Added `COMMON_ENABLE_OPENSTACK_INTEGRATION` to run the `openstack` role when enabled. Default: `False`
+
+- Role: mongo_3_2
+  - Added role for mongo 3.2, not yet in use.
+  - Removed MONGO_CLUSTERED variable. In this role mongo replication is always configured, even if there is only one node.
+
+- Role: edxapp
+  - Added creation of enterprise_worker user to provisioning. This user is used by the edx-enterprise package when making API requests to Open edX IDAs.
+
+- Role: forum
+  - Added `FORUM_REBUILD_INDEX` to rebuild the ElasticSearch index from the database, when enabled.  Default: `False`.
+
+- Role: edxapp
+  - Let `confirm_email` in `EDXAPP_REGISTRATION_EXTRA_FIELDS` default to `"hidden"`.
+  - Let `terms_of_service` in `EDXAPP_REGISTRATION_EXTRA_FIELDS` default to `"hidden"`.
+
+- Role: ecommerce
+  - Added ECOMMERCE_LANGUAGE_COOKIE_NAME which is the name of the cookie the ecommerce django app looks at for determining the language preference.
+
+- Role: neo4j
+  - Enabled splunk forwarding for neo4j logs.
+  - Increased maximum amount of open files to 40000, as suggested by neo4j.
+  - Updated the java build that neo4j uses to run.
+
+- Role: edxapp
+  - Set the default value for EDXAPP_BULK_EMAIL_ROUTING_KEY_SMALL_JOBS to
+ 'edx.lms.core.low'.
+
+- Role: jenkins_master
+  - Update pinned use of JDK7 in Jenkins installs to default JDK version from role `oraclejdk`.
+
+- Role: notifier
+  - Added `NOTIFIER_DATABASE_ENGINE`, `NOTIFIER_DATABASE_NAME`, `NOTIFIER_DATABASE_USER`, `NOTIFIER_DATABASE_PASSWORD`, `NOTIFIER_DATABASE_HOST`, and `NOTIFIER_DATABASE_PORT` to be able to configure the `notifier` service to use a database engine other than sqlite. Defaults to local sqlite.
+  - Deprecated: `NOTIFIER_DB_DIR`: Please use `NOTIFIER_DATABASE_NAME` instead.
+
+- Role: elasticsearch
+  - Replaced `elasticsearch_apt_key` and `elastic_search_apt_keyserver` with `elasticsearch_apt_key_url`
+  - Updated elasticsearch version to 1.5.0
+
+- Role: edxapp
   - Install development.txt in Vagrant and Docker devstacks
 
 - Role: edxapp
@@ -286,3 +368,11 @@
 
 - Role: insights
   - Removed `SUPPORT_EMAIL` setting from `INSIGHTS_CONFIG`, as it is was replaced by `SUPPORT_URL`.
+
+- Role: insights
+  - Added `INSIGHTS_DOMAIN` to configure the domain Insights is deployed on
+  - Added `INSIGHTS_CLOUDFRONT_DOMAIN` to configure the domain static files can be served from
+  - Added `INSIGHTS_CORS_ORIGIN_WHITELIST_EXTRA` to configure allowing CORS on domains other than the `INSIGHTS_DOMAIN`
+
+- Role: edxapp
+  - Added `EDXAPP_VIDEO_IMAGE_SETTINGS` to configure S3-backed video images.
