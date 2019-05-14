@@ -213,6 +213,12 @@ jenkins_seed_job:
     - id: INSERT_TO_MYSQL_COURSE_ENROLL_BY_COUNTRY
       enable: "{{ ANALYTICS_SCHEDULE_INSERT_TO_MYSQL_COURSE_ENROLL_BY_COUNTRY | default(true) }}"
       extra_vars: "{{ ANALYTICS_SCHEDULE_INSERT_TO_MYSQL_COURSE_ENROLL_BY_COUNTRY_EXTRA_VARS | default('') }}"
+    - id: MODULE_ENGAGEMENT_BOOTSTRAP
+      enable: "{{ ANALYTICS_SCHEDULE_MODULE_ENGAGEMENT_BOOTSTRAP | default(true) }}"
+      extra_vars: "{{ ANALYTICS_SCHEDULE_MODULE_ENGAGEMENT_BOOTSTRAP_EXTRA_VARS | default('') }}"
+    - id: MODULE_ENGAGEMENT
+      enable: "{{ ANALYTICS_SCHEDULE_MODULE_ENGAGEMENT | default(true) }}"
+      extra_vars: "{{ ANALYTICS_SCHEDULE_MODULE_ENGAGEMENT_EXTRA_VARS | default('') }}"
   dsl:
     gradle_tasks:
       - clean
