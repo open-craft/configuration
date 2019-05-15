@@ -24,6 +24,7 @@
     NGINX_SET_X_FORWARDED_HEADERS: True
     DISCOVERY_URL_ROOT: 'http://localhost:{{ DISCOVERY_NGINX_PORT }}'
     COMMON_ENABLE_AWS_ROLE: false
+    COMMON_ENABLE_OPENSTACK_ROLE: false
     ecommerce_create_demo_data: true
     credentials_create_demo_data: true
     SANDBOX_ENABLE_DISCOVERY: true
@@ -33,6 +34,7 @@
     SANDBOX_ENABLE_RABBITMQ: true
     JOURNALS_ENABLED: false
     EDX_NOTES_API_ENABLED: false
+    DEMO_ROLE_ENABLED: true
   roles:
     - role: swapfile
       SWAPFILE_SIZE: 4GB
@@ -59,6 +61,8 @@
     - role: edxapp
       celery_worker: True
     - edxapp
+    - role: openstack
+      when: COMMON_ENABLE_OPENSTACK_ROLE
     - role: ecommerce
       when: SANDBOX_ENABLE_ECOMMERCE
     - role: ecomworker
@@ -74,7 +78,8 @@
       nginx_sites:
       - edx_notes_api
       when: EDX_NOTES_API_ENABLED
-    - demo
+    - role: demo
+      when: DEMO_ROLE_ENABLED
     - oauth_client_setup
     - oraclejdk
     - role: elasticsearch
