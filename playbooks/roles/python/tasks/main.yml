@@ -3,12 +3,18 @@
 # support python3.
 
 - name: Update apt-get
-  raw: apt-get update -qq
+  raw: apt-get update
   register: python_update_result
-  until: python_update_result.rc == 0
   retries: 10
   delay: 10
 
+- debug:
+    var: python_update_result
+
 - name: Install packages
-  raw: "apt-get install -qq {{ item }}"
+  raw: "apt-get install {{ item }}"
   with_items: "{{ python_packages }}"
+  register: apt_install
+
+- debug:
+    var: apt_install
