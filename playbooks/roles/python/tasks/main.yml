@@ -2,6 +2,15 @@
 # xenial+ cloud images don't have python2.7 installed, and ansible doesn't yet
 # support python3.
 
+- name: Print repos
+  become: true
+  raw: cat /etc/apt/sources.list | grep -v -e '#' -e '^$'
+  register: repos_output
+
+- name: Debug repos
+  debug:
+    var: repos_output
+
 - name: Update apt-get
   become: true
   raw: apt-get update
