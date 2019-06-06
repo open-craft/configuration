@@ -24,11 +24,11 @@
 #
 # Start dealing with Jumbo frames issue in mixed MTU deployements in AWS
 #
-- name: Gather ec2 facts for use in other roles
-  action: ec2_metadata_facts
-  # no_log: True
-  tags:
-    - deploy
+# - name: Gather ec2 facts for use in other roles
+#   action: ec2_metadata_facts
+#   # no_log: True
+#   tags:
+#     - deploy
 
 - name: Set the MTU to 1500 temporarily
   shell: "/sbin/ifconfig {{ ansible_default_ipv4.interface }} mtu 1500 up"
