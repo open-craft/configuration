@@ -2,13 +2,9 @@
 # xenial+ cloud images don't have python2.7 installed, and ansible doesn't yet
 # support python3.
 
-- name: Check if the cloud-init command is installed
-  command: test -e /usr/bin/cloud-init
-  register: cloud_init_command
-
 - name: Wait until cloud-init has finished running
-  raw: cloud-init status --wait
-  when: cloud_init_command.rc == 0
+  raw: test -e /usr/bin/cloud-init && cloud-init status --wait
+  ignore_errors: yes
 
 - name: Update apt-get
   raw: apt-get update -qq
