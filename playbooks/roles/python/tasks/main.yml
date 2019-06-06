@@ -12,8 +12,17 @@
 - debug:
     var: python_update_result
 
+- name: Search for python-minimal
+  become: true
+  raw: apt-cache search python-minimal
+  register: search_result
+
+- name: Debug search for python-minimal
+  debug:
+    var: search_result
+
 - name: Install packages
-  raw: "apt-get install {{ item }}"
+  raw: "apt-get install -y {{ item }}"
   with_items: "{{ python_packages }}"
   register: apt_install
 
