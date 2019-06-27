@@ -220,6 +220,14 @@
     - install
     - install:configuration
 
+- name: Install python mysqldb module
+  pip: name={{item}} state=present
+  with_items:
+    - MySQL-python
+  tags:
+    - install
+    - install:configuration
+
 - name: Grant access to table storing test data in output database
   mysql_user:
     user: "{{ ANALYTICS_PIPELINE_OUTPUT_DATABASE.username }}"
