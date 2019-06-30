@@ -588,7 +588,7 @@ EDXAPP_CODE_JAIL_LIMITS:
 # Should be set to
 EDXAPP_WORKERS:
   lms: 14
-  cms: 14
+  cms: 4
 # EDXAPP_WORKER_THREADS
 #   lms: <num worker threads>
 #   cms: <num worker threads>
