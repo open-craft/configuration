@@ -220,6 +220,28 @@
     - install
     - install:configuration
 
+- name: Install a bunch of system packages on which analytics_pipeline relies
+  apt:
+    name: "{{ item }}"
+    state: present
+    update_cache: true
+    cache_valid_time: 3600
+  with_items: "{{ analytics_pipeline_debian_pkgs }}"
+  when: ansible_distribution in common_debian_variants
+  tags:
+    - install
+    - install:system-requirements
+
+- name: Install a bunch of system packages on which analytics_pipeline relies
+  yum:
+    name: "{{ item }}"
+    state: present
+  with_items: "{{ analytics_pipeline_redhat_pkgs }}"
+  when: ansible_distribution in common_redhat_variants
+  tags:
+    - install
+    - install:system-requirements
+
 - name: Install python mysqldb module
   pip: name={{item}} state=present
   with_items:

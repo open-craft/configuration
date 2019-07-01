@@ -50,6 +50,8 @@ analytics_pipeline_util_library:
 # OS packages
 #
 
-analytics_pipeline_debian_pkgs: []
+analytics_pipeline_debian_pkgs:
+  - libmysqlclient-dev
 
-analytics_pipeline_redhat_pkgs: []
+analytics_pipeline_redhat_pkgs:
+  - libmysqlclient-devel
