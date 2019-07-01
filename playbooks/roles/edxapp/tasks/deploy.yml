@@ -277,7 +277,7 @@
     extra_args: "-i {{ COMMON_PYPI_MIRROR_URL }} --exists-action w"
   become_user: "{{ edxapp_sandbox_user }}"
   when: EDXAPP_PYTHON_SANDBOX
-  with_tiems:
+  with_items:
     - "{{ sandbox_pre_requirements }}"
     - "{{ sandbox_base_requirements }}"
   tags:
