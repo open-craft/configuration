@@ -28,8 +28,10 @@
       nginx_default_sites:
       - lms
     - role: edxlocal
+      when: EDXAPP_MYSQL_HOST == 'localhost'
     - role: memcache
     - role: mongo
+      when: "'localhost' in EDXAPP_MONGO_HOSTS"
     - role: rabbitmq
       rabbitmq_ip: 127.0.0.1
     - oraclejdk
@@ -39,6 +41,7 @@
     - edxapp
     - demo
     - oauth_client_setup
+    - elasticsearch
     - forum
     - role: notifier
     - role: xqueue
@@ -48,4 +51,3 @@
       when: COMMON_ENABLE_NEWRELIC
     - role: datadog
       when: COMMON_ENABLE_DATADOG
-
