@@ -31,9 +31,9 @@
     - role: edxlocal
       when: EDXAPP_MYSQL_HOST == 'localhost'
     - role: memcache
+      when: "'localhost' in ' '.join(EDXAPP_MEMCACHE)"
     - role: mongo
-    - role: rabbitmq
-      rabbitmq_ip: 127.0.0.1
+      when: "'localhost' in EDXAPP_MONGO_HOSTS"
     - role: edxapp
       celery_worker: True
     - edxapp
@@ -43,7 +43,9 @@
     - oauth_client_setup
     - oraclejdk
     - role: elasticsearch
+      when: "'localhost' in EDXAPP_ELASTIC_SEARCH_CONFIG|map(attribute='host')"
     - forum
+    - discovery
     - role: notifier
       NOTIFIER_DIGEST_TASK_INTERVAL: 5
     - role: xqueue
