@@ -37,8 +37,6 @@
     - role: edxapp
       celery_worker: True
     - edxapp
-    - analytics_api
-    - insights
     # not ready yet: - edx_notes_api
     - oauth_client_setup
     - oraclejdk
