@@ -34,6 +34,8 @@
       when: "'localhost' in ' '.join(EDXAPP_MEMCACHE)"
     - role: mongo
       when: "'localhost' in EDXAPP_MONGO_HOSTS"
+    - role: rabbitmq
+      rabbitmq_ip: 127.0.0.1
     - role: edxapp
       celery_worker: True
     - edxapp
