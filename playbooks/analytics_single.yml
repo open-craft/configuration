@@ -30,6 +30,8 @@
       when: EDXAPP_MYSQL_HOST == 'localhost'
     - role: memcache
       when: "'localhost' in ' '.join(EDXAPP_MEMCACHE)"
+    - role: elasticsearch
+      when: ANALYTICS_API_ELASTICSEARCH_LEARNERS_HOST == 'localhost'
     - role: nginx
       nginx_sites:
         - analytics_api
