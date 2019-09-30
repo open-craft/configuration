@@ -37,6 +37,13 @@
 # ansible-playbook -i 'localhost,' ./analytics_pipeline.yml  -e@/ansible/vars/deployment.yml -e@/ansible/vars/env-deployment.yml
 #
 
+- name: Install dependencies
+  apt:
+    name: "{{ item }}"
+    install_recommends: yes
+    state: present
+  with_items: "{{ analytics_pipeline_debian_pkgs }}"
+
 - name: Create config directory
   file:
     path: "{{ ANALYTICS_PIPELINE_CONFIG_DIR }}"
