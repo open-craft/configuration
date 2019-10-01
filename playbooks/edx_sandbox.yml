@@ -18,6 +18,8 @@
   roles:
     - role: swapfile
       SWAPFILE_SIZE: 8GB
+    - role: aws
+      when: COMMON_ENABLE_AWS_ROLE
     - role: nginx
       nginx_sites:
       - certs
@@ -27,7 +29,6 @@
       - xqueue
       nginx_default_sites:
       - lms
-
     - role: edxlocal
       when: EDXAPP_MYSQL_HOST == 'localhost'
     - role: memcache
