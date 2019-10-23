@@ -184,6 +184,8 @@ NGINX_CREATE_HTPASSWD_FILE: >
 NGINX_EDXAPP_CMS_APP_EXTRA: ""
 # Extra settings to add to site configuration for LMS
 NGINX_EDXAPP_LMS_APP_EXTRA: ""
+# Extra settings to add to site configuration for Insights
+NGINX_INSIGHTS_APP_EXTRA: ""
 
 # List of subnet or IP addressess to allow to access admin endpoints 
 NGINX_ADMIN_ACCESS_CIDRS: []

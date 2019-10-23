@@ -69,6 +69,8 @@ location @proxy_to_app {
 
     proxy_redirect off;
     proxy_pass http://insights_app_server;
+
+    {{ NGINX_INSIGHTS_APP_EXTRA }}
   }
 
   # Prevent invalid display courseware in IE 10+ with high privacy settings
