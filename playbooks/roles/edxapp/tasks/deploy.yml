@@ -42,6 +42,7 @@
     version: "{{ edx_platform_version }}"
     accept_hostkey: yes
     key_file: "{% if EDXAPP_USE_GIT_IDENTITY %}{{ edxapp_git_identity }}{% endif %}"
+    force: yes
   become_user: "{{ edxapp_user }}"
   register: edxapp_platform_checkout
   tags:
