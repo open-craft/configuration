@@ -89,11 +89,12 @@ extra_vars_file="/var/tmp/extra-vars-$$.yml"
 sandbox_secure_vars_file="${WORKSPACE}/configuration-secure/ansible/vars/developer-sandbox.yml"
 sandbox_internal_vars_file="${WORKSPACE}/configuration-internal/ansible/vars/developer-sandbox.yml"
 extra_var_arg="-e@${extra_vars_file}"
+program_manager="false"
 
 if [[ $edx_internal == "true" ]]; then
     # if this is a an edx server include
     # the secret var file
-    extra_var_arg="-e@${sandbox_internal_vars_file} -e@${sandbox_secure_vars_file} -e@${extra_vars_file}"
+    extra_var_arg="-e@${sandbox_internal_vars_file} -e@${sandbox_secure_vars_file} -e@${extra_vars_file} -e DECRYPT_CONFIG_PRIVATE_KEY=$WORKSPACE/configuration-secure/ansible/keys/sandbox-remote-config/sandbox/private.key -e ENCRYPTED_CFG_DIR=$WORKSPACE/configuration-internal/sandbox-remote-config/sandbox -e UNENCRYPTED_CFG_DIR=$WORKSPACE"
 fi
 
 if [[ -z $region ]]; then
@@ -127,14 +128,18 @@ fi
 
 if [[ -z $ami ]]; then
   if [[ $server_type == "full_edx_installation" ]]; then
-    ami="ami-75789e63"
+    ami="ami-0d7c5de485513e2dd"
   elif [[ $server_type == "ubuntu_16.04" || $server_type == "full_edx_installation_from_scratch" ]]; then
-    ami="ami-9dcfdb8a"
+    ami="ami-092546daafcc8bc0d"
   fi
 fi
 
 if [[ -z $instance_type ]]; then
-  instance_type="t2.large"
+  instance_type="r5.large"
+fi
+
+if [[ -z $instance_initiated_shutdown_behavior ]]; then
+  instance_initiated_shutdown_behavior="terminate"
 fi
 
 if [[ -z $enable_newrelic ]]; then
@@ -157,9 +162,38 @@ if [[ -z $edx_demo_course ]]; then
   edx_demo_course="false"
 fi
 
+if [[ -z $enable_automatic_auth_for_testing ]]; then
+  enable_automatic_auth_for_testing="false"
+fi
+
 if [[ -z $enable_client_profiling ]]; then
   enable_client_profiling="false"
 fi
+
+if [[ -z $set_whitelabel ]]; then
+  set_whitelabel="true"
+fi
+
+if [[ -z $registrar ]]; then
+  registrar="false"
+fi
+
+if [[ -z $registrar_version ]]; then
+  registrar_version="master"
+fi
+
+if [[ -z $learner_portal ]]; then
+  learner_portal="false"
+fi
+
+if [[ -z $learner_portal_version ]]; then
+  learner_portal_version="master"
+fi
+
+if [[ $registrar == 'true' ]]; then
+  program_manager="true"
+fi
+
 
 # Lowercase the dns name to deal with an ansible bug
 dns_name="${dns_name,,}"
@@ -167,23 +201,26 @@ dns_name="${dns_name,,}"
 deploy_host="${dns_name}.${dns_zone}"
 ssh-keygen -f "/var/lib/jenkins/.ssh/known_hosts" -R "$deploy_host"
 
-cd playbooks/edx-east
+cd playbooks
 
 cat << EOF > $extra_vars_file
 edx_platform_version: $edxapp_version
 forum_version: $forum_version
 notifier_version: $notifier_version
-xqueue_version: $xqueue_version
-xserver_version: $xserver_version
+XQUEUE_VERSION: $XQUEUE_VERSION
 certs_version: $certs_version
 configuration_version: $configuration_version
 demo_version: $demo_version
+THEMES_VERSION: $themes_version
+registrar_version: $registrar_version
+learner_portal_version: $learner_portal_version
+program_manager_version: $program_manager_version
 
 edx_ansible_source_repo: ${configuration_source_repo}
 edx_platform_repo: ${edx_platform_repo}
 
 EDXAPP_PLATFORM_NAME: $sandbox_platform_name
-EDXAPP_COMPREHENSIVE_THEME_DIRS: $edxapp_comprehensive_theme_dirs
+COMMON_SANDBOX_BUILD: True
 
 EDXAPP_STATIC_URL_BASE: $static_url_base
 EDXAPP_LMS_NGINX_PORT: 80
@@ -193,13 +230,34 @@ ECOMMERCE_NGINX_PORT: 80
 ECOMMERCE_SSL_NGINX_PORT: 443
 ECOMMERCE_VERSION: $ecommerce_version
 
-PROGRAMS_NGINX_PORT: 80
-PROGRAMS_SSL_NGINX_PORT: 443
-PROGRAMS_VERSION: $programs_version
-
 CREDENTIALS_NGINX_PORT: 80
 CREDENTIALS_SSL_NGINX_PORT: 443
 CREDENTIALS_VERSION: $credentials_version
+
+ANALYTICS_API_NGINX_PORT: 80
+ANALYTICS_API_SSL_NGINX_PORT: 443
+ANALYTICS_API_VERSION: $analytics_api_version
+
+REGISTRAR_NGINX_PORT: 80
+REGISTRAR_SSL_NGINX_PORT: 443
+REGISTRAR_VERSION: $registrar_version
+REGISTRAR_ENABLED: $registrar
+REGISTRAR_SANDBOX_BUILD: True
+
+LEARNER_PORTAL_NGINX_PORT: 80
+LEARNER_PORTAL_SSL_NGINX_PORT: 443
+LEARNER_PORTAL_VERSION: $learner_portal_version
+LEARNER_PORTAL_ENABLED: $learner_portal
+LEARNER_PORTAL_SANDBOX_BUILD: True
+
+PROGRAM_MANAGER_NGINX_PORT: 80
+PROGRAM_MANAGER_SSL_NGINX_PORT: 443
+PROGRAM_MANAGER_VERSION: $program_manager_version
+PROGRAM_MANAGER_ENABLED: $program_manager
+PROGRAM_MANAGER_SANDBOX_BUILD: True
+
+VIDEO_PIPELINE_BASE_NGINX_PORT: 80
+VIDEO_PIPELINE_BASE_SSL_NGINX_PORT: 443
 
 DISCOVERY_NGINX_PORT: 80
 DISCOVERY_SSL_NGINX_PORT: 443
@@ -208,11 +266,11 @@ NGINX_SET_X_FORWARDED_HEADERS: True
 NGINX_REDIRECT_TO_HTTPS: True
 EDX_ANSIBLE_DUMP_VARS: true
 migrate_db: "yes"
-rabbitmq_ip: "127.0.0.1"
-rabbitmq_refresh: True
+dns_name: $dns_name
 COMMON_HOSTNAME: $dns_name
 COMMON_DEPLOYMENT: edx
 COMMON_ENVIRONMENT: sandbox
+COMMON_LMS_BASE_URL: https://${deploy_host}
 
 nginx_default_sites:
   - lms
@@ -251,9 +309,6 @@ EOF_PROFILING
 fi
 
 if [[ $edx_internal == "true" ]]; then
-    # if this isn't a public server add the github
-    # user and set edx_internal to True so that
-    # xserver is installed
     cat << EOF >> $extra_vars_file
 EDXAPP_PREVIEW_LMS_BASE: preview-${deploy_host}
 EDXAPP_LMS_BASE: ${deploy_host}
@@ -269,43 +324,80 @@ COMMON_USER_INFO:
 USER_CMD_PROMPT: '[$name_tag] '
 COMMON_ENABLE_NEWRELIC_APP: $enable_newrelic
 COMMON_ENABLE_DATADOG: $enable_datadog
+COMMON_OAUTH_BASE_URL: "https://${deploy_host}"
 FORUM_NEW_RELIC_ENABLE: $enable_newrelic
 ENABLE_PERFORMANCE_COURSE: $performance_course
 ENABLE_DEMO_TEST_COURSE: $demo_test_course
 ENABLE_EDX_DEMO_COURSE: $edx_demo_course
+EDXAPP_ENABLE_AUTO_AUTH: $enable_automatic_auth_for_testing
 EDXAPP_NEWRELIC_LMS_APPNAME: sandbox-${dns_name}-edxapp-lms
 EDXAPP_NEWRELIC_CMS_APPNAME: sandbox-${dns_name}-edxapp-cms
 EDXAPP_NEWRELIC_WORKERS_APPNAME: sandbox-${dns_name}-edxapp-workers
 XQUEUE_NEWRELIC_APPNAME: sandbox-${dns_name}-xqueue
+XQUEUE_CONSUMER_NEWRELIC_APPNAME: sandbox-${dns_name}-xqueue_consumer
 FORUM_NEW_RELIC_APP_NAME: sandbox-${dns_name}-forums
 SANDBOX_USERNAME: $github_username
 EDXAPP_ECOMMERCE_PUBLIC_URL_ROOT: "https://ecommerce-${deploy_host}"
 EDXAPP_ECOMMERCE_API_URL: "https://ecommerce-${deploy_host}/api/v2"
-EDXAPP_COURSE_CATALOG_API_URL: "https://catalog-${deploy_host}/api/v1"
+EDXAPP_DISCOVERY_API_URL: "https://discovery-${deploy_host}/api/v1"
+EDXAPP_COURSE_CATALOG_API_URL: "{{ EDXAPP_DISCOVERY_API_URL }}"
 
+ANALYTICS_API_LMS_BASE_URL: "https://{{ EDXAPP_LMS_BASE }}/"
+
+# NOTE: This is the same as DISCOVERY_URL_ROOT below
+ECOMMERCE_DISCOVERY_SERVICE_URL: "https://discovery-${deploy_host}"
 ECOMMERCE_ECOMMERCE_URL_ROOT: "https://ecommerce-${deploy_host}"
 ECOMMERCE_LMS_URL_ROOT: "https://${deploy_host}"
 ECOMMERCE_SOCIAL_AUTH_REDIRECT_IS_HTTPS: true
+ecommerce_create_demo_data: true
 
-PROGRAMS_LMS_URL_ROOT: "https://${deploy_host}"
-PROGRAMS_URL_ROOT: "https://programs-${deploy_host}"
-PROGRAMS_SOCIAL_AUTH_REDIRECT_IS_HTTPS: true
-PROGRAMS_CORS_ORIGIN_WHITELIST:
-  - studio-${deploy_host}
+DISCOVERY_URL_ROOT: "https://discovery-${deploy_host}"
+DISCOVERY_SOCIAL_AUTH_REDIRECT_IS_HTTPS: true
 
+REGISTRAR_URL_ROOT: "https://registrar-${deploy_host}"
+REGISTRAR_API_ROOT: "https://registrar-${deploy_host}/api"
+REGISTRAR_DISCOVERY_BASE_URL: "https://discovery-${deploy_host}"
+REGISTRAR_LMS_BASE_URL: "https://${deploy_host}"
+REGISTRAR_SOCIAL_AUTH_REDIRECT_IS_HTTPS: true
+
+LEARNER_PORTAL_URL_ROOT: "https://learner-portal-${deploy_host}"
+LEARNER_PORTAL_DISCOVERY_BASE_URL: "https://discovery-${deploy_host}"
+LEARNER_PORTAL_LMS_BASE_URL: "https://${deploy_host}"
+
+PROGRAM_MANAGER_URL_ROOT: "https://program-manager-${deploy_host}"
+PROGRAM_MANAGER_DISCOVERY_BASE_URL: "https://discovery-${deploy_host}"
+PROGRAM_MANAGER_LMS_BASE_URL: "https://${deploy_host}"
+PROGRAM_MANAGER_REGISTRAR_API_BASE_URL: "https://registrar-${deploy_host}/api"
+
+credentials_create_demo_data: true
 CREDENTIALS_LMS_URL_ROOT: "https://${deploy_host}"
 CREDENTIALS_DOMAIN: "credentials-${deploy_host}"
 CREDENTIALS_URL_ROOT: "https://{{ CREDENTIALS_DOMAIN }}"
 CREDENTIALS_SOCIAL_AUTH_REDIRECT_IS_HTTPS: true
-COURSE_DISCOVERY_ECOMMERCE_API_URL: "https://ecommerce-${deploy_host}/api/v2"
+CREDENTIALS_DISCOVERY_API_URL: "{{ DISCOVERY_URL_ROOT }}/api/v1/"
 
-DISCOVERY_URL_ROOT: "https://discovery-${deploy_host}"
-DISCOVERY_SOCIAL_AUTH_REDIRECT_IS_HTTPS: true
-DISCOVERY_PROGRAMS_API_URL: "{{ PROGRAMS_URL_ROOT }}/api/v1/"
+VIDEO_PIPELINE_DOMAIN: "veda-${deploy_host}"
+VIDEO_PIPELINE_BASE_URL_ROOT: "https://{{ VIDEO_PIPELINE_DOMAIN }}"
+VIDEO_PIPELINE_BASE_LMS_BASE_URL: "https://{{ EDXAPP_LMS_BASE }}"
+
+VEDA_WEB_FRONTEND_VERSION: ${video_pipeline_version:-master}
+VEDA_PIPELINE_WORKER_VERSION: ${video_pipeline_version:-master}
+VEDA_ENCODE_WORKER_VERSION: ${video_encode_worker_version:-master}
 
 EOF
 fi
 
+encrypted_config_apps=(edxapp ecommerce ecommerce_worker analytics_api insights discovery credentials registrar edx_notes_api)
+
+for app in ${encrypted_config_apps[@]}; do
+     eval app_decrypt_and_copy_config_enabled=\${${app}_decrypt_and_copy_config_enabled}
+     if [[ ${app_decrypt_and_copy_config_enabled} == "true" ]]; then
+         cat << EOF >> $extra_vars_file
+${app^^}_DECRYPT_CONFIG_ENABLED: true
+${app^^}_COPY_CONFIG_ENABLED: true
+EOF
+     fi
+done
 
 if [[ $recreate == "true" ]]; then
     # vars specific to provisioning added to $extra-vars
@@ -317,6 +409,7 @@ security_group: $security_group
 ami: $ami
 region: $region
 zone: $zone
+instance_initiated_shutdown_behavior: $instance_initiated_shutdown_behavior
 instance_tags:
     environment: $environment
     github_username: $github_username
@@ -333,7 +426,7 @@ EOF
 
 
     if [[ $server_type == "full_edx_installation" ]]; then
-        extra_var_arg+=' -e instance_userdata="" -e launch_wait_time=0'
+        extra_var_arg+=' -e instance_userdata="" -e launch_wait_time=0 -e elb_pre_post=false'
     fi
     # run the tasks to launch an ec2 instance from AMI
     cat $extra_vars_file
@@ -342,28 +435,41 @@ EOF
     if [[ $server_type == "full_edx_installation" ]]; then
         # additional tasks that need to be run if the
         # entire edx stack is brought up from an AMI
-        run_ansible rabbitmq.yml -i "${deploy_host}," $extra_var_arg -e 'elb_pre_post=false' --user ubuntu
+        run_ansible redis.yml -i "${deploy_host}," $extra_var_arg --user ubuntu
         run_ansible restart_supervisor.yml -i "${deploy_host}," $extra_var_arg --user ubuntu
     fi
 fi
 
-declare -A deploy
-roles="edxapp forum ecommerce programs credentials discovery notifier xqueue xserver certs demo testcourses"
+veda_web_frontend=${video_pipeline:-false}
+veda_pipeline_worker=${video_pipeline:-false}
+veda_encode_worker=${video_encode_worker:-false}
+video_pipeline_integration=${video_pipeline:-false}
 
-for role in $roles; do
-    deploy[$role]=${!role}
+# ansible overrides for master's integration environment setup
+if [[ $registrar == "true" ]]; then
+    cat << EOF >> $extra_vars_file
+COMMON_ENABLE_SPLUNKFORWARDER: true,
+EDXAPP_ENABLE_ENROLLMENT_RESET: true,
+EOF
+fi
+
+declare -A deploy
+plays="edxapp forum ecommerce credentials discovery analyticsapi veda_web_frontend veda_pipeline_worker veda_encode_worker video_pipeline_integration notifier xqueue certs demo testcourses registrar program_manager learner_portal"
+
+for play in $plays; do
+    deploy[$play]=${!play}
 done
 
 # If reconfigure was selected or if starting from an ubuntu 16.04 AMI
-# run non-deploy tasks for all roles
+# run non-deploy tasks for all plays
 if [[ $reconfigure == "true" || $server_type == "full_edx_installation_from_scratch" ]]; then
     cat $extra_vars_file
     run_ansible edx_continuous_integration.yml -i "${deploy_host}," $extra_var_arg --user ubuntu
 fi
 
 if [[ $reconfigure != "true" && $server_type == "full_edx_installation" ]]; then
-    # Run deploy tasks for the roles selected
-    for i in $roles; do
+    # Run deploy tasks for the plays selected
+    for i in $plays; do
         if [[ ${deploy[$i]} == "true" ]]; then
             cat $extra_vars_file
             run_ansible ${i}.yml -i "${deploy_host}," $extra_var_arg --user ubuntu
@@ -374,7 +480,7 @@ if [[ $reconfigure != "true" && $server_type == "full_edx_installation" ]]; then
     done
 fi
 
-# deploy the edx_ansible role
+# deploy the edx_ansible play
 run_ansible edx_ansible.yml -i "${deploy_host}," $extra_var_arg --user ubuntu
 cat $sandbox_secure_vars_file $sandbox_internal_vars_file $extra_vars_file | grep -v -E "_version|migrate_db" > ${extra_vars_file}_clean
 ansible -c ssh -i "${deploy_host}," $deploy_host -m copy -a "src=${extra_vars_file}_clean dest=/edx/app/edx_ansible/server-vars.yml" -u ubuntu -b
@@ -390,6 +496,27 @@ fi
 
 # set the hostname
 run_ansible set_hostname.yml -i "${deploy_host}," -e hostname_fqdn=${deploy_host} --user ubuntu
+
+# master's integration environment setup
+if [[ $registrar == "true" ]]; then
+  # vars specific to master's integration environment
+  cat << EOF >> $extra_vars_file
+username: $registrar_user_email
+email: $registrar_user_email
+organization_key: $registrar_org_key
+registrar_role: "organization_read_write_enrollments"
+EOF
+  run_ansible masters_sandbox.yml -i "${deploy_host}," $extra_var_arg --user ubuntu
+fi
+
+if [[ $set_whitelabel == "true" ]]; then
+    # Setup Whitelabel themes
+    run_ansible whitelabel.yml -i "${deploy_host}," $extra_var_arg --user ubuntu
+fi
+
+if [[ $enable_newrelic == "true" ]]; then
+    run_ansible run_role.yml -i "${deploy_host}," -e role=newrelic_infrastructure $extra_var_arg  --user ubuntu
+fi
 
 rm -f "$extra_vars_file"
 rm -f ${extra_vars_file}_clean

@@ -1,3 +1,578 @@
+- Open edX
+  - The wrong version of xqueue was being installed, fixed.
+
+- Open edX
+  - native.sh needed to uninstall pyyaml to proceed
+
+- Role: enterprise_catalog
+  - Create role
+
+- Role: blockstore
+  - Increased upload limit to 10M
+
+- Role: ecommerce
+  - Fixed paypal payment processor default configuration
+
+- Role: edxapp
+  - Added `ENABLE_PUBLISHER` for indicating that the publisher frontend service is in use
+
+- Role: discovery
+  - Added `ENABLE_PUBLISHER` for indicating that the publisher frontend service is in use
+
+- Role: edxapp
+  - Added `ENABLE_ENROLLMENT_RESET` feature flag for masters integration sandboxes
+
+- Role: conductor
+  - New role added to configure the conductor service
+
+- Role: jwt_signature
+  - Added role to inject JWT signing keys into application config, used from edxapp, worker, and registrar.
+
+- Playbook: masters_sandbox_update
+  - Create edx partner
+
+- Playbook: program_manager
+  - Added playbook to setup program-manager micro-frontend application on sandboxes
+
+- Role: program_manager
+  - Created the program-manager role for micro-frontend application to be setup
+
+- Role: registrar
+  - Set CSRF_TRUSTED_ORIGINS.
+
+- Role: registrar
+  - Set CORS_ORIGIN_WHITELIST.
+
+- Role: discovery
+  - Override DISCOVERY_MYSQL_REPLICA_HOST to `edx.devstack.mysql` in docker.
+
+- Playbook: masters_sandbox
+  - Include call to create_api_access_request
+
+- Role: discovery
+  - Add mysql replica settings to env config.
+
+- Role: common_vars
+  - Default `COMMON_JWT_PUBLIC_SIGNING_JWK_SET` to `''`
+    instead of `!!null`. Because of how this setting is handled,
+    `!!null` ends up rendering as the literal string `None` instead
+    of the value `null`, which causes JSON decoding to fail
+    wherever the default value is used (as `'None'` is not valid JSON).
+    By setting the default to a Falsy value like the
+    empty string, edx-drf-extensions does not attempt to JSON-
+    decode it.
+
+- Playbook: masters_sandbox
+  - Added playbook to setup user and api access
+
+- Role: registrar
+  - Changed `REGISTRAR_CELERY_ALWAYS_EAGER` default to `false`.
+
+- Role: registrar
+  - Added `REGISTRAR_CELERY_ALWAYS_EAGER` with default `True`.
+  - Injected above settings as environment variable for Registrar.
+
+- Role: xserver
+  - Remove xserver from sandbox builds.
+
+- Role: oauth_client_setup
+  - Ensure that created DOT applications have corresponding ApplicationAccess records with user_id scope.
+
+- Role: edx_notes_api
+  - Added `EDX_NOTES_API_HOSTNAME` to set a hostname for the edx-notes-api IDA.
+
+- Open edX
+  - Added `SANDBOX_ENABLE_NOTES` to enable/disable setting up the edx-notes-api IDA.
+
+- Role: registrar
+  - Add registrar to sandbox builds.
+
+- Role: registrar
+  - Change default celery queue to `registrar.default`, explicitly set default exchange and routing key.
+
+- Role: designer
+  - Create role
+
+- Role: supervisor
+  - Add registrar to `pre_supervisor_checks.py`
+
+- Role: registrar
+  - Added `registrar-workers.conf.j2`
+  - Add task to generate `registrar-workers.conf` from `registrar-workers.conf.j2`
+  - Added `REGISTRAR_WORKERS_ENABLE_NEWRELIC_DISTRIBUTED_TRACING`
+  - Added `REGISTRAR_WORKER_DEFAULT_STOPWAITSECS`
+  - Added `REGISTRAR_CELERY_HEARTBEAT_ENABLED`
+  - Added `REGISTRAR_NEWRELIC_WORKERS_APPNAME`
+  - Added `REGISTRAR_CELERY_WORKERS`
+
+- Role: registrar
+  - Added `REGISTRAR_CELERY_BROKER_TRANSPORT`.
+  - Added `REGISTRAR_CELERY_BROKER_USER`.
+  - Added `REGISTRAR_CELERY_BROKER_PASSWORD`.
+  - Added `REGISTRAR_CELERY_BROKER_HOSTNAME`.
+  - Added `REGISTRAR_CELERY_BROKER_VHOST`.
+  - Injected all above settings as environment variables for Registrar.
+
+- Role: registrar
+  - Added `REGISTRAR_API_ROOT`
+  - Modified `REGISTRAR_MEDIA_URL`.
+
+- Role: edx_django_service
+  - Added new overridable variable `edx_django_service_api_root`
+
+- Role: registrar
+  - Replaced `REGISTRAR_MEDIA_ROOT`.
+  - Added `REGISTRAR_MEDIA_STORAGE_BACKEND`.
+
+- Role: registrar
+  - Replaced `REGISTRAR_LMS_URL_ROOT` with `REGISTRAR_LMS_BASE_URL`.
+  - Replaced `REGISTRAR_DISCOVERY_API_URL` with `REGISTRAR_DISCOVERY_BASE_URL`.
+
+- Role: registrar
+  - Added `REGISTRAR_SEGMENT_KEY` for segment.io event tracking.
+
+- Role: registrar
+  - Added `REGISTRAR_SOCIAL_AUTH_EDX_OAUTH2_KEY` for oauth2.
+  - Added `REGISTRAR_SOCIAL_AUTH_EDX_OAUTH2_SECRET` for oauth2.
+  - Added `REGISTRAR_BACKEND_SERVICE_EDX_OAUTH2_KEY` for backend auth.
+  - Added `REGISTRAR_BACKEND_SERVICE_EDX_OAUTH2_SECRET` for backend auth.
+  - Added `REGISTRAR_SERVICE_USER_EMAIL` to have a registrar service user on LMS
+  - Added `REGISTRAR_SERVICE_USER_NAME` to have a registrar service user on LMS
+
+- Role: registrar
+  - Create role
+
+- Role: edxapp
+  - Added ENTERPRISE_MARKETING_FOOTER_QUERY_PARAMS to allow for edx specific query params to be added for business marketing footer.
+
+- Role: edxapp
+  - Removed the OfficeMix XBlock (the service that it uses has been dead for months).
+
+- Role: edxapp
+  - Added 'SYSTEM_WIDE_ROLE_CLASSES' for use of edx-rbac roles in the jwt in the lms
+
+- Open edX
+  - Renamed edx_sandbox.yml to openedx_native.yml
+
+- Role: ecomworker
+  - Added `assignment_email` default template value in `SAILTHRU` config to send offer assignment emails.
+
+- Role: nginx
+  - Added CORS Access-Control-Allow-Origin for static assets.
+  - Replaced wildcard Access-Control-Allow-Origin header for fonts. Make sure you set EDXAPP_CORS_ORIGIN_WHITELIST to include all your domains.
+
+- Role: nginx
+  - Modified robots.txt.j2 to accept the Allow rule.
+  - Modified robots.txt.j2 to accept either a single string or a list of strings for agent, disallow, and allow.
+
+- Role: ecommerce
+  - Added CORS_ORIGIN_WHITELIST and CORS_URLS_REGEX to allow selective CORS whitelisting of origins/urls.
+
+- common_vars
+  - Added new overridable variable `COMMON_LMS_BASE_URL`.
+
+- Role: discovery
+  - Added `DISCOVERY_CORS_ORIGIN_WHITELIST` to allow CORS whitelisting of origins.
+
+- abbey.py
+  - Removed abbey.py
+
+- Role: edxapp
+  - Renamed proctoring backend setting to work with edx-proctoring 1.5.0
+  - Render auth and env config to a single yml file
+
+- Role: edxapp
+  - Remove low priority queue, use default instead.
+
+- Role: ecommerce
+  - Remove unused JWT_SECRET_KEYS.
+
+- Role: ecommerce
+  - Transformed the JWT_ISSUERS to match the format expected by edx-drf-extensions jwt_decode_handler.
+
+- Role: edxapp
+  - Added `ENTERPRISE_CUSTOMER_SUCCESS_EMAIL` to lms_env_config for configuring emails to the customer success team.
+
+- Role: edx_django_service
+  - Added new overridable variable `edx_django_service_gunicorn_max_requests`
+
+- Role: edxapp
+  - `EDXAPP_EDXAPP_SECRET_KEY` no longer has a default value
+
+- Role: ecommerce
+  - Set default max_requests to 3000.(eg. restart gunicorn process every 3000 requests.)
+
+- Role: edx_notes_api
+  - Added `JWT_AUTH` to edx-notes-api that is used in other IDAs.
+
+- Role: edxapp
+  - Removed `PASSWORD_MIN_LENGTH`, `PASSWORD_MAX_LENGTH`, and `PASSWORD_COMPLEXITY` in favor of specifying these in `AUTH_PASSWORD_VALIDATORS`.
+
+- Role: edxapp
+  - Added `AUTH_PASSWORD_VALIDATORS` to utilize Django's password validation. Base validators included in configuration are UserAttributeSimilarity to test the password against the username and email using the default similarity threshold of 0.7 (1.0 fails exact matches only), MinimumLength to test password minimum length, and MaximumLength to test password maximum length.
+
+- Role: edxapp
+  - Added `EDXAPP_LOGIN_REDIRECT_WHITELIST` which provides a whitelist of domains to which the login/logout pages will redirect.
+
+- Role: prospectus
+  - New role added to configure the prospectus service
+
+- Role: edxapp
+  - `EDXAPP_CACHE_BACKEND` added to allow overriding Django's memcache backend
+
+- Removed the obsolete install_stack.sh file (the last reference to fullstack)
+
+- Role: nginx
+  - Added `NGINX_EDXAPP_PROXY_INTERCEPT_ERRORS` to be able to use custom static error pages for error responses from the LMS.
+  - Added `NGINX_SERVER_HTML_FILES_TEMPLATE` to make the error file template configurable.
+  - Added `NGINX_SERVER_STATIC_FILES` to allow copying static contents to the server static folder. Can be used to deploy static contents for the error pages for example.
+
+- Role: analytics_api
+  - Added `basic_auth_exempted_paths` configuration for enterprise api endpoints
+
+- Role: edx_django_service
+  - Added optional `edx_django_service_allow_cors_headers` boolean option to pass CORS headers (`Access-Control-Allow-Origin` and `Access-Control-Allow-Methods`) on non basic-auth
+  calls to support `/api` endpoints for analytics_api.
+
+- Role: analytics_api
+  - Added `ANALYTICS_API_CORS_ORIGIN_WHITELIST` to allow CORS whitelisting of origins.
+
+- Role: edxapp
+  - `EDXAPP_X_FRAME_OPTIONS` added in studio to prevent clickjacking.
+
+- Role: nginx
+  - Added `NGINX_EDXAPP_DEFAULT_SITE_THEME` to allow to completely
+  override `favicon.ico` file when Comprehensive Theme is enabled.
+
+- Role: edxapp
+  - Added `EDXAPP_X_FRAME_OPTIONS` to prevent click jacking in LMS.
+
+- git_clone:
+  - The working tree is explicitly checked for modified files, to prevent mysterious failures.
+
+- Installation
+  - OPENEDX_RELEASE is now required, to prevent accidental installation of master.
+  - sandbox.sh has been renamed native.sh to better indicate what it does.
+
+- XQueue
+  - Expose CLOUDWATCH_QUEUE_COUNT_METRIC which is defined XQueue's settings.py for further dictionary structure
+
+- nginx:
+  - remove nginx_cfg - an internal variable that was really only used for the edx-release nginx site, which served version.{html,json} off of a nonstandard port.  The file it served was never populated.
+
+- Role: edxapp
+  - Create EDXAPP_CMS_GUNICORN_TIMEOUT and EDXAPP_LMS_STATIC_URL_BASE to allow overriding of the gunicorn timeout
+
+- Structure: edx-east
+  - Deprecated the edx-east folder, playbooks now live in the top level directory instead of edx-east/playbooks. A symbolic link was added for now, but should not be relied upon.
+
+- Role: edxapp
+  - EDXAPP_NGINX_SKIP_ENABLE_SITES added to allow you to not sync in the lms or cms nginx configuration.  Instead you can enable them during deployment.
+  - EDXAPP_NGINX_DEFAULT_SITES added to allow you to mark both lms and cms as defaults, best paired with picking which site to enable during deployment.
+  - EDXAPP_LMS_STATIC_URL_BASE and EDXAPP_CMS_STATIC_URL_BASE allow a per-application setting of the static URL.  You can stil use EDXAPP_STATIC_URL_BASE for now but we may retire that as we continue to separate LMS and CMS.
+
+- Role: XQueue
+  - Convert to a yaml config (instead of xqueue.auth.json and xqueue.env.json we get xqueue.yml and it lives by default in /edx/etc/xqueue.yml like standard IDAs)
+  - Add XQUEUE_DEFAULT_FILE_STORAGE so that you can specify S3 or Swift in your config
+  - XQUEUE_SETTINGS now prefers production.py over aws_settings.py
+
+- Role: credentials
+  - Set `LANGUAGE_COOKIE_NAME` so that Credentials will use the global language cookie.
+
+- Role: edxapp
+  - Added `PASSWORD_POLICY_COMPLIANCE_ROLLOUT_CONFIG` to make configurable whether password complexity is checked on login and how such complexity is rolled out to users.
+
+- Role: certs
+  - Added `CERTS_QUEUE_POLL_FREQUENCY` to make configurable the certificate agent's queue polling frequency.
+
+- Role: edxapp
+  - Added `RETIREMENT_STATES` to generic_env_config to support making the retirement workflow configurable.
+
+- Removed Vagrantfiles for devstack and fullstack, and supporting files.
+
+- Role: xqueue
+  - Added XQUEUE_SUBMISSION_PROCESSING_DELAY and XQUEUE_CONSUMER_DELAY to xqueue env so they can be passed along to the app.
+
+- Role: edxapp
+  - Moved `PASSWORD_MIN_LENGTH`, `PASSWORD_MAX_LENGTH`, and `PASSWORD_COMPLEXITY` to generic_env_config to allow CMS and LMS to share these configurations
+
+- Role: edxapp
+  - Added GOOGLE_SITE_VERIFICATION_ID to move a previously hardcoded value into configuration.
+  - Changed `EDXAPP_RETIRED_USERNAME_FMT` to `EDXAPP_RETIRED_USERNAME_PREFIX`. Changed/split `EDXAPP_RETIRED_EMAIL_FMT` to be `EDXAPP_RETIRED_EMAIL_PREFIX` and `EDXAPP_RETIRED_EMAIL_DOMAIN`.
+
+- Role xqueue
+  - Removed RabbitMQ in earlier changes in XQueue itself, we don't need any of the configuration
+    XQUEUE_RABBITMQ_USER XQUEUE_RABBITMQ_PASS XQUEUE_RABBITMQ_VHOST XQUEUE_RABBITMQ_HOSTNAME
+    XQUEUE_RABBITMQ_PORT XQUEUE_RABBITMQ_TLS
+  - Added NEWRELIC_APPNAME and NEWRELIC_LICENSE_KEY to the configuration files consumed by XQueue.
+    Useful for external utilities that are reporting NR metrics.
+  - Added XQUEUE_CONSUMER_NEWRELIC_APPNAME which is added to the supervisor start of xqueue_consumer
+    if you have New Relic enabled.
+  - Retired XQUEUE_WORKERS_PER_QUEUE
+
+- Role edx_django_service
+  - Added maintenance page under the flag EDX_DJANGO_SERVICE_ENABLE_S3_MAINTENANCE.
+  - Added the s3_maintenance.j2 file to point to the s3 maintenance page.
+
+- Role: xqueue
+  - Added XQUEUE_MYSQL_CONN_MAX_AGE so that you can have xqueue use django's persistent DB connections
+
+- Role: edxapp
+  - Added empty `EDXAPP_PASSWORD_COMPLEXITY` setting to ease overriding complexity.
+
+- Role: splunkforwarder
+  - Updated the role so the splunkforwarder can be installed on Amazon Linux OS environment, which is a RHEL variant
+
+- Role: server_utils
+  - Update to only do things for debian varient environment
+
+- Role: xqueue
+  - Added `XQUEUE_SESSION_ENGINE` to allow a configurable xqueue session engine.
+  - Added `XQUEUE_CACHES` to allow a configurable xqueue cache.
+
+- Role: devpi
+  - New role added to configure a devpi service as a pass-through cache for PyPI.
+
+- Role: devpi_consumer
+  - Added role to configure Python containers to use devpi for Docker Devstack
+
+- Role: xqueue
+  - Remove S3_BUCKET and S3_PATH_PREFIX - they were deprecated prior to ginkgo
+  - Remove SERVICE_VARIANT - it was copied from edxapp but never truly used (except to complicate things)
+  - The manage_users management command is only run when disable_edx_services is false (previously this play would try
+    to update databases while building images, where services are generally disabled).
+
+- Role: edxapp
+  - Added `EDXAPP_RETIRED_USERNAME_FMT`, `EDXAPP_RETIRED_EMAIL_FMT`, `EDXAPP_RETIRED_USER_SALTS`, and
+  `EDXAPP_RETIREMENT_SERVICE_WORKER_USERNAME` to generic_env_config to allow user retirement to be configurable.
+
+- Role: edxapp
+  - Added `ENTERPRISE_REPORTING_SECRET` to CMS auth settings to allow edx-enterprise migrations to run.
+
+- Role: edxapp
+  - Added `EDXAPP_FERNET_KEYS` to allow for use of django-fernet-keys in LMS.
+
+- Role: edxapp
+  - Added `EDXAPP_DEFAULT_COURSE_VISIBILITY_IN_CATALOG` setting (defaults to `both`).
+
+  - Added `EDXAPP_DEFAULT_MOBILE_AVAILABLE` setting (defaults to `false`).
+
+  - Added `EDX_PLATFORM_REVISION` (set from `edx_platform_version`). This is for
+  edx-platform debugging purposes, and replaces calling dealer.git at startup.
+
+- Role: veda_pipeline_worker
+  - New role to run all (`deliver, ingest, youtubecallback`) [video pipeline workers](https://github.com/edx/edx-video-pipeline/blob/master/bin/)
+
+- Role: veda_ffmpeg
+  - New role added to compile ffmpeg for video pipeline. It will be used as a dependency for video pipeline roles.
+
+- Role: edxapp
+  - Added `EDXAPP_BRANCH_IO_KEY` to configure branch.io journey app banners.
+
+- Role: ecomworker
+  - Added `ECOMMERCE_WORKER_BROKER_TRANSPORT` with a default value of 'ampq' to be backwards compatible with rabbit.  Set to 'redis' if you wish to use redis instead of rabbit as a queue for ecommerce worker.
+
+- Role: ecommerce
+  - Added `ECOMMERCE_BROKER_TRANSPORT` with a default value of 'ampq' to be backwards compatible with rabbit.  Set to 'redis' if you wish to use redis instead of rabbit as a queue for ecommerce.
+
+- Role: credentials
+  - This role is now dependent on the edx_django_service role. Settings are all the same, but nearly all of the tasks are performed by the edx_django_service role.
+
+- Role: veda_delivery_worker
+  - New role added to run [video delivery worker](https://github.com/edx/edx-video-pipeline/blob/master/bin/deliver)
+
+- Role: veda_web_frontend
+  - New role added for [edx-video-pipeline](https://github.com/edx/edx-video-pipeline)
+
+- Role: edxapp
+  - Added `EDXAPP_LMS_INTERNAL_ROOT_URL` setting (defaults to `EDXAPP_LMS_ROOT_URL`).
+
+- Role: edxapp
+  - Added `EDXAPP_CELERY_BROKER_TRANSPORT` and renamed `EDXAPP_RABBIT_HOSTNAME`
+    to `EDXAPP_CELERY_BROKER_HOSTNAME`. This is to support non-amqp brokers,
+    specifically redis. If `EDXAPP_CELERY_BROKER_HOSTNAME` is unset it will use
+    the value of `EDXAPP_RABBIT_HOSTNAME`, however it is recommended to update
+    your configuration to set `EDXAPP_CELERY_BROKER_TRANSPORT` explicitly.
+
+- Role: edxapp
+  - Added `EDXAPP_MONGO_REPLICA_SET`, which is required to use
+    pymongo.MongoReplicaSetClient in PyMongo 2.9.1.  This should be set to the
+    name of your replica set.
+    This setting causes the `EDXAPP_*_READ_PREFERENCE` settings below to be used.
+  - Added `EDXAPP_MONGO_CMS_READ_PREFERENCE` with a default value of `PRIMARY`.
+  - Added `EDXAPP_MONGO_LMS_READ_PREFERENCE` with a default value of
+    `SECONDARY_PREFERED` to distribute the read workload across the replica set
+    for replicated docstores and contentstores.
+  - Added `EDXAPP_LMS_SPLIT_DOC_STORE_READ_PREFERENCE` with a default value of
+    `EDXAPP_MONGO_LMS_READ_PREFERENCE`.
+  - Added `EDXAPP_LMS_DRAFT_DOC_STORE_CONFIG` with a default value of
+    `EDXAPP_MONGO_CMS_READ_PREFERENCE`, to enforce consistency between
+    Studio and the LMS Preview modes.
+  - Removed `EDXAPP_CONTENTSTORE_ADDITIONAL_OPTS`, since there is no notion of
+    common options to the content store anymore.
+
+- Role: nginx
+  - Modified `lms.j2` , `cms.j2` , `credentials.j2` , `edx_notes_api.j2` and `insights.j2` to enable HTTP Strict Transport Security
+  - Added `NGINX_HSTS_MAX_AGE` to make HSTS header `max_age` value configurable and used in templates
+
+- Role: server_utils
+  - Install "vim", not "vim-tiny".
+
+- Role: edxapp
+  - Added GOOGLE_ANALYTICS_TRACKING_ID setting for inserting GA tracking into emails generated via ACE.
+
+- Role: notifier
+  - Added notifier back to continuous integration.
+
+- Role: ecommerce
+  - This role is now dependent on the edx_django_service role. Settings are all the same, but nearly all of the tasks are performed by the edx_django_service role.
+
+- Role: discovery
+  - Added `DISCOVERY_REPOS` to allow configuring discovery repository details.
+
+- Role: edx_django_service
+  - Made the keys `edx_django_service_git_protocol`, `edx_django_service_git_domain`, and `edx_django_service_git_path` of `edx_django_service_repos` all individually configurable.
+
+- Role: discovery
+  - Updated LANGUAGE_CODE to generic english. Added configuration for multilingual language package django-parler.
+
+- Role: edxapp
+  - Added `EDXAPP_EXTRA_MIDDLEWARE_CLASSES` for configuring additional middleware logic.
+
+- Role: discovery
+  - Added `OPENEXCHANGERATES_API_KEY` for retrieving currency exchange rates.
+
+- Role: edxapp
+  - Added `EDXAPP_SCORM_PKG_STORAGE_DIR`, with default value as it was in the server template.
+  - Added `EDXAPP_SCORM_PLAYER_LOCAL_STORAGE_ROOT`, with default value as it was in the server template.
+
+- Role: edxapp
+  - Added `EDXAPP_ENTERPRISE_TAGLINE` for customized header taglines for different enterprises.
+  - Added `EDXAPP_PLATFORM_DESCRIPTION` used to describe the specific Open edX platform.
+
+- Role: edxapp
+  - Added `EDXAPP_REINDEX_ALL_COURSES` to rebuild the course index on deploy. Disabled by default.
+
+- Role: edxapp
+  - Added `ENTERPRISE_SUPPORT_URL` variable used by the LMS.
+
+- Role: edxapp
+  - Added OAUTH_DELETE_EXPIRED to enable automatic deletion of edx-django-oauth2-provider grants, access tokens, and refresh tokens as they are consumed. This will not do a bulk delete of existing rows.
+
+- Role: mongo_3_2
+  - Added role for mongo 3.2, not yet in use.
+  - Removed MONGO_CLUSTERED variable. In this role mongo replication is always configured, even if there is only one node.
+
+- Role: edxapp
+  - Added creation of enterprise_worker user to provisioning. This user is used by the edx-enterprise package when making API requests to Open edX IDAs.
+
+- Role: neo4j
+  - Increase heap and page caches sizes for neo4j
+
+- Role: neo4j
+  - Updated neo4j to 3.2.2
+  - Removed authentication requirement for neo4j
+
+- Role: forum
+  - Added `FORUM_REBUILD_INDEX` to rebuild the ElasticSearch index from the database, when enabled.  Default: `False`.
+
+- Role: nginx
+  - Added `NGINX_EDXAPP_CMS_APP_EXTRA`, which makes it possible to add custom settings to the site configuration for Studio.
+  - Added `NGINX_EDXAPP_LMS_APP_EXTRA`, which makes it possible to add custom settings to the site configuration for the LMS.
+
+- Role: edxapp
+  - Let `confirm_email` in `EDXAPP_REGISTRATION_EXTRA_FIELDS` default to `"hidden"`.
+  - Let `terms_of_service` in `EDXAPP_REGISTRATION_EXTRA_FIELDS` default to `"hidden"`.
+
+- Role: ecommerce
+  - Added ECOMMERCE_LANGUAGE_COOKIE_NAME which is the name of the cookie the ecommerce django app looks at for determining the language preference.
+
+- Role: neo4j
+  - Enabled splunk forwarding for neo4j logs.
+  - Increased maximum amount of open files to 40000, as suggested by neo4j.
+  - Updated the java build that neo4j uses to run.
+
+- Role: edxapp
+  - Set the default value for EDXAPP_POLICY_CHANGE_GRADES_ROUTING_KEY to
+ 'edx.lms.core.default'.
+
+- Role: edxapp
+  - Set the default value for EDXAPP_BULK_EMAIL_ROUTING_KEY_SMALL_JOBS to
+ 'edx.lms.core.low'.
+
+- Role: jenkins_master
+  - Update pinned use of JDK7 in Jenkins installs to default JDK version from role `oraclejdk`.
+
+- Role: notifier
+  - Added `NOTIFIER_DATABASE_ENGINE`, `NOTIFIER_DATABASE_NAME`, `NOTIFIER_DATABASE_USER`, `NOTIFIER_DATABASE_PASSWORD`, `NOTIFIER_DATABASE_HOST`, and `NOTIFIER_DATABASE_PORT` to be able to configure the `notifier` service to use a database engine other than sqlite. Defaults to local sqlite.
+  - Deprecated: `NOTIFIER_DB_DIR`: Please use `NOTIFIER_DATABASE_NAME` instead.
+
+- Role: elasticsearch
+  - Replaced `elasticsearch_apt_key` and `elastic_search_apt_keyserver` with `elasticsearch_apt_key_url`
+  - Updated elasticsearch version to 1.5.0
+
+- Role: edxapp
+  - Install development.txt in Vagrant and Docker devstacks
+
+- Role: edxapp
+  - Set the EDXAPP_IMPORT_EXPORT_BUCKET setting to an empty string
+
+- Role: edxapp
+  - Updated default value of the EDXAPP_ENTERPRISE_COURSE_ENROLLMENT_AUDIT_MODES setting to ["audit", "honor"]
+
+- Role: edx_notes_api
+  - Removed EDX_NOTES_API_ELASTICSEARCH_HOST.
+  - Removed EDX_NOTES_API_ELASTICSEARCH_PORT.
+  - EDX_NOTES_API_ELASTICSEARCH_URL.
+
+- Role: edxapp
+  - Added the EDXAPP_ACTIVATION_EMAIL_SUPPORT_LINK URL with default value `''`.
+  - Added the EDXAPP_PASSWORD_RESET_SUPPORT_LINK URL with default value `''`.
+
+- Role: nginx
+  - Modified `server-template.j2` to be more accessible and configurable.
+  - The template should contain the `lang` attribute in the HTML tag.
+  - If the image loaded has some meaning, as a logo, it should have the `alt` attribute.
+  - After the header 1 (h1) there is no relevant text content, so next it can not be
+    another header (h2). It was changed to be a paragraph with the header 2 CSS style.
+  - Added `NGINX_SERVER_ERROR_IMG_ALT` with default value as it was in the server template
+  - Added `NGINX_SERVER_ERROR_LANG` with default value `en`
+  - Added `NGINX_SERVER_ERROR_STYLE_H1` with default value as it was in the server template
+  - Added `NGINX_SERVER_ERROR_STYLE_P_H2` with default value as it was in the server template
+  - Added `NGINX_SERVER_ERROR_STYLE_P` with default value as it was in the server template
+  - Added `NGINX_SERVER_ERROR_STYLE_DIV` with default value as it was in the server template
+
+- Role: edxapp
+  - Added the EDXAPP_SHOW_HEADER_LANGUAGE_SELECTOR feature flag with default value [false]
+  - Added the EDXAPP_SHOW_FOOTER_LANGUAGE_SELECTOR feature flag with default value [false]
+
+- Role: edxapp
+  - Added the EDXAPP_ENTERPRISE_COURSE_ENROLLMENT_AUDIT_MODES setting with default value ["audit"]
+
+- Role: edxapp
+  - DOC_LINK_BASE settings have been removed, replaced by HELP_TOKENS_BOOKS
+
+- Role: edxapp
+  - Add the EDXAPP_LANGUAGE_COOKIE setting
+
+- Role: rabbitmq
+  - Upgraded to 3.6.9
+  - Switched to a PPA rather than a .deb hosted in S3
+  - Note that you generally cannot upgrade RabbitMQ live in place https://www.rabbitmq.com/clustering.html
+    this is particularly true coming from 3.2 to 3.6.  We are using the shovel plugin to move tasks across clusters
+    but their documentation covers different scenarios.
+- Role: edxapp
+  - Added a new EDXAPP_MYSQL_CONN_MAX_AGE, default to 0.  Adjust it to change how long a connection is kept open
+  for reuse before it is closed.
+  - Set preload_app to False in gunicorn config for LMS and Studio.
+- Role: analytics_api
+  - Added `ANALYTICS_API_AGGREGATE_PAGE_SIZE`, default value 10.  Adjust this parameter to increase the number of
+    aggregate search results returned by the Analytics API, i.e. in course_metadata: enrollment_modes, cohorts, and
+    segments.
+- Role: programs
+  - This role has been removed as this service is no longer supported. The role is still available on the [Ficus branch](https://github.com/edx/configuration/releases/tag/open-release%2Fficus.1).
+- Role: xqueue
+  - Changed `XQUEUE_RABBITMQ_TLS` default from `true` to `false`.
 - Role: credentials
   - Added `CREDENTIALS_EXTRA_APPS` to enable the inclusion of additional Django apps in the Credentials Service.
 - Role: common
@@ -200,20 +775,93 @@
   - Changed SECURITY_UPGRADE_ON_ANSIBLE to only apply security updates.  If you want to retain the behavior of running safe-upgrade,
     you should switch to using SAFE_UPGRADE_ON_ANSIBLE.
 
+- Role: mongo_2_6
+  - Added `MONGO_AUTH` to turn authentication on/off. Auth is now enabled by default, and was previously disabled by default.
+
 - Role: mongo_3_0
   - Changed MONGO_STORAGE_ENGINE to default to wiredTiger which is the default in 3.2 and 3.4 and what edX suggests be used even on 3.0.
     If you have a mmapv1 3.0 install, override MONGO_STORAGE_ENGINE to be mmapv1 which was the old default.
   - Support parsing the replset JSON in 3.2 and 3.0
+  - Added `MONGO_AUTH` to turn authentication on/off. Auth is now enabled by default, and was previously disabled by default.
 
 - Role: xqueue
-  - Added `EDXAPP_CELERY_BROKER_USE_SSL` to allow configuring celery to use TLS.
+  - Added `XQUEUE_RABBITMQ_TLS` to allow configuring xqueue to use TLS when connecting to the AMQP broker.
+  - Added `XQUEUE_RABBITMQ_VHOST` to allow configuring the xqueue RabbitMQ host.
+  - Added `XQUEUE_RABBITMQ_PORT` to allow configuring the RabbitMQ port.
 
 - Role: edxapp
-  - Added `XQUEUE_RABBITMQ_VHOST` to allow configuring the xqueue RabbitMQ host.
-  - Added `XQUEUE_RABBITMQ_PORT` and `XQUEUE_RABBITMQ_TLS` to allow configuring the RabbitMQ port, and enabling TLS respectively.
+  - Added `EDXAPP_CELERY_BROKER_USE_SSL` to allow configuring celery to use TLS.
 
 - Role: ecommerce
   - Added `ECOMMERCE_ENTERPRISE_URL` for the `enterprise` API endpoint exposed by a new service `edx-enterprise` (currently hosted by `LMS`), which defaults to the existing setting `ECOMMERCE_LMS_URL_ROOT`.
 
 - Role: ecommerce
   - Removed `SEGMENT_KEY` which is no longer used.  Segment key is now defined in DB configuration. (https://github.com/edx/ecommerce/pull/1121)
+
+- Role: edxapp
+  - Added `EDXAPP_BLOCK_STRUCTURES_SETTINGS` to configure S3-backed Course Block Structures.
+
+- Role: insights
+  - Removed `INSIGHTS_FEEDBACK_EMAIL` which is no longer used, as it was deemed redundant with `INSIGHTS_SUPPORT_EMAIL`.
+
+- Role: insights
+  - Removed `SUPPORT_EMAIL` setting from `INSIGHTS_CONFIG`, as it is was replaced by `SUPPORT_URL`.
+
+- Role: insights
+  - Added `INSIGHTS_DOMAIN` to configure the domain Insights is deployed on
+  - Added `INSIGHTS_CLOUDFRONT_DOMAIN` to configure the domain static files can be served from
+  - Added `INSIGHTS_CORS_ORIGIN_WHITELIST_EXTRA` to configure allowing CORS on domains other than the `INSIGHTS_DOMAIN`
+
+- Role: edxapp
+  - Added `EDXAPP_VIDEO_IMAGE_SETTINGS` to configure S3-backed video images.
+
+- Role: edxapp
+  - Added `EDXAPP_BASE_COOKIE_DOMAIN` for sharing cookies across edx domains.
+
+- Role: insights
+  - Removed `bower install` task
+  - Replaced r.js build task with webpack build task
+  - Removed `./manage.py compress` task
+
+- Role: insights
+  - Moved `THEME_SCSS` from `INSIGHTS_CONFIG` to `insights_environment`
+
+- Role: analytics_api
+  - Added a number of `ANALYTICS_API_DEFAULT_*` and `ANALYTICS_API_REPORTS_*` variables to allow more selective specification of database parameters (rather than
+      overriding the whole structure).
+
+- Role: edxapp
+  - Remove EDXAPP_ANALYTICS_API_KEY, EDXAPP_ANALYTICS_SERVER_URL, EDXAPP_ANALYTICS_DATA_TOKEN, EDXAPP_ANALYTICS_DATA_URL since they are old and
+  no longer consumed.
+
+- Role: edxapp
+  - Added `PASSWORD_MIN_LENGTH` for password minimum length validation on reset page.
+  - Added `PASSWORD_MAX_LENGTH` for password maximum length validation on reset page.
+
+- Role: credentials
+  - Replaced `CREDENTIALS_OAUTH_URL_ROOT` with `COMMON_OAUTH_URL_ROOT` from `common_vars`
+  - Replaced `CREDENTIALS_OIDC_LOGOUT_URL` with `COMMON_OAUTH_LOGOUT_URL` from `common_vars`
+  - Replaced `CREDENTIALS_JWT_AUDIENCE` with `COMMON_JWT_AUDIENCE` from `common_vars`
+  - Replaced `CREDENTIALS_JWT_ISSUER` with `COMMON_JWT_ISSUER` from `common_vars`
+  - Replaced `CREDENTIALS_JWT_SECRET_KEY` with `COMMON_JWT_SECRET_KEY` from `common_vars`
+  - Replaced `CREDENTIALS_SOCIAL_AUTH_EDX_OIDC_ISSUER` with `COMMON_JWT_ISSUER` from `common_vars`
+
+- Role: ecommerce
+  - Replaced `ECOMMERCE_OAUTH_URL_ROOT` with `COMMON_OAUTH_URL_ROOT` from `common_vars`
+  - Replaced `ECOMMERCE_OIDC_LOGOUT_URL` with `COMMON_OAUTH_LOGOUT_URL` from `common_vars`
+  - Replaced `ECOMMERCE_JWT_SECRET_KEY` with `COMMON_JWT_SECRET_KEY` from `common_vars`
+  - Replaced `ECOMMERCE_SOCIAL_AUTH_EDX_OIDC_ISSUER` with `COMMON_JWT_ISSUER` from `common_vars`
+
+- Role: edxapp
+  - Added `EDXAPP_VIDEO_TRANSCRIPTS_SETTINGS` to configure S3-backed video transcripts.
+  - Removed unused `EDXAPP_BOOK_URL` setting
+
+- Role: edxapp
+  - Added `EDXAPP_ZENDESK_OAUTH_ACCESS_TOKEN` for making requests to Zendesk through front-end.
+
+- Role: whitelabel
+  - Added `WHITELABEL_THEME_DIR` to point to the location of whitelabel themes.
+  - Added `WHITELABEL_ADMIN_USER` to specify an admin user.
+  - Added `WHITELABEL_DNS` for DNS settings of themes.
+  - Added `WHITELABEL_ORG` for whitelabel organization settings.
+

@@ -3,7 +3,7 @@ mongo_logappend: true
 #This way, when mongod receives a SIGUSR1, it'll close and reopen its log file handle
 mongo_logrotate: reopen
 
-mongo_version: 3.0.12
+mongo_version: 3.0.14
 mongo_port: "27017"
 mongo_extra_conf: ''
 mongo_key_file: '/etc/mongodb_key'
@@ -14,6 +14,10 @@ mongo_log_dir: "{{ COMMON_LOG_DIR }}/mongo"
 mongo_journal_dir: "{{ COMMON_DATA_DIR }}/mongo/mongodb/journal"
 mongo_user: mongodb
 
+# The MONGODB_REPO variable should use {{ ansible_distribution_release }}
+# instead of hard coding a release name. Since we are already accidentally
+# running precise binaries on trusty, we are going to leave this alone for
+# mongo 3.0 and remedy it when we upgrade to mongo 3.2
 MONGODB_REPO: "deb http://repo.mongodb.org/apt/ubuntu precise/mongodb-org/3.0 multiverse"
 MONGODB_APT_KEY: "7F0CEB10"
 MONGODB_APT_KEYSERVER: "keyserver.ubuntu.com"
@@ -42,6 +46,7 @@ MONGO_USERS:
 MONGO_CLUSTERED: false
 MONGO_BIND_IP: 127.0.0.1
 MONGO_REPL_SET: "rs0"
+MONGO_AUTH: true
 
 # Cluster member configuration
 # Fed directly into mongodb_replica_set module

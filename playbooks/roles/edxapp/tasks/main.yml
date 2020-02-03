@@ -6,8 +6,8 @@
   user:
     name: "{{ edxapp_user }}"
     home: "{{ edxapp_app_dir }}"
-    createhome: no
-    shell: /bin/false
+    createhome: "{{ edxapp_user_createhome }}"
+    shell: "{{ edxapp_user_shell }}"
   tags:
     - install
     - install:base
@@ -36,20 +36,17 @@
     - install
     - install:base
 
-# This is a symlink that has to exist because
-# we currently can't override the DATA_DIR var
-# in edx-platform. TODO: This can be removed once
-# VPC-122 is closed
-- name: make the course data dir
-  file:
-    src: "{{ edxapp_course_data_dir }}"
-    dest: "{{ edxapp_legacy_course_data_dir }}"
-    state: link
-    owner: "{{ edxapp_user }}"
-    group: "{{ common_web_group }}"
+- name: write devstack script
+  template:
+    src: "devstack.sh.j2"
+    dest: "{{ edxapp_app_dir }}/devstack.sh"
+    owner: "{{ supervisor_user }}"
+    group: "{{ common_web_user }}"
+    mode: 0744
+  when: devstack is defined and devstack
   tags:
-    - install
-    - install:base
+    - devstack
+    - devstack:install
 
 - name: create edxapp log dir
   file:
@@ -97,22 +94,39 @@
     - install
     - install:base
 
-# adding chris-lea nodejs repo
-# TODO: 16.04
-- name: add ppas for current versions of nodejs
-  apt_repository:
-    repo: "{{ edxapp_chrislea_ppa }}"
-  when: ansible_distribution_release == 'precise'
-  tags:
-    - install
-    - install:base
-    
 - name: install system packages on which LMS and CMS rely
   apt:
     name: "{{ item }}"
     state: present
     update_cache: yes
-  with_items: "{{ edxapp_debian_pkgs }}"
+  with_flattened:
+    - "{{ edxapp_debian_pkgs_default }}"
+    - "{{ edxapp_debian_pkgs_extra }}"
+  tags:
+    - install
+    - install:base
+
+- name: Install the gpg key for nodejs LTS
+  apt_key:
+    url: "https://deb.nodesource.com/gpgkey/nodesource.gpg.key"
+    state: present
+  tags:
+    - install
+    - install:base
+
+- name: Install the nodejs LTS repos
+  apt_repository:
+    repo: "deb https://deb.nodesource.com/node_{{ edxapp_node_version }}.x {{ ansible_distribution_release }} main"
+    state: present
+    update_cache: yes
+  tags:
+    - install
+    - install:base
+
+- name: Install node
+  apt:
+    name: nodejs
+    state: present
   tags:
     - install
     - install:base
@@ -139,7 +153,7 @@
   tags:
     - install
     - install:base
- 
+
 # Set up the python sandbox execution environment
 - include: python_sandbox_env.yml
   when: EDXAPP_PYTHON_SANDBOX
