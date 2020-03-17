@@ -204,3 +204,11 @@
   tags:
     - gather_static_assets
     - assets
+
+- name: Create or update SiteConfiguration
+  include: site_configuration.yml
+  with_items:
+    - lms
+    - cms
+  tags:
+    - create_or_update_site_configuration

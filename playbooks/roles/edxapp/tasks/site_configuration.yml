@@ -1,0 +1,21 @@
+---
+- block:
+    - name: Create the {{ item }} SiteConfiguration JSON file
+      template:
+        src: "site_configuration.json.j2"
+        dest: "/tmp/{{ item }}_site_configuration.json"
+
+    - name: Get the default {{ item }} SITE_ID
+      shell: ". {{ edxapp_app_dir }}/edxapp_env && {{ edxapp_venv_bin }}/python {{ edxapp_code_dir }}/manage.py {{ item }} print_setting SITE_ID --settings={{ edxapp_settings }} 2>/dev/null"
+      register: site_id
+
+    - name: Run create_or_update_site_configuration
+      shell: ". {{ edxapp_app_dir }}/edxapp_env && {{ edxapp_venv_bin }}/python {{ edxapp_code_dir }}/manage.py {{ item }} create_or_update_site_configuration --site-id {{ site_id.stdout }} -f /tmp/{{ item }}_site_configuration.json --\
+enabled --settings={{ edxapp_settings }}"
+
+    - name: Remove the {{ item }} SiteConfiguration JSON file
+      file:
+        path: "/tmp/{{ item }}_site_configuration.json"
+        state: absent
+
+  when: vars['EDXAPP_' ~ item|upper ~ '_SITE_CONFIGURATION']
