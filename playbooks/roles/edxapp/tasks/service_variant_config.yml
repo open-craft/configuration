@@ -204,3 +204,23 @@
   tags:
     - gather_static_assets
     - assets
+
+- name: Create or update LMS SiteConfiguration
+  block:
+    - name: Create the LMS SiteConfiguration JSON file
+      template:
+        src: "lms_site_configuration.json.j2"
+        dest: "/tmp/lms_site_configuration.json"
+
+    - name: Get default SITE_ID
+      command: "{{ COMMON_BIN_DIR }}/manage.edxapp lms print_setting SITE_ID 2>/dev/null"
+      register: lms_default_site_id
+
+    - name: Run create_or_update_site_configuration
+      command: "{{ COMMON_BIN_DIR }}/manage.edxapp lms create_or_update_site_configuration --site-id {{ lms_default_site_id.stdout }} -e @/tmp/lms_site_configuration.json --enabled"
+
+    - name: Remove the LMS SiteConfiguration JSON file
+      file:
+        path: "/tmp/lms_site_configuration.json"
+        state: absent
+  when: '"lms" in service_variants_enabled' and EDXAPP_LMS_SITE_CONFIGURATION
