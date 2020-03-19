@@ -1,5 +1,1 @@
-{% if item == 'lms' %}
-{{ EDXAPP_LMS_SITE_CONFIGURATION | to_nice_json }}
-{% elif item == 'cms' %}
-{{ EDXAPP_CMS_SITE_CONFIGURATION | to_nice_json }}
-{% endif %}
+{{ EDXAPP_SITE_CONFIGURATION.values | to_nice_json }}
