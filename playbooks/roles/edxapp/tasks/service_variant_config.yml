@@ -209,3 +209,5 @@
   include: site_configuration.yml
   when: EDXAPP_SITE_CONFIGURATION
   with_items: "{{ EDXAPP_SITE_CONFIGURATION }}"
+  tags:
+    - create_or_update_site_configuration
