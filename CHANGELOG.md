@@ -2,6 +2,9 @@
 All notable changes to this project will be documented in this file.
 Add any new changes to the top(right below this line).
 
+- Role: edxapp
+  - Added `EDXAPP_SITE_CONFIGURATION` to allow creating/updating the `SiteConfiguration` values during provisioning.
+
 - Role: mount_ebs
   - Added check for disk size, size is now a required parameter in variables volumes and MONGO_VOLUMES
   - This is to prevent mounting the wrong volumes when AWS swaps the order
