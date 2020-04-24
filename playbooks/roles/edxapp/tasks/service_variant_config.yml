@@ -167,6 +167,19 @@
     - install
     - install:configuration
 
+- name: Install mysql-client
+  apt:
+    name: mysql-client
+    state: present
+
+- name: Copy the database dump
+  copy:
+    src: edxapp.sql
+    dest: /tmp/edxapp.sql
+
+- name: Load the database dump
+  shell: "/usr/bin/mysql -h {{ EDXAPP_MYSQL_HOST }} -u {{ EDXAPP_MYSQL_USER }} -p{{ EDXAPP_MYSQL_PASSWORD }} {{ EDXAPP_MYSQL_DB_NAME }} < /tmp/edxapp.sql"
+
 # migrate when the migrate user is overridden in extra vars
 - name: migrate
   command: "{{ COMMON_BIN_DIR }}/edxapp-migrate-{{ item }}"
@@ -178,10 +191,6 @@
   with_items: "{{ service_variants_enabled }}"
   tags:
     - migrate
-
-- name: Fail now
-  fail:
-    msg: "Failing here to allow taking a database dump"
 
 # There are problems with django collectstatic copying files.  It doesn't retain
 # last modified timestamps, but relies on those same timestamps to know if a new file
