@@ -179,6 +179,10 @@
   tags:
     - migrate
 
+- name: Fail now
+  fail:
+    msg: "Failing here to allow taking a database dump"
+
 # There are problems with django collectstatic copying files.  It doesn't retain
 # last modified timestamps, but relies on those same timestamps to know if a new file
 # should be recopied.  While collectstatic --clear exists, it only clears some of the
