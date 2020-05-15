@@ -167,18 +167,25 @@
     - install
     - install:configuration
 
-- name: Install mysql-client
-  apt:
-    name: mysql-client
-    state: present
+- name: Preload the database dump to minimize provisioning time
+  block:
+    - name: Install mysql-client
+      apt:
+        name: mysql-client
+        state: present
 
-- name: Copy the database dump
-  copy:
-    src: edxapp.sql
-    dest: /tmp/edxapp.sql
+    - name: Copy the database dump
+      copy:
+        src: edxapp.sql
+        dest: /tmp/edxapp.sql
 
-- name: Load the database dump
-  shell: "/usr/bin/mysql -h {{ EDXAPP_MYSQL_HOST }} -u {{ EDXAPP_MYSQL_USER }} -p{{ EDXAPP_MYSQL_PASSWORD }} {{ EDXAPP_MYSQL_DB_NAME }} < /tmp/edxapp.sql"
+    - name: Load the database dump
+      shell: "/usr/bin/mysql -h {{ EDXAPP_MYSQL_HOST }} -u {{ EDXAPP_MYSQL_USER }} -p{{ EDXAPP_MYSQL_PASSWORD }} {{ EDXAPP_MYSQL_DB_NAME }} < /tmp/edxapp.sql"
+
+    - name: Set the flag to indicate that the dump has been loaded
+      set_fact:
+        db_dump_loaded: true
+  when: db_dump_loaded is not defined
 
 # migrate when the migrate user is overridden in extra vars
 - name: migrate
