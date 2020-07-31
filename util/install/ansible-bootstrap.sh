@@ -40,11 +40,12 @@ fi
 #
 # Bootstrapping constants
 #
-VIRTUAL_ENV_VERSION="15.2.0"
-PIP_VERSION="19.3.1"
-SETUPTOOLS_VERSION="39.0.1"
+VIRTUAL_ENV_VERSION="16.7.10"
+PIP_VERSION="20.0.2"
+SETUPTOOLS_VERSION="44.1.0"
 VIRTUAL_ENV="/tmp/bootstrap"
 PYTHON_BIN="${VIRTUAL_ENV}/bin"
+PYTHON_VERSION="3.5"
 ANSIBLE_DIR="/tmp/ansible"
 CONFIGURATION_DIR="/tmp/configuration"
 EDX_PPA_KEY_SERVER="keyserver.ubuntu.com"
@@ -92,6 +93,7 @@ fi
 EDX_PPA="deb http://ppa.edx.org ${SHORT_DIST} main"
 
 # Upgrade the OS
+sudo rm -r /var/lib/apt/lists/* -vf
 apt-get update -y
 
 # To apt-key update in bionic, gnupg is needed.
@@ -122,6 +124,11 @@ if [[ "${SHORT_DIST}" != bionic ]] ;then
   add-apt-repository -y "${EDX_PPA}"
 fi
 
+# Add deadsnakes repository for python3.5 usage in
+# Ubuntu versions different than xenial.
+if [[ "${SHORT_DIST}" != xenial ]] ;then
+  add-apt-repository -y ppa:deadsnakes/ppa
+fi
 
 # Install python 2.7 latest, git and other common requirements
 # NOTE: This will install the latest version of python 2.7 and
@@ -130,18 +137,18 @@ apt-get update -y
 
 apt-get install -y python2.7 python2.7-dev python-pip python-apt python-jinja2 build-essential sudo git-core libmysqlclient-dev libffi-dev libssl-dev
 
+apt-get install -y python${PYTHON_VERSION}-dev python3-pip python3-apt
 
-pip install --upgrade pip=="${PIP_VERSION}"
+python${PYTHON_VERSION} -m pip install --upgrade pip=="${PIP_VERSION}"
 
 # pip moves to /usr/local/bin when upgraded
 PATH=/usr/local/bin:${PATH}
-pip install setuptools=="${SETUPTOOLS_VERSION}"
-pip install virtualenv=="${VIRTUAL_ENV_VERSION}"
-
+python${PYTHON_VERSION} -m pip install setuptools=="${SETUPTOOLS_VERSION}"
+python${PYTHON_VERSION} -m pip install virtualenv=="${VIRTUAL_ENV_VERSION}"
 
 if [[ "true" == "${RUN_ANSIBLE}" ]]; then
     # create a new virtual env
-    /usr/local/bin/virtualenv "${VIRTUAL_ENV}"
+    /usr/local/bin/virtualenv --python=python${PYTHON_VERSION} "${VIRTUAL_ENV}"
 
     PATH="${PYTHON_BIN}":${PATH}
 
@@ -153,7 +160,7 @@ if [[ "true" == "${RUN_ANSIBLE}" ]]; then
     make requirements
 
     cd "${CONFIGURATION_DIR}"/playbooks
-    "${PYTHON_BIN}"/ansible-playbook edx_ansible.yml -i '127.0.0.1,' -c local -e "configuration_version=${CONFIGURATION_VERSION}"
+    "${PYTHON_BIN}"/ansible-playbook edx_ansible.yml -i '127.0.0.1,' -c local -e "CONFIGURATION_VERSION=${CONFIGURATION_VERSION}"
 
     # cleanup
     rm -rf "${ANSIBLE_DIR}"

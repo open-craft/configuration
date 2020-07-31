@@ -48,6 +48,15 @@
     - devstack
     - devstack:install
 
+- name: add paver autocomplete to bashrc
+  lineinfile:
+    dest: /root/.bashrc
+    line: "source {{ edxapp_code_dir }}/scripts/paver_autocomplete.sh"
+  when: devstack is defined and devstack
+  tags:
+  - devstack
+  - devstack:install
+
 - name: create edxapp log dir
   file:
     path: "{{ edxapp_log_dir }}"
@@ -116,7 +125,7 @@
 
 - name: Install the nodejs LTS repos
   apt_repository:
-    repo: "deb https://deb.nodesource.com/node_{{ edxapp_node_version }}.x {{ ansible_distribution_release }} main"
+    repo: "deb https://deb.nodesource.com/node_{{ EDXAPP_NODE_VERSION }}.x {{ ansible_distribution_release }} main"
     state: present
     update_cache: yes
   tags:
@@ -167,7 +176,7 @@
 - name: Include JWT signature setting in the app config file
   include_role:
     name: jwt_signature
-  when: COMMON_SANDBOX_BUILD and celery_worker is not defined
+  when: CONFIGURE_JWTS and celery_worker is not defined
   vars:
      app_name: 'lms'
      app_config_file: "{{ COMMON_CFG_DIR }}/lms.yml"

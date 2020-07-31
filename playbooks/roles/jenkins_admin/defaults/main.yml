@@ -30,7 +30,7 @@ JENKINS_ADMIN_AWS_CREDENTIALS: !!null
 jenkins_admin_role_name: jenkins_admin
 
 
-jenkins_admin_version: "1.658"
+JENKINS_ADMIN_VERSION: "1.658"
 #
 # OS packages
 #

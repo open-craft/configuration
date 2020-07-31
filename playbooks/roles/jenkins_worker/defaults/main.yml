@@ -6,7 +6,7 @@ jenkins_group: "jenkins"
 jenkins_groups: "jenkins,docker"
 jenkins_home: /home/jenkins
 
-jenkins_edx_platform_version: master
+JENKINS_EDX_PLATFORM_VERSION: master
 
 # System packages
 jenkins_debian_pkgs:
@@ -20,10 +20,20 @@ jenkins_debian_pkgs:
 # packer direct download URL
 packer_url: "https://releases.hashicorp.com/packer/1.4.4/packer_1.4.4_linux_amd64.zip"
 
-jenkins_node_version: "12"
+JENKINS_NODE_VERSION: "12"
 ansible_distribution_release: "xenial"
 
 jenkins_worker_python_versions:
   - 2.7
   - 3.5
   - 3.6
+  - 3.8
+
+# The packaging for Python 3.7 and above split distutils out into a separate package;
+# needed for virtualenv creation
+jenkins_worker_distutils_versions:
+  - 3.8
+
+edx_platform_python_versions:
+  - 3.5
+  - 3.8
