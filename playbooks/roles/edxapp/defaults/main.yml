@@ -1013,6 +1013,7 @@ edxapp_environment_default:
   LMS_CFG: "{{ edxapp_lms_cfg }}"
   STUDIO_CFG: "{{ edxapp_studio_cfg }}"
   BOTO_CONFIG: "{{ edxapp_app_dir }}/.boto"
+  SETUPTOOLS_USE_DISTUTILS: "stdlib" # https://setuptools.readthedocs.io/en/latest/history.html#v50-0-0
 
 edxapp_environment_extra: {}
 
