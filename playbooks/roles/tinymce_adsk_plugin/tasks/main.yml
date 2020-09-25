@@ -1,0 +1,54 @@
+---
+
+- name: Clone plugin and move it to specific directory
+  block:
+    - name: Clone plugin
+      git:
+        repo: "{{ tinymce_adsk_plugin_repo }}"
+        dest: "{{ tinymce_adsk_plugin_temp_dir }}"
+        accept_hostkey: true
+    - name: Copy plugin to tinymce plugins directory
+      command: "cp -r {{ tinymce_adsk_plugin_temp_dir }}/{{ tinymce_adsk_plugin_dir_name }} {{ tinymce_plugins_dir }}"
+    - name: Clean cloned plugin path
+      file:
+        state: absent
+        path: "{{ tinymce_adsk_plugin_temp_dir }}"
+    - name: Remove minified plugin javascript
+      file:
+        state: absent
+        path: "{{ tinymce_adsk_plugin_minified_js_path }}"
+  become_user: "{{ edxapp_user }}"
+
+- name: Minify tinymce plugin files
+  block:
+    - name: Unarchive JakePackage.zip
+      unarchive:
+        src: "{{ edx_jake_package }}"
+        dest: "{{ tinymce_dir }}"
+        remote_src: yes
+    - name: Installs npm dependencies from archive
+      shell: "npm install"
+      args:
+        chdir: "{{ tinymce_dir }}"
+    - name: Build tinymce with jake
+      shell: "npx jake minify bundle[themes:{{ tinymce_themes | join(',') }},plugins:{{ tinymce_plugins | join(',') }}]"
+      args:
+        chdir: "{{ tinymce_dir }}"
+  become_user: "{{ edxapp_user }}"
+
+- name: Update static assets
+  command: "{{ COMMON_BIN_DIR }}/edxapp-update-assets"
+
+- name: Restart LMS
+  supervisorctl:
+    state: restarted
+    supervisorctl_path: "{{ supervisor_ctl }}"
+    config: "{{ supervisor_cfg }}"
+    name: "lms"
+
+- name: Restart LMS
+  supervisorctl:
+    state: restarted
+    supervisorctl_path: "{{ supervisor_ctl }}"
+    config: "{{ supervisor_cfg }}"
+    name: "cms"

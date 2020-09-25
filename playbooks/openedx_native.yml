@@ -110,3 +110,4 @@
       when: not COMMON_ENABLE_DATADOG
     - role: user_retirement_pipeline
       when: COMMON_RETIREMENT_SERVICE_SETUP
+    - tinymce_adsk_plugin
