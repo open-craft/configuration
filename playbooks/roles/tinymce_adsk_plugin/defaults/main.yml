@@ -1,6 +1,6 @@
 ---
 
-tinymce_adsk_plugin_repo: "git@github.com:open-craft/tinymce-adsk-plugin.git"
+tinymce_adsk_plugin_repo: "https://gitlab.com/nizarmah/tinymce-adsk-plugin"
 tinymce_adsk_plugin_branch: "master"
 tinymce_adsk_plugin_dir_name: "adsklink"
 tinymce_adsk_plugin_temp_dir: "{{ edxapp_code_dir }}/.temp_tinymce_adsk_plugin"
