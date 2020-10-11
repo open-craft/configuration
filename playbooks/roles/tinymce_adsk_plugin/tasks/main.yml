@@ -26,10 +26,6 @@
         src: "{{ edx_jake_package }}"
         dest: "{{ tinymce_dir }}"
         remote_src: yes
-    - name: Installs npm dependencies from archive
-      shell: "npm install"
-      args:
-        chdir: "{{ tinymce_dir }}"
     - name: Build tinymce with jake
       shell: "npx jake minify bundle[themes:{{ tinymce_themes | join(',') }},plugins:{{ tinymce_plugins | join(',') }}]"
       args:
