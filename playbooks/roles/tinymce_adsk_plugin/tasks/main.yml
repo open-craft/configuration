@@ -22,6 +22,14 @@
         src: "{{ edx_jake_package }}"
         dest: "{{ tinymce_dir }}"
         remote_src: yes
+    - name: Clean existing node modules
+      file:
+        state: absent
+        path: "{{ tinymce_dir }}/node_modules"
+    - name: Install npm dependencies from archive
+      shell: "npm install"
+      args:
+        chdir: "{{ tinymce_dir }}"
     - name: Clean existing tinymce files with jake
       shell: "npx jake clean"
       args:
