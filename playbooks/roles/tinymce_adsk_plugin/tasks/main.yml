@@ -13,10 +13,6 @@
       file:
         state: absent
         path: "{{ tinymce_adsk_plugin_temp_dir }}"
-    - name: Remove minified plugin javascript
-      file:
-        state: absent
-        path: "{{ tinymce_adsk_plugin_minified_js_path }}"
   become_user: "{{ edxapp_user }}"
 
 - name: Minify tinymce plugin files
@@ -26,6 +22,10 @@
         src: "{{ edx_jake_package }}"
         dest: "{{ tinymce_dir }}"
         remote_src: yes
+    - name: Clean existing tinymce files with jake
+      shell: "npx jake clean"
+      args:
+        chdir: "{{ tinymce_dir }}"
     - name: Build tinymce with jake
       shell: "npx jake minify bundle[themes:{{ tinymce_themes | join(',') }},plugins:{{ tinymce_plugins | join(',') }}]"
       args:

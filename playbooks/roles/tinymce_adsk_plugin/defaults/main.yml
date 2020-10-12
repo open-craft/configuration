@@ -8,8 +8,6 @@ tinymce_adsk_plugin_temp_dir: "{{ edxapp_code_dir }}/.temp_tinymce_adsk_plugin"
 tinymce_dir: "{{ edxapp_code_dir }}/common/static/js/vendor/tinymce"
 tinymce_plugins_dir: "{{ tinymce_dir }}/js/tinymce/plugins"
 
-tinymce_adsk_plugin_minified_js_path: "{{ tinymce_plugins_dir }}/{{ tinymce_adsk_plugin_dir_name }}/plugin.min.js"
-
 edx_jake_package: "{{ edxapp_code_dir }}/vendor_extra/tinymce/JakePackage.zip"
 
 tinymce_themes:
