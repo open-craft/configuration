@@ -30,8 +30,8 @@
       shell: "npm install"
       args:
         chdir: "{{ tinymce_dir }}"
-    - name: Clean existing tinymce files with jake
-      shell: "npx jake clean"
+    - name: Clean existing tinymce js files with jake
+      shell: "npx jake clean-js"
       args:
         chdir: "{{ tinymce_dir }}"
     - name: Build tinymce with jake
