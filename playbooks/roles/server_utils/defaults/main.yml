@@ -22,7 +22,7 @@ server_utils_role_name: server_utils
 
 server_utils_debian_pkgs:
   # not sure why this is installed
-  - ack-grep
+  - ack
   # not sure why this is installed
   - mosh
   # not sure why this is installed
