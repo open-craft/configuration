@@ -28,3 +28,5 @@ MySQL-python==1.2.5
 #Azure:
 azure==2.0.0
 azure-storage==0.20.0
+
+setuptools==44.1.1
