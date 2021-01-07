@@ -1,9 +1,9 @@
 ---
 
-ORACLEJDK_VERSION: "8u131"
+ORACLEJDK_VERSION: "8u271"
 # what the archive unpacks to
-oraclejdk_base: "jdk1.8.0_131"
-oraclejdk_build: "b11"
+oraclejdk_base: "jdk1.8.0_271"
+oraclejdk_build: "b09"
 oraclejdk_platform: "linux"
 oraclejdk_arch: "x64"
 oraclejdk_file: "jdk-{{ ORACLEJDK_VERSION }}-{{ oraclejdk_platform }}-{{ oraclejdk_arch }}.tar.gz"
