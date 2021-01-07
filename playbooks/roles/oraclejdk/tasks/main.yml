@@ -17,7 +17,7 @@
   with_items: "{{ oraclejdk_debian_pkgs }}"
 
 - name: Download Oracle Java
-  command: "curl -L -b "oraclelicense=a" https://download.oracle.com/otn-pub/java/jdk/8u271-b09/61ae65e088624f5aaa0b1d2d801acb16/jdk-8u271-linux-x64.tar.gz -o /var/tmp/{{ oraclejdk_file }}"
+  command: "curl -L -b 'oraclelicense=a' https://download.oracle.com/otn-pub/java/jdk/8u271-b09/61ae65e088624f5aaa0b1d2d801acb16/jdk-8u271-linux-x64.tar.gz -o /var/tmp/{{ oraclejdk_file }}"
 
 - name: Create jvm dir
   file:
