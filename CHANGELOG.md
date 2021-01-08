@@ -1,6 +1,35 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 Add any new changes to the top(right below this line).
+ 
+ - 2021-01-08
+     - Role: tinymce_plugins
+        - Installs `tinymce_plugins` specified in `TINYMCE_ADDITIONAL_PLUGINS_LIST` configuration variable
+        - Rebuilds TinyMCE files with the newly installed plugins and the previous ones
+
+     - Role: edxapp
+        - Includes `tinymce_plugins` role in order to install custom TinyMCE plugins, if there are any.
+
+ - 2021-01-05
+     - Role: edxapp
+        - setting `proxy_buffer_size` behind the EDXAPP_SET_PROXY_BUFFER_SIZE flag.
+
+ - 2020-12-11
+    - Role: jenkins_master
+       - Adding variable/tasks to create directories for job virtual
+         enviroments to be created, as part of removing shiningpanda
+         as a dependency.
+
+ - 2020-12-09
+     - Role: edxapp
+        - Updated renderer options to reference `common.djangoapps.edxmako`
+          instead of `edxmako`. The latter import path is deprecated.
+          Other than removing warnings, there should be no functional
+          change.
+
+ - 2020-12-02
+    - Role: mfe
+        - Added logo-related configuration settings, with defaults.
 
  - 2020-12-01
     - Role: edxapp
