@@ -40,6 +40,7 @@
     ECOMMERCE_ENABLE_COMPREHENSIVE_THEMING: false
     EDXAPP_ENABLE_MEMCACHE: true
     EDXAPP_ENABLE_ELASTIC_SEARCH: true
+    EDXAPP_ENABLE_COURSE_GRADES_FETCH: true
   roles:
     - role: swapfile
       SWAPFILE_SIZE: 4GB
@@ -110,3 +111,5 @@
       when: not COMMON_ENABLE_DATADOG
     - role: user_retirement_pipeline
       when: COMMON_RETIREMENT_SERVICE_SETUP
+    - role: edx_course_grades
+      when: EDXAPP_ENABLE_COURSE_GRADES_FETCH
