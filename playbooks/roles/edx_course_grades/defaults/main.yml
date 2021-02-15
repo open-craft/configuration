@@ -1,0 +1,25 @@
+#
+# Open edX Retirement Pipeline Configuration
+#
+# github:     https://github.com/edx/configuration
+# wiki:       https://openedx.atlassian.net/wiki/display/OpenOPS
+# code style: https://openedx.atlassian.net/wiki/display/OpenOPS/Ansible+Code+Conventions
+# license:    https://github.com/edx/configuration/blob/master/LICENSE.TXT
+#
+#
+# Deploy the edx_course_grades
+#
+# See documentation in README.rst
+
+#
+# This file contains the variables you'll need to pass to the role, and some
+# example values.
+
+course_grades_log_dir: "{{ COMMON_LOG_DIR }}/course_grades"
+course_grades_fetch_records_script: "{{ COMMON_BIN_DIR }}/query-course-grades-data"
+course_grades_log_file: "{{ course_grades_log_dir }}/course_grades_records.log"
+course_grades_script_location: "/edx/var/course_grades"
+course_grades_python_script: "{{ course_grades_script_location }}/fetch_course_grades.py"
+course_grades_log_sync_prefix: "logs/course_grades/"
+course_grades_cron_job_hours: 6
+course_grades_cron_job_minutes: 0
