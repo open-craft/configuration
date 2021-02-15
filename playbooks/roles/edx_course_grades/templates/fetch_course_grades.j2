@@ -1,0 +1,20 @@
+#!/usr/bin/python
+
+import MySQLdb
+
+username = "{{ EDXAPP_MYSQL_USER }}"
+password = "{{ EDXAPP_MYSQL_PASSWORD }}"
+dbname = "{{ EDXAPP_MYSQL_DB_NAME }}"
+dbhost = "{{ EDXAPP_MYSQL_HOST }}"
+query = "select * from grades_persistentcoursegrade where modified > date_sub(now(), interval 1 day)"
+
+dbconnect = MySQLdb.connect(dbhost, username, password, dbname)
+
+cursor = dbconnect.cursor()
+cursor.execute(query)
+
+data = cursor.fetchone()
+if data:
+  print(data)
+
+dbconnect.close()
