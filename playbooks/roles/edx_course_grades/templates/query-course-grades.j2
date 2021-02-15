@@ -1,0 +1,20 @@
+#!/bin/bash
+
+if (( $EUID != 0 )); then
+    echo "Please run as the root user"
+    exit 1
+fi
+
+
+if [ ! -f "{{ course_grades_log_file }}" ]; then
+  sudo touch "{{ course_grades_log_file }}"
+else
+  chown syslog.syslog "{{ course_grades_log_file }}"
+fi
+
+exec > >(tee -a "{{ course_grades_log_file }}")
+exec 2>&1
+
+script_path="{{ course_grades_python_script }}"
+
+/usr/bin/python3 $script_path
