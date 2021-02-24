@@ -137,11 +137,39 @@ error_page {{ k }} {{ v }};
   {% endif -%}
 
   location @proxy_to_lms_app {
+    if ($request_method = 'OPTIONS') {
+        add_header 'Access-Control-Allow-Origin' $cors_origin;
+        add_header 'Access-Control-Allow-Methods' 'GET, POST, OPTIONS';
+        add_header 'Access-Control-Allow-Headers' 'Authorization, USE-JWT-COOKIE';
+        add_header 'Access-Control-Allow-Credentials' true;
+        add_header 'Access-Control-Max-Age' 86400;
+        add_header 'Content-Type' 'text/plain; charset=utf-8';
+        add_header 'Content-Length' 0;
+        return 204;
+    }
+
+    add_header 'Access-Control-Allow-Methods' 'GET, POST, OPTIONS' always;
+    add_header 'Access-Control-Allow-Credentials' true always;
+
 {% include "lms_proxy.j2" %}
 
   }
 
   location @proxy_to_lms_app_api {
+    if ($request_method = 'OPTIONS') {
+        add_header 'Access-Control-Allow-Origin' $cors_origin;
+        add_header 'Access-Control-Allow-Methods' 'GET, POST, OPTIONS';
+        add_header 'Access-Control-Allow-Headers' 'Authorization, USE-JWT-COOKIE';
+        add_header 'Access-Control-Allow-Credentials' true;
+        add_header 'Access-Control-Max-Age' 86400;
+        add_header 'Content-Type' 'text/plain; charset=utf-8';
+        add_header 'Content-Length' 0;
+        return 204;
+    }
+
+    add_header 'Access-Control-Allow-Methods' 'GET, POST, OPTIONS' always;
+    add_header 'Access-Control-Allow-Credentials' true always;
+
     error_page 504 @empty_json;
     error_page 502 @empty_json;
     error_page 500 @empty_json;
