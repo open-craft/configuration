@@ -18,7 +18,6 @@
 uptime_report_script: "/edx/var/upload_uptime_report.py"
 uptime_report_cron_job_days: 6
 uptime_report_cron_job_minutes: 0
-newrelic_monitor_id: ""
 newrelic_query_key: ""
 newrelic_query_api_url: ""
 uptime_report_s3_bucket: ""

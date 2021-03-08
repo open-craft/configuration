@@ -5,15 +5,15 @@ import json
 import datetime
 from six.moves import urllib
 
-newrelic_monitor_id = '{{ newrelic_monitor_id }}'
 newrelic_query_key = '{{ newrelic_query_key }}'
 newrelic_query_api_url = '{{ newrelic_query_api_url }}'
 uptime_report_s3_bucket = '{{ uptime_report_s3_bucket }}'
+newrelic_monitor_name = 'https://{{ EDXAPP_SITE_NAME }}/'
 aws_access_key_id = '{{ AWS_S3_LOGS_ACCESS_KEY_ID }}'
 aws_secret_access_key = '{{ AWS_S3_LOGS_SECRET_KEY }}'
 
 nr_query = ("SELECT percentage(count(*), WHERE result = 'SUCCESS') as 'UPTIME' "
-            "FROM SyntheticCheck WHERE monitorId = '{0}' "
+            "FROM SyntheticCheck WHERE monitorName = '{0}' "
             "FACET dateOf(timestamp), hourOf(timestamp) "
             "SINCE '{1} 00:00:00' UNTIL '{2} 00:00:00' "
             "LIMIT MAX")
@@ -22,7 +22,7 @@ def get_uptime_data(date):
     from_time = (date+datetime.timedelta(days=-1)).strftime("%Y-%m-%d")
     to_time = date.strftime("%Y-%m-%d")
     data = urllib.parse.urlencode({
-        'nrql': nr_query.format(newrelic_monitor_id, from_time, to_time)
+        'nrql': nr_query.format(newrelic_monitor_name, from_time, to_time)
     })
     headers = {'X-Query-Key': newrelic_query_key, 'Accept': 'application/json'}
     request = urllib.request.Request(newrelic_query_api_url+'?'+data, headers=headers)
