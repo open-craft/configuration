@@ -1,7 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 Add any new changes to the top(right below this line).
- 
+
+ - 2021-07-03
+    - Role: ecommerce
+      - Added new configuration variable ECOMMERCE_EXTRA_CONFIG_OVERRIDES, which will allow override any ecommerce settings.
+
  - 2021-01-08
      - Role: tinymce_plugins
         - Installs `tinymce_plugins` specified in `TINYMCE_ADDITIONAL_PLUGINS_LIST` configuration variable
