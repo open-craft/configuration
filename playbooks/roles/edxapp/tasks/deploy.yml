@@ -27,6 +27,15 @@
     - install
     - install:base
 
+# Check https://stackoverflow.com/a/61934186 for details.
+# We need this, because Ubuntu 20.04 has strict security checks,
+# and CircleCI MySQL container doesn't support recent version of TLS
+- name: disable strict ssl security
+  copy:
+    src: openssl.cnf
+    dest: /usr/lib/ssl/openssl.cnf
+  become: True
+
 - name: set git fetch.prune to ignore deleted remote refs
   shell: git config --global fetch.prune true
   become_user: "{{ edxapp_user }}"
