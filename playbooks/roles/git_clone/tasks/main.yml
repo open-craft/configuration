@@ -73,6 +73,7 @@
     repo: "git@{{ item.DOMAIN }}:{{ item.PATH }}/{{ item.REPO }}"
     dest: "{{ item.DESTINATION }}"
     version: "{{ item.VERSION }}"
+    refspec: "{{ item.REFSPEC if 'REFSPEC' in item else None }}"
     accept_hostkey: yes
     key_file: "{{ git_home }}/.ssh/{{ item.REPO }}"
     depth: 1
@@ -90,6 +91,7 @@
     repo: "https://{{ item.DOMAIN }}/{{ item.PATH }}/{{ item.REPO }}"
     dest: "{{ item.DESTINATION }}"
     version: "{{ item.VERSION }}"
+    refspec: "{{ item.REFSPEC if 'REFSPEC' in item else None }}"
     depth: 1
   become_user: "{{ repo_owner }}"
   register: code_checkout

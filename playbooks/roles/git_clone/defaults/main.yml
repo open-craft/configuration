@@ -25,6 +25,7 @@
 #        PATH: edx
 #        REPO: sample-themes.git
 #        VERSION: release
+#        REFSPEC: "+refs/pull/*:refs/heads/*"
 #        DESTINATION: /edx/etc/edx-themes/edx-themes
 #        SSH_KEY: "{{ THEMES_GIT_IDENTITY }}"
 #
