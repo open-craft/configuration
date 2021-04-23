@@ -21,6 +21,18 @@
     url: "{{ oraclejdk_url }}"
     headers: 'Cookie:oraclelicense=accept-securebackup-cookie'
     dest: "/var/tmp/{{ oraclejdk_file }}"
+  when: USE_PRIVATE_ORACLEJDK is undefined or not USE_PRIVATE_ORACLEJDK
+
+- name: Download Oracle Java from private S3 bucket
+  aws_s3:
+    access_key: "{{ oraclejdk_s3.access_key }}"
+    secret_key: "{{ oraclejdk_s3.secret_key }}"
+    region: "{{ oraclejdk_s3.region }}"
+    bucket: "{{ oraclejdk_s3.bucket_name }}"
+    object: "{{ oraclejdk.filename | default(oraclejdk_file) }}"
+    dest: "/var/tmp/{{ oraclejdk_file }}"
+    mode: get
+  when: USE_PRIVATE_ORACLEJDK is defined and USE_PRIVATE_ORACLEJDK
 
 - name: Create jvm dir
   file:
