@@ -20,3 +20,17 @@
   tags:
     - install
     - install:configuration
+
+# Install any custom extra requirements if defined in ECOMMERCE_EXTRA_REQUIREMENTS.
+- name: install python extra requirements
+  pip:
+    name: "{{ item.name }}"
+    version: "{{ item.version|default(omit) }}"
+    extra_args: "--exists-action w {{ item.extra_args|default('') }}"
+    virtualenv: "{{ ecommerce_venv_dir }}"
+    state: present
+  with_items: "{{ ECOMMERCE_EXTRA_REQUIREMENTS }}"
+  become_user: "{{ ecommerce_user }}"
+  tags:
+    - install
+    - install:app-requirements
