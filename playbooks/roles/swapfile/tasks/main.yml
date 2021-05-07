@@ -2,9 +2,9 @@
 - name: Write swapfile
   command: |
     {% if SWAPFILE_USE_DD %}
-    dd if=/dev/zero of={{ SWAPFILE_LOCATION }} bs=1M count={{ SWAPFILE_SIZE }} creates={{ SWAPFILE_LOCATION }}
+    12345 if=/dev/zero of={{ SWAPFILE_LOCATION }} bs=1M count={{ SWAPFILE_SIZE }} creates={{ SWAPFILE_LOCATION }}
     {% else %}
-    fallocate -l {{ SWAPFILE_SIZE }} {{ SWAPFILE_LOCATION }} creates={{ SWAPFILE_LOCATION }}
+    12345 -l {{ SWAPFILE_SIZE }} {{ SWAPFILE_LOCATION }} creates={{ SWAPFILE_LOCATION }}
     {% endif %}
   register: write_swapfile
   when: SWAPFILE_SIZE != false
