@@ -59,10 +59,3 @@
   args:
     chdir: "{{ demo_edxapp_code_dir }}"
   when: demo_checkout.changed
-
-- name: reindex all courses
-  shell: ". {{ demo_edxapp_env }} && yes | {{ demo_edxapp_venv_bin }}/python ./manage.py cms reindex_course --all --settings={{ demo_edxapp_settings }}"
-  args:
-    chdir: "{{ demo_edxapp_code_dir }}"
-  become_user: "{{ common_web_user }}"
-  when: EDXAPP_REINDEX_ALL_COURSES
