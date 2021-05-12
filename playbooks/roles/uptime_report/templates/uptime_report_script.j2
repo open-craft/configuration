@@ -8,6 +8,7 @@ from six.moves import urllib
 newrelic_query_key = '{{ newrelic_query_key }}'
 newrelic_query_api_url = '{{ newrelic_query_api_url }}'
 uptime_report_s3_bucket = '{{ uptime_report_s3_bucket }}'
+uptime_report_s3_bucket_folder = '{{ uptime_report_s3_bucket_folder }}'
 newrelic_monitor_name = 'https://{{ EDXAPP_SITE_NAME }}/'
 aws_access_key_id = '{{ AWS_S3_LOGS_ACCESS_KEY_ID }}'
 aws_secret_access_key = '{{ AWS_S3_LOGS_SECRET_KEY }}'
@@ -42,7 +43,11 @@ def get_uptime_data(date):
     return times
 
 def upload_to_s3(uptime_data, date):
-    filename = 'uptime/uptime-{0}.json'.format((date+datetime.timedelta(days=-1)).strftime("%Y-%m-%d"))
+    filepath = 'uptime/'
+    if uptime_report_s3_bucket_folder:
+        filepath = '{0}{1}/'.format(filepath, uptime_report_s3_bucket_folder)
+    
+    filename = '{0}uptime-{1}.json'.format(filepath, (date+datetime.timedelta(days=-1)).strftime("%Y-%m-%d"))
     uptime_data = json.dumps(uptime_data)
 
     s3_client = boto3.client('s3',aws_access_key_id=aws_access_key_id, aws_secret_access_key=aws_secret_access_key)

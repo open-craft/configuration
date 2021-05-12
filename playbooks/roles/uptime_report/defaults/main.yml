@@ -21,3 +21,4 @@ uptime_report_cron_job_minutes: 0
 newrelic_query_key: ""
 newrelic_query_api_url: ""
 uptime_report_s3_bucket: ""
+uptime_report_s3_bucket_folder: ""
