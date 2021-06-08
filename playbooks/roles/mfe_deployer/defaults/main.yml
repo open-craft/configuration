@@ -17,12 +17,6 @@ MFES:
   - name: account
     repo: frontend-app-account
     public_path: "/account/"
-  - name: payment
-    repo: frontend-app-payment
-    public_path: "/payment/"
-  - name: ecommerce
-    repo: frontend-app-ecommerce
-    public_path: "/ecommerce/"
 
 MFES_ECOMMERCE:
   - name: payment
