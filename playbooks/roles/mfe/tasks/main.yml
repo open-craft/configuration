@@ -85,7 +85,7 @@
     - install:app-requirements
 
 - name: install npm overrides
-  shell: "npm install {{ item }} --no-save"
+  shell: "npm install {{ item }}"
   args:
     chdir: "{{ MFE_CODE_DIR }}"
   become_user: "{{ MFE_USER }}"
