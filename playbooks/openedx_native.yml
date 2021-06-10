@@ -109,7 +109,3 @@
     - role: user_retirement_pipeline
       when: COMMON_RETIREMENT_SERVICE_SETUP
     - role: mfe_deployer
-    - role: edx_course_grades
-      when: EDXAPP_ENABLE_COURSE_GRADES_FETCH
-    - role: uptime_report
-      when: ENABLE_UPTIME_REPORT
