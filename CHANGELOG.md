@@ -1,6 +1,10 @@
 # Changelog
 All notable changes to this project will be documented in this file.
-Add any new changes to the top(right below this line).
+Add any new changes to the top (right below this line).
+
+ - 2021-06-17
+    - Role credentials
+       - Installs extra python packages specified in `CREDENTIALS_EXTRA_REQUIREMENTS` (defaults to `[]`).
 
  - 2021-07-03
     - Role: ecommerce
