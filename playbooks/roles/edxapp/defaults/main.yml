@@ -203,6 +203,14 @@ EDXAPP_ENABLE_AUTO_AUTH: false
 # Settings for enabling and configuring third party authorization
 EDXAPP_ENABLE_THIRD_PARTY_AUTH: true
 EDXAPP_ENABLE_OAUTH2_PROVIDER: false
+EDXAPP_THIRD_PARTY_AUTH_BACKENDS:
+  - social_core.backends.google.GoogleOAuth2
+  - social_core.backends.linkedin.LinkedinOAuth2
+  - social_core.backends.facebook.FacebookOAuth2
+  - social_core.backends.azuread.AzureADOAuth2
+  - third_party_auth.identityserver3.IdentityServer3
+  - third_party_auth.saml.SAMLAuthBackend
+  - third_party_auth.lti.LTIAuthBackend
 
 EDXAPP_ENABLE_MOBILE_REST_API: false
 
@@ -875,7 +883,7 @@ EDXAPP_VIDEO_IMAGE_SETTINGS:
   VIDEO_IMAGE_MAX_BYTES : 2097152
   VIDEO_IMAGE_MIN_BYTES : 2048
   STORAGE_KWARGS:
-    location: "{{ edxapp_media_dir_s3 }}/"
+    location: "{{ edxapp_video_storage_location }}/"
     base_url: "{{ EDXAPP_MEDIA_URL }}/"
   DIRECTORY_PREFIX: 'video-images/'
 
@@ -885,7 +893,7 @@ EDXAPP_VIDEO_TRANSCRIPTS_MAX_AGE: 31536000
 EDXAPP_VIDEO_TRANSCRIPTS_SETTINGS:
   VIDEO_TRANSCRIPTS_MAX_BYTES : 3145728
   STORAGE_KWARGS:
-    location: "{{ edxapp_media_dir_s3 }}/"
+    location: "{{ edxapp_video_storage_location }}/"
     base_url: "{{ EDXAPP_MEDIA_URL }}/"
   DIRECTORY_PREFIX: 'video-transcripts/'
 
@@ -1037,6 +1045,7 @@ edxapp_deploy_path: "{{ edxapp_venv_bin }}:{{ edxapp_code_dir }}/bin:{{ edxapp_n
 edxapp_staticfile_dir: "{{ edxapp_data_dir }}/staticfiles"
 edxapp_media_dir: "{{ edxapp_data_dir }}/media"
 edxapp_media_dir_s3: "{{ edxapp_media_dir | regex_replace('^\\/', '') }}"
+edxapp_video_storage_location: "{% if EDXAPP_DEFAULT_FILE_STORAGE == 'django.core.files.storage.FileSystemStorage' %}{{ edxapp_media_dir }}{% else %}{{ edxapp_media_dir_s3 }}{% endif %}/"
 edxapp_course_static_dir: "{{ edxapp_data_dir }}/course_static"
 edxapp_course_data_dir: "{{ edxapp_data_dir }}/data"
 edxapp_upload_dir: "{{ edxapp_data_dir }}/uploads"
@@ -1506,6 +1515,7 @@ lms_env_config:
   OAUTH_EXPIRE_PUBLIC_CLIENT_DAYS: "{{ EDXAPP_OAUTH_EXPIRE_PUBLIC_CLIENT_DAYS }}"
   OAUTH_DELETE_EXPIRED: "{{ EDXAPP_OAUTH_DELETE_EXPIRED }}"
   PAID_COURSE_REGISTRATION_CURRENCY: "{{ EDXAPP_PAID_COURSE_REGISTRATION_CURRENCY }}"
+  THIRD_PARTY_AUTH_BACKENDS: "{{ EDXAPP_THIRD_PARTY_AUTH_BACKENDS }}"
   GIT_REPO_DIR: "{{ EDXAPP_GIT_REPO_DIR }}"
   SITE_NAME:  "{{ EDXAPP_LMS_SITE_NAME }}"
   HTTPS: "{{ EDXAPP_LMS_HTTPS }}"

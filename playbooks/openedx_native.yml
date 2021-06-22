@@ -40,6 +40,15 @@
     ECOMMERCE_ENABLE_COMPREHENSIVE_THEMING: false
     EDXAPP_ENABLE_MEMCACHE: true
     EDXAPP_ENABLE_ELASTIC_SEARCH: true
+    # See https://chat.opencraft.com/opencraft/pl/gycakygo1fyxfc5zmwx1jb67na
+    RETIREMENT_SERVICE_GIT_REPOS:
+      - PROTOCOL: "{{ COMMON_GIT_PROTOCOL }}"
+        DOMAIN: "{{ COMMON_GIT_MIRROR }}"
+        PATH: "{{ COMMON_GIT_PATH }}"
+        REPO: "tubular.git"
+        VERSION: "24beaac052467e3e85627d4b16f4ee5ee33b42d2"
+        DESTINATION: "{{ retirement_service_app_dir }}"
+        SSH_KEY: "{{ RETIREMENT_SERVICE_GIT_IDENTITY }}"
   roles:
     - role: swapfile
       SWAPFILE_SIZE: 4GB
