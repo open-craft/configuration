@@ -204,6 +204,16 @@
     - install
     - install:app-requirements
 
+- name: git ignore local changes to extra.txt
+  command: "git update-index --skip-worktree {{ edx_django_service_code_dir }}/requirements/extra.txt"
+  args:
+    chdir: "{{ edx_django_service_code_dir }}"
+  become_user: "{{ edx_django_service_user }}"
+  when: edx_django_service_add_extra_requirements_to_requirements_file is defined and edx_django_service_add_extra_requirements_to_requirements_file
+  tags:
+    - install
+    - install:app-requirements
+
 - name: Check for existing make_migrate container
   command: "docker ps -aq --filter name='{{ edx_django_service_name }}.make_migrate'"
   register: edx_django_service_make_migrate_container
