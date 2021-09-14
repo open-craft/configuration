@@ -15,6 +15,14 @@
     # These should stay false for the public AMI
     COMMON_ENABLE_DATADOG: False
     COMMON_ENABLE_SPLUNKFORWARDER: False
+    RETIREMENT_SERVICE_GIT_REPOS:
+      - PROTOCOL: "{{ COMMON_GIT_PROTOCOL }}"
+        DOMAIN: "{{ COMMON_GIT_MIRROR }}"
+        PATH: "open-craft"
+        REPO: "tubular.git"
+        VERSION: "opencraft-release/koa.3"
+        DESTINATION: "{{ retirement_service_app_dir }}"
+        SSH_KEY: "{{ RETIREMENT_SERVICE_GIT_IDENTITY }}"
   roles:
     - role: swapfile
       SWAPFILE_SIZE: 4GB
