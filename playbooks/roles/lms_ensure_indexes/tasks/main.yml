@@ -1,0 +1,7 @@
+---
+# Task to ensure indexes for edx_platform, creating the required indexes in MongoDB
+
+- name: Creates all required indexes in MongoDB
+  shell: ". {{ edxapp_app_dir }}/edxapp_env && {{ edxapp_venv_bin }}/python {{ COMMON_BIN_DIR }}/manage.edxapp lms ensure_indexes"
+  become: True
+  become_user: "{{ edxapp_user }}"

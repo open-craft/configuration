@@ -1,0 +1,4 @@
+edxapp_app_dir: "{{ COMMON_APP_DIR }}/edxapp"
+edxapp_venv_bin: "{{ edxapp_app_dir }}/venvs/edxapp/bin"
+edxapp_user: edxapp
+
