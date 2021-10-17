@@ -2,11 +2,51 @@
 All notable changes to this project will be documented in this file.
 Add any new changes to the top (right below this line).
 
+ - 2021-11-30
+    - Upgrade celery to 5.2.0 and adjust CLI call parameters too
+    - Bumped single-beat to use a more supported fork of the project
+
+ - 2021-11-01
+    - Docker: edxapp
+       - Removed unnecessary `CELERY_QUEUES` overrides for LMS and Studio.
+         Instead, just use the default value of `CELERY_QUEUES` as set in
+         edx-platform's settings files.
+         Functionally, this means that in addition to the existing queues
+         that LMS and Studio defined, there is now a "low priority" queue
+         for Studio, suitable for tasks like a CourseGraph dump.
+
+ - 2021-10-20
+    - Role neo4j
+       - Upgrade Neo4j from 3.2.2 to 3.5.28.
+
  - 2021-10-19
      - Role: edxapp
         - Added a new task to create all required MongoDB indexes by using ensure_indexes lms command
      - Role: forum
         - Added a new task to rebuild MongoDB indexes
+
+ - 2021-08-26
+    - Role neo4j
+      - Bring Neo4j role closer in with what we really deploy:
+        - Change Neo4j version from 3.2.2 to 3.3.1.
+        - Expose Bolt on 0.0.0.0:7687 with optional encryption.
+        - Enable `dbms.allow_upgrade`, which is the new name of the `dbms.allow_format_migration` key.
+        - Remove http->https redirection logic when NGINX_ENABLE_SSL is false.
+
+ - 2021-09-28
+    - Role nginx
+      - Add `NGINX_ENABLE_IPV6` configuration variable to make nginx
+        services listen on the IPv6 wildcard address (in addition to
+        the IPv4 one, where services always listen). Defaults to true.
+
+ - 2021-09-19
+    - Remove configuration for edx-certificates, as that repo and service are no longer used.
+
+ - 2021-07-29
+    - Role edxapp
+       - Add `EDXAPP_ENABLE_MONGODB_INDEXES` configuration variable to optionally set up indexes on edxapp mongodb.
+    - Role forum
+       - Add `FORUM_ENABLE_MONGODB_INDEXES` configuration variable to optionally set up indexes on forum mongodb.
 
  - 2021-07-19
      - Role: edx_django_service
