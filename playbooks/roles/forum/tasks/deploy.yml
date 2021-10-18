@@ -84,11 +84,10 @@
     - migrate
     - migrate:db
 
-- name: MongoDB Indexing for cs_comments_service
+- name: rebuild MongoDB indexes
   shell:
     cmd: bundle exec rake db:init
     chdir: "{{ forum_code_dir }}"
-  become: yes
   become_user: "{{ forum_user }}"
   environment: "{{ forum_base_env }}"
 

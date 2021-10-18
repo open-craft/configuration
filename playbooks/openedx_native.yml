@@ -118,4 +118,3 @@
     - role: mfe_deployer
     - role: uptime_report
       when: ENABLE_UPTIME_REPORT
-    - role: lms_ensure_indexes
