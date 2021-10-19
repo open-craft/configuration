@@ -2,6 +2,12 @@
 All notable changes to this project will be documented in this file.
 Add any new changes to the top (right below this line).
 
+ - 2021-10-19
+     - Role: edxapp
+        - Added a new task to create all required MongoDB indexes by using ensure_indexes lms command
+     - Role: forum
+        - Added a new task to rebuild MongoDB indexes
+
  - 2021-07-19
      - Role: edx_django_service
         - Allows writing extra requirements to an 'extra.txt' requirements file in the service's requirements directory.
