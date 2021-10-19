@@ -68,6 +68,7 @@
     COMMON_ECOMMERCE_BASE_URL: '{{ ECOMMERCE_ECOMMERCE_URL_ROOT }}'
     ECOMMERCE_ENABLE_PAYMENT_MFE: true
     ENABLE_UPTIME_REPORT: true
+    RETIREMENT_SERVICE_VERSION: "open-release/nutmeg.2"
   roles:
     - role: swapfile
       SWAPFILE_SIZE: 4GB
