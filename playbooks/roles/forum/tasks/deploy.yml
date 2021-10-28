@@ -84,6 +84,13 @@
     - migrate
     - migrate:db
 
+- name: rebuild MongoDB indexes
+  shell:
+    cmd: bundle exec rake db:init
+    chdir: "{{ forum_code_dir }}"
+  become_user: "{{ forum_user }}"
+  environment: "{{ forum_base_env }}"
+
   # call supervisorctl update. this reloads
   # the supervisorctl config and restarts
   # the services if any of the configurations
