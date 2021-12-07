@@ -33,6 +33,10 @@ Add any new changes to the top (right below this line).
     - Role: discovery
        - Replaced `ELASTICSEARCH_URL` with `ELASTICSEARCH_CLUSTER_URL` in `discovery_service_config_overrides`.
 
+ - 2021-11-30
+    - Upgrade celery to 5.2.0 and adjust CLI call parameters too
+    - Bumped single-beat to use a more supported fork of the project
+
  - 2021-10-20
     - Role neo4j
        - Upgrade Neo4j from 3.3.1 to 3.5.28.
