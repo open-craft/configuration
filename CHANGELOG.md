@@ -28,6 +28,19 @@ Add any new changes to the top (right below this line).
     - Role: discovery
        - Replaced `ELASTICSEARCH_URL` with `ELASTICSEARCH_CLUSTER_URL` in `discovery_service_config_overrides`.
 
+ - 2021-11-30
+    - Upgrade celery to 5.2.0 and adjust CLI call parameters too
+    - Bumped single-beat to use a more supported fork of the project
+
+ - 2021-11-01
+    - Docker: edxapp
+       - Removed unnecessary `CELERY_QUEUES` overrides for LMS and Studio.
+         Instead, just use the default value of `CELERY_QUEUES` as set in
+         edx-platform's settings files.
+         Functionally, this means that in addition to the existing queues
+         that LMS and Studio defined, there is now a "low priority" queue
+         for Studio, suitable for tasks like a CourseGraph dump.
+
  - 2021-10-20
     - Role neo4j
        - Upgrade Neo4j from 3.3.1 to 3.5.28.
