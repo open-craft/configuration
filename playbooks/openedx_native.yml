@@ -3,7 +3,7 @@
 # Open edX Native installation for single server community installs.
 
 - name: Include credentials playbook
-  import_playbook: credentials.yaml
+  import_playbook: credentials.yml
 
 - name: Configure instance(s)
   hosts: all
