@@ -117,6 +117,7 @@ error_page {{ k }} {{ v }};
   # via hiera.
   client_max_body_size {{ NGINX_LMS_CLIENT_MAX_BODY_SIZE }};
   proxy_read_timeout {{ NGINX_LMS_PROXY_READ_TIMEOUT }};
+  proxy_send_timeout {{ NGINX_LMS_PROXY_SEND_TIMEOUT }};
 
   rewrite ^(.*)/favicon.ico$ {{ NGINX_EDXAPP_FAVICON_PATH }} last;
 
