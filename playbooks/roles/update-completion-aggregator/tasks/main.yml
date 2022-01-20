@@ -1,0 +1,35 @@
+---
+#
+# edX Configuration
+#
+# github:     https://github.com/edx/configuration
+# wiki:       https://openedx.atlassian.net/wiki/display/OpenOPS
+# code style: https://openedx.atlassian.net/wiki/display/OpenOPS/Ansible+Code+Conventions
+# license:    https://github.com/edx/configuration/blob/master/LICENSE.TXT
+#
+#
+#
+# Tasks for role update-completion-aggregator
+#
+# Overview:
+# This role will be used to set up cron job for updating completion aggregator
+# Example play:
+#
+#
+
+- name: Create bash script to tasks to update completion aggregator
+  template:
+    dest: "{{ update_completion_aggregator_script }}"
+    src: "update_completion_aggregator_script.j2"
+    mode: 0755
+    owner: root
+    group: root
+
+- name: Install cron job for automatically running the update completion aggregator script
+  cron:
+    name: "Run update completion aggregator script"
+    job: "{{ update_completion_aggregator_script }}"
+    hour: "{{ update_completion_cron_job_hours }}"
+    minute: "{{ update_completion_cron_job_minutes }}"
+    day: "*"
+  when: COMPLETION_AGGREGATOR_ENABLE_CRON_JOB
