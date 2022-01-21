@@ -69,6 +69,7 @@
     COMMON_ECOMMERCE_BASE_URL: '{{ ECOMMERCE_ECOMMERCE_URL_ROOT }}'
     ECOMMERCE_ENABLE_PAYMENT_MFE: true
     ENABLE_UPTIME_REPORT: true
+    ENABLE_COMPLETION_AGGREGATOR_UPDATE_CRON: true
     RETIREMENT_SERVICE_VERSION: "open-release/lilac.master"
   roles:
     - role: swapfile
@@ -144,3 +145,5 @@
       when: ENABLE_UPTIME_REPORT
     - role: edx_course_grades
       when: EDXAPP_ENABLE_COURSE_GRADES_FETCH
+    - role: update-completion-aggregator
+      when: ENABLE_COMPLETION_AGGREGATOR_UPDATE_CRON
