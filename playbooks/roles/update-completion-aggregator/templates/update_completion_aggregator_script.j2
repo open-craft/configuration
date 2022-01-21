@@ -1,0 +1,28 @@
+#!/bin/bash
+
+# Ensure only one instance of the script is running
+LOCKFILE=/edx/var/completion-aggregator.lock
+if [ -e ${LOCKFILE} ] && kill -0 `cat ${LOCKFILE}`; then
+    echo "Completion aggregator update already running!"
+    exit
+fi
+# make sure the lockfile is removed when we exit and then claim it
+trap "rm -f ${LOCKFILE}; exit" INT TERM EXIT
+echo $$ > ${LOCKFILE}
+
+# Set environment
+. /edx/app/edxapp/edxapp_env
+
+# Source virtualenv
+source /edx/app/edxapp/venvs/edxapp/bin/activate
+
+# Run aggregator service to update any stale aggregate completion data
+/edx/app/edxapp/edx-platform/manage.py lms run_aggregator_service \
+        --settings=production
+
+# Run aggregator cleanup to delete old database entries
+/edx/app/edxapp/edx-platform/manage.py lms run_aggregator_cleanup \
+        --settings=production
+
+# Clear the lockfile
+rm -f $LOCKFILE

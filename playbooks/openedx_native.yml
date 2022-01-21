@@ -41,6 +41,7 @@
     EDXAPP_ENABLE_ELASTIC_SEARCH: true
     EDXAPP_ENABLE_COURSE_GRADES_FETCH: true
     ENABLE_UPTIME_REPORT: true
+    ENABLE_COMPLETION_AGGREGATOR_UPDATE_CRON: true
     RETIREMENT_SERVICE_GIT_REPOS:
       - PROTOCOL: "{{ COMMON_GIT_PROTOCOL }}"
         DOMAIN: "{{ COMMON_GIT_MIRROR }}"
@@ -119,3 +120,5 @@
     - role: mfe_deployer
     - role: uptime_report
       when: ENABLE_UPTIME_REPORT
+    - role: update-completion-aggregator
+      when: ENABLE_COMPLETION_AGGREGATOR_UPDATE_CRON
