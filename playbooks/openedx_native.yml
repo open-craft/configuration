@@ -7,10 +7,6 @@
   become: True
   gather_facts: True
   vars:
-    # TODO: @gabor-boros - remove this line when we upgrade to Maple. For more information:
-    # https://tasks.opencraft.com/browse/SE-4860
-    EDXAPP_EXTRA_REQUIREMENTS: '{{ EDXAPP_EXTRA_REQUIREMENTS + [{"name": "setuptools<59.7.0,>=59.1.1"}] }}'
-    
     migrate_db: "yes"
     MFE_DEPLOY_NGINX_PORT: 19010
     MFE_BASE: "{{ EDXAPP_LMS_BASE }}:{{ MFE_DEPLOY_NGINX_PORT }}"
