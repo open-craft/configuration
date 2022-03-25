@@ -20,6 +20,11 @@ Add any new changes to the top (right below this line).
        - Added a new `SIMPLETHEME_I18N_DJANGO` setting to allow operators to provide
          additional translations, or override existing django translations.
 
+ - 2022-03-25
+    - Role: edxapp
+        - Added a new `CUSTOM_RESOURCE_TEMPLATES_DIRECTORY` setting to allow operators to
+          override the default resource templates.
+
  - 2022-02-01
     - Role: edxapp
         - Added a new `EDXAPP_PREPEND_LOCALE_PATHS` setting to allow operators to
@@ -33,13 +38,26 @@ Add any new changes to the top (right below this line).
     - Role: discovery
        - Replaced `ELASTICSEARCH_URL` with `ELASTICSEARCH_CLUSTER_URL` in `discovery_service_config_overrides`.
 
+ - 2022-01-05
+	- Remove an extraneous `-A ecommerce_worker` from the ecomworker startup script,
+	  which was preventing the celery worker process from starting.
+
  - 2021-11-30
     - Upgrade celery to 5.2.0 and adjust CLI call parameters too
     - Bumped single-beat to use a more supported fork of the project
 
+ - 2021-11-01
+    - Docker: edxapp
+       - Removed unnecessary `CELERY_QUEUES` overrides for LMS and Studio.
+         Instead, just use the default value of `CELERY_QUEUES` as set in
+         edx-platform's settings files.
+         Functionally, this means that in addition to the existing queues
+         that LMS and Studio defined, there is now a "low priority" queue
+         for Studio, suitable for tasks like a CourseGraph dump.
+
  - 2021-10-20
     - Role neo4j
-       - Upgrade Neo4j from 3.3.1 to 3.5.28.
+       - Upgrade Neo4j from 3.2.2 to 3.5.28.
 
  - 2021-08-26
     - Role neo4j
