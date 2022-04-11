@@ -92,7 +92,7 @@
     - role: redis
       when: SANDBOX_ENABLE_REDIS
     - role: edxapp
-      celery_worker: True
+      celery_worker: False
     - edxapp
     - role: blockstore
       when: SANDBOX_ENABLE_BLOCKSTORE

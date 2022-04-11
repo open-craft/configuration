@@ -434,7 +434,7 @@
     supervisorctl_path: "{{ supervisor_ctl }}"
     config: "{{ supervisor_cfg }}"
     state: started
-  when: celery_worker is defined and not disable_edx_services
+  when: celery_worker and not disable_edx_services
   become_user: "{{ supervisor_service_user }}"
   tags:
     - manage
