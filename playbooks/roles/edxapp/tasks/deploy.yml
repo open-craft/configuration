@@ -395,6 +395,15 @@
   when:
     - celery_worker is not defined
 
+- name: compile JS translations
+  shell: ". {{ edxapp_app_dir }}/edxapp_env && {{ edxapp_venv_bin }}/python ./manage.py lms --settings={{ edxapp_settings }} compilejsi18n"
+  args:
+    chdir: "{{ edxapp_code_dir }}"
+  become_user: "{{ edxapp_user }}"
+  when: EDXAPP_COMPILE_JSI18N and celery_worker is not defined
+  tags:
+    - assets
+
 # creates the supervisor jobs for the
 # service variants configured, runs
 # gather_assets and db migrations
@@ -507,16 +516,6 @@
   tags:
     - manage
     - manage:db
-
-- name: reindex all courses
-  shell: ". {{ edxapp_app_dir }}/edxapp_env && {{ edxapp_venv_bin }}/python ./manage.py cms reindex_course --setup --settings={{ edxapp_settings }}"
-  args:
-    chdir: "{{ edxapp_code_dir }}"
-  become_user: "{{ common_web_user }}"
-  when: EDXAPP_REINDEX_ALL_COURSES
-  tags:
-    - install
-    - install:base
 
 - name: install cron job to run clearsessions
   cron:

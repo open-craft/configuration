@@ -4,6 +4,22 @@
 All notable changes to this project will be documented in this file.
 Add any new changes to the top (right below this line).
 
+ - 2022-04-06
+    - Role: edxapp
+        - Added a new `EDXAPP_COMPILE_JSI18N` variable to control whether
+          to run the `compilejsi18n` management command on edxapp deploy.
+          Defaults to false.
+
+ - 2022-04-06
+    - Role: simple_theme
+       - Added a new `SIMPLETHEME_I18N_DJANGO` setting to allow operators to provide
+         additional translations, or override existing django translations.
+
+ - 2022-02-01
+    - Role: edxapp
+        - Added a new `EDXAPP_PREPEND_LOCALE_PATHS` setting to allow operators to
+          override the default translations.
+
  - 2022-01-06
     - Role: edx_notes_api
        - Replaced `ELASTICSEARCH_URL` with `ELASTICSEARCH_DSL` in `edx_notes_api_service_config`.
