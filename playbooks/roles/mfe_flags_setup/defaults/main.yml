@@ -3,3 +3,5 @@
 MFE_FLAGS_SETUP_FLAGS_LIST:
   - account.redirect_to_microfrontend
   - order_history.redirect_to_microfrontend
+
+MFE_FLAGS_SETUP_DEACTIVATE_LIST: []

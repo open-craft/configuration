@@ -35,3 +35,11 @@
   environment: "{{ edxapp_environment }}"
   when: item not in edxapp_waffle_flags_list.stdout
   loop: "{{ MFE_FLAGS_SETUP_FLAGS_LIST }}"
+
+- name: Create deactivate MFE waffle flag if it does not exist
+  shell: >
+    {{ edxapp_venv_bin }}/python {{ COMMON_BIN_DIR }}/manage.edxapp lms waffle_flag {{ item }} --deactivate --create --settings={{ COMMON_EDXAPP_SETTINGS }}
+  become_user: "{{ edxapp_user }}"
+  environment: "{{ edxapp_environment }}"
+  when: item not in edxapp_waffle_flags_list.stdout
+  loop: "{{ MFE_FLAGS_SETUP_DEACTIVATE_LIST }}"
