@@ -69,6 +69,9 @@
     ECOMMERCE_ENABLE_PAYMENT_MFE: true
     ENABLE_UPTIME_REPORT: true
     RETIREMENT_SERVICE_VERSION: "open-release/maple.3"
+
+    EDXAPP_ENABLE_CLOUDWATCH: false
+    cloudwatch_logs_enabled: '{{ EDXAPP_ENABLE_CLOUDWATCH }}'
   roles:
     - role: swapfile
       SWAPFILE_SIZE: 4GB
@@ -127,6 +130,8 @@
       when: COMMON_ENABLE_DATADOG
     - role: splunkforwarder
       when: COMMON_ENABLE_SPLUNKFORWARDER
+    - role: aws_cloudwatch_agent
+      when: EDXAPP_ENABLE_CLOUDWATCH
     - role: postfix_queue
       when: POSTFIX_QUEUE_EXTERNAL_SMTP_HOST != ''
     - role: datadog-uninstall
