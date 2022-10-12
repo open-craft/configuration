@@ -56,6 +56,7 @@
     ECOMMERCE_ENABLE_COMPREHENSIVE_THEMING: false
     EDXAPP_ENABLE_MEMCACHE: true
     EDXAPP_ENABLE_ELASTIC_SEARCH: true
+    EDXAPP_ENABLE_COURSE_GRADES_FETCH: true
     # Ecommerce
     ECOMMERCE_CORS_ORIGIN_WHITELIST: [
       "{{ EDXAPP_LMS_BASE_SCHEME }}://{{ MFE_BASE }}",
@@ -67,6 +68,10 @@
     # For the mfe role.
     COMMON_ECOMMERCE_BASE_URL: '{{ ECOMMERCE_ECOMMERCE_URL_ROOT }}'
     ECOMMERCE_ENABLE_PAYMENT_MFE: true
+    ENABLE_UPTIME_REPORT: true
+    EDXAPP_ENABLE_CLOUDWATCH: false
+    cloudwatch_logs_enabled: '{{ EDXAPP_ENABLE_CLOUDWATCH }}'
+    RETIREMENT_SERVICE_VERSION: "open-release/nutmeg.2"
   roles:
     - role: swapfile
       SWAPFILE_SIZE: 4GB
@@ -125,6 +130,8 @@
       when: COMMON_ENABLE_DATADOG
     - role: splunkforwarder
       when: COMMON_ENABLE_SPLUNKFORWARDER
+    - role: aws_cloudwatch_agent
+      when: EDXAPP_ENABLE_CLOUDWATCH
     - role: postfix_queue
       when: POSTFIX_QUEUE_EXTERNAL_SMTP_HOST != ''
     - role: datadog-uninstall
@@ -134,3 +141,7 @@
     - role: mfe_deployer
       MFE_DEPLOY_ECOMMERCE_MFES: "{{ SANDBOX_ENABLE_ECOMMERCE }}"
     - role: mfe_flags_setup
+    - role: uptime_report
+      when: ENABLE_UPTIME_REPORT
+    - role: edx_course_grades
+      when: EDXAPP_ENABLE_COURSE_GRADES_FETCH

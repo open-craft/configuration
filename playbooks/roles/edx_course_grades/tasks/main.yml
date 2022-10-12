@@ -1,0 +1,68 @@
+---
+#
+# edX Configuration
+#
+# github:     https://github.com/edx/configuration
+# wiki:       https://openedx.atlassian.net/wiki/display/OpenOPS
+# code style: https://openedx.atlassian.net/wiki/display/OpenOPS/Ansible+Code+Conventions
+# license:    https://github.com/edx/configuration/blob/master/LICENSE.TXT
+#
+#
+#
+# Tasks for role edx_course_grades
+# 
+# Overview:
+# This role will be used to set up automatic querying of persistent grades 
+# and writing to logs which will then be uploaded to s3 via logrotate
+# 
+# Example play:
+#
+#
+
+- name: Create script location
+  file:
+    path: "{{ course_grades_script_location }}"
+    state: directory
+    owner: root
+    group: root
+    mode: 0755
+
+- name: Create python script to query the mysql database
+  template:
+    dest: "{{ course_grades_python_script }}"
+    src: "fetch_course_grades.j2"
+    mode: 0644
+    owner: root
+    group: root
+
+- name: Create log directory
+  file:
+    path: "{{ course_grades_log_dir }}"
+    state: directory
+    owner: root
+    group: root
+    mode: 0755
+
+- name: Create automated script for running the query
+  template:
+    src: query-course-grades.j2
+    dest: "{{ course_grades_fetch_records_script }}"
+    owner: root
+    group: root
+    mode: 0744
+
+- name: Set up logrotate on course grades log
+  template:
+    dest: "/etc/logrotate.d/hourly/course_grades.log"
+    src: "etc/logrotate.d/hourly/edx_logrotate_course_grades_log.j2"
+    owner: root
+    group: root
+    mode: 0644
+
+- name: Install cron job for automatically running the course grades query
+  cron:
+    name: "Run course grades query"
+    job: "{{ course_grades_fetch_records_script }}"
+    hour: "{{ course_grades_cron_job_hours }}"
+    minute: "{{ course_grades_cron_job_minutes }}"
+    day: "*"
