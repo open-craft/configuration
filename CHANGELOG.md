@@ -4,6 +4,11 @@
 All notable changes to this project will be documented in this file.
 Add any new changes to the top (right below this line).
 
+ - 2022-10-14
+    - Changed default value of `MFE_ORDER_HISTORY_URL` to empty string `""` to
+      prevent MFE header dropdown from rending `Order History` option when
+      Order History URL is not configured.
+
  - 2022-06-08
     - Role: edxapp
         - Added a new `CELERY_RESULT_BACKEND` setting to allow operators to
