@@ -4,6 +4,10 @@
 All notable changes to this project will be documented in this file.
 Add any new changes to the top (right below this line).
 
+ - 2022-11-11
+    - Changed default value of `EDXAPP_MONGO_REPLICA_SET` to `null` from existing
+      empty string `""`, to make it compatible with pymongo >= 3.11 in Nutmeg and above.
+
  - 2022-10-14
     - Changed default value of `MFE_ORDER_HISTORY_URL` to empty string `""` to
       prevent MFE header dropdown from rending `Order History` option when
