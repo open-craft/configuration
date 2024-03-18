@@ -4,6 +4,10 @@
 All notable changes to this project will be documented in this file.
 Add any new changes to the top (right below this line).
 
+- 2024-03-18
+  - Role: discovery
+    - Added `DISCOVERY_EXTRA_CONFIG_OVERRIDES` to allow overriding Course Discovery settings.
+
 - 2024-01-25
   - Role: mfe
     - Added `MFE_ENVIRONMENT_DEFAULT_EXTRA` to allow operators to add extra environment variables to all MFEs when
