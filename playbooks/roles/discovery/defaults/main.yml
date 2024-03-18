@@ -156,7 +156,7 @@ DISCOVERY_REPOS:
 #   - name: git+https://git.myproject.org/MyProject#egg=MyProject
 DISCOVERY_EXTRA_REQUIREMENTS: []
 
-discovery_service_config_overrides:
+discovery_config:
   ELASTICSEARCH_CLUSTER_URL: '{{ DISCOVERY_ELASTICSEARCH_URL }}'
   ELASTICSEARCH_INDEX_NAME: '{{ DISCOVERY_ELASTICSEARCH_INDEX_NAME }}'
 
@@ -195,6 +195,9 @@ discovery_service_config_overrides:
   USERNAME_REPLACEMENT_WORKER: "{{ DISCOVERY_USERNAME_REPLACEMENT_WORKER }}"
 
   CELERY_BROKER_URL: "{{ DISCOVERY_CELERY_BROKER_URL }}"
+
+DISCOVERY_EXTRA_CONFIG_OVERRIDES: {}
+discovery_service_config_overrides: "{{ discovery_config | combine(DISCOVERY_EXTRA_CONFIG_OVERRIDES) }}"
 
 # See edx_django_service_automated_users for an example of what this should be
 DISCOVERY_AUTOMATED_USERS: {}
