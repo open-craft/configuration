@@ -54,6 +54,7 @@
     version: "{{ EDX_PLATFORM_VERSION }}"
     accept_hostkey: yes
     key_file: "{% if EDXAPP_USE_GIT_IDENTITY %}{{ edxapp_git_identity }}{% endif %}"
+    force: true
   become_user: "{{ edxapp_user }}"
   register: edxapp_platform_checkout
   tags:
@@ -167,7 +168,7 @@
   tags:
     - install
     - install:app-requirements
-  
+
 - name: Install local edxapp requirements
   command: "{{ edxapp_venv_dir }}/bin/pip install -e {{ edxapp_code_dir }}/."
   become_user: "{{ edxapp_user }}"
