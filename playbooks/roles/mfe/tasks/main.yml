@@ -65,6 +65,9 @@
   tags:
     - install
     - install:system-requirements
+  register: rc
+  until: rc is succeeded
+  retries: 5
 
 - name: upgrade npm
   command: "npm install -g npm@{{ MFE_NPM_VERSION }}"
