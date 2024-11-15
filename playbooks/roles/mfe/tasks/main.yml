@@ -98,6 +98,16 @@
     - install
     - install:app-requirements
 
+- name: download plugin config
+  get_url:
+    url: "{{ MFE_PLUGIN_CONFIG_URL }}"
+    dest: "{{ MFE_CODE_DIR }}/env.config.jsx"
+  become_user: "{{ MFE_USER }}"
+  when: MFE_PLUGIN_CONFIG_URL != ''
+  tags:
+    - install
+    - install:app-requirements
+
 - name: build MFE
   command: "npm run build"
   args:
