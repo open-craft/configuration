@@ -53,6 +53,32 @@
     path: /home/vagrant
   register: vagrant_home_dir
 
+# https://github.com/deadsnakes/issues/issues/251#issuecomment-3357847914
+- name: Create temporary directory for Python .deb files
+  file:
+    path: /tmp/python35_311_focal
+    state: directory
+    mode: '0755'
+
+- name: Unpack Python 3.5 and 3.11 .deb files
+  unarchive:
+    src: python35_311_focal.tar.gz
+    dest: /tmp/python35_311_focal/
+
+- name: Install dependencies for Python .deb packages
+  apt:
+    name:
+      - libc-dev-bin
+      - linux-libc-dev
+      - libcrypt-dev
+      - libexpat1-dev
+      - libc6-dev
+    state: present
+    update_cache: yes
+
+- name: Install Python .deb files
+  shell: dpkg -i /tmp/python35_311_focal/*.deb
+
 # Ensure that we can install old software if need be.
 - name: Add edX PPA apt key
   apt_key:
