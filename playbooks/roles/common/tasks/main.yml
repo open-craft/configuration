@@ -104,21 +104,6 @@
     ansible_distribution in common_debian_variants and
     (ansible_distribution_release == 'precise' or ansible_distribution_release == 'trusty' or ansible_distribution_release == 'xenial')
 
-# The deadsnakes PPA is required to install python3.5 on Bionic and Focal
-# Xenial comes with python3.5 installed.
-- name: add deadsnakes repository
-  apt_repository:
-    repo: "ppa:deadsnakes/ppa"
-    update_cache: yes
-  register: add_repo
-  until: add_repo is success
-  retries: 10
-  delay: 5
-  when: ansible_distribution_release == 'bionic' or ansible_distribution_release == 'focal' or ansible_distribution_release == 'jammy'
-  tags:
-    - install
-    - install:system-requirements
-
 - name: Install role-independent useful system packages
   # do this before log dir setup; rsyslog package guarantees syslog user present
   apt:
